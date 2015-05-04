@@ -7,7 +7,17 @@ ko.bindingHandlers.googlemap = {
             center: new google.maps.LatLng(latitude, longitude)
         };
         ko.bindingHandlers.googlemap.map = new google.maps.Map(element, mapOptions);
-        console.log(ko.bindingHandlers.googlemap.map);
+    },
+    createMarkers: function(mapMarkers) {
+        for (var i = 0; i < mapMarkers.length; i++){
+            var latLng = new google.maps.LatLng(
+                            mapMarkers[i].latitude,
+                            mapMarkers[i].longitude);
+            var marker = new google.maps.Marker({
+                position: latLng,
+                map: ko.bindingHandlers.googlemap.map
+            });
+        }
     },
     init: function (element, valueAccessor) {
         var value = valueAccessor();
@@ -19,22 +29,11 @@ ko.bindingHandlers.googlemap = {
                     var latitude = results[0]['geometry']['location']['A'];
                     var longitude = results[0]['geometry']['location']['F'];
                     ko.bindingHandlers.googlemap.createMap(element, latitude, longitude);
+                    ko.bindingHandlers.googlemap.createMarkers(value.mapMarkers());
             } else {
                 alert('Geocoder error because: ' + status);
             }
         });
-
-        for (var i = 0; i < value.mapMarkers().length; i++){
-            //console.log(value.mapMarkers()[i]);
-            var latLng = new google.maps.LatLng(
-                            value.mapMarkers()[i].latitude,
-                            value.mapMarkers()[i].longitude);
-            //console.log(latLng);
-            var marker = new google.maps.Marker({
-                position: latLng,
-                map: ko.bindingHandlers.googlemap.map
-            });
-        }
     }
 };
 
@@ -43,7 +42,6 @@ var mapMarkers = [
     {name: "Gangnam", latitude: 37.4967, longitude: 127.0275}
 ];
 
-var centerTest;
 var ViewModel =  function () {
     var self = this;
 
