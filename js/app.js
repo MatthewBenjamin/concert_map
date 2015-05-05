@@ -11,16 +11,25 @@ ko.bindingHandlers.googlemap = {
         ko.bindingHandlers.googlemap.map = new google.maps.Map(element, mapOptions);
     },
     createMarkers: function(mapMarkers) {
+        var infoWindow = new google.maps.InfoWindow();
         for (var i = 0; i < mapMarkers.length; i++){
             console.log(mapMarkers[i]);
-
             var latLng = new google.maps.LatLng(
                             mapMarkers[i].venue.location['geo:point']['geo:lat'],
                             mapMarkers[i].venue.location['geo:point']['geo:long']);
+
             var marker = new google.maps.Marker({
                 position: latLng,
                 title: mapMarkers[i].title,
+                content: mapMarkers[i].title,       // TODO: make function(outside of viewmodel) that sets HTML content
                 map: ko.bindingHandlers.googlemap.map
+            });
+            var infoWindow = new google.maps.InfoWindow({
+                content: marker.content
+            });
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.setContent(this.content);
+                infoWindow.open(ko.bindingHandlers.googlemap.map, this);
             });
         }
     },
@@ -66,14 +75,10 @@ ko.bindingHandlers.googlemap = {
     }
 };
 
-var mapMarkers = [
-    {name: "Austin", latitude: 30.267153 , longitude: -97.74306079999997}
-];
-
 var ViewModel =  function () {
     var self = this;
 
-    self.mapMarkers = ko.observableArray(mapMarkers);
+    //self.mapMarkers = ko.observableArray(mapMarkers);
 
     var defaultLocation = 'Austin, TX';
     self.currentAddress = ko.computed(function(address) {
