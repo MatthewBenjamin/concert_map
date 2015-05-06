@@ -39,13 +39,12 @@ ko.bindingHandlers.googlemap = {
     }
 };
 
-//var googleMap = ko.bindingHandlers.googlemap;
-
+// TODO: self.currentMarker or click event
 var ViewModel =  function () {
     var self = this;
     self.defaultLocation = 'Austin, TX';
     self.currentAddress = ko.observable(self.defaultLocation);
-    self.mapCenter = ko.observable( { latitude: null, longitude: null } );
+    self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
     self.lastFmEvents = ko.observableArray();
 
     var geocoder = new google.maps.Geocoder();
@@ -58,7 +57,11 @@ var ViewModel =  function () {
                         latitude: latitude,
                         longitude: longitude
                     };
-                    self.mapCenter(mapCenter);
+                    if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
+                        //console.log('Old map latlng: ', self.mapCenter());
+                        //console.log('New map latlng: ', mapCenter);
+                        self.mapCenter(mapCenter);
+                    }
             } else {
                 alert('Geocoder error because: ' + status);
             }
