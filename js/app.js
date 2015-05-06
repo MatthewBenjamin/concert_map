@@ -1,6 +1,4 @@
 // Custom Handler for Google Map
-var mapCenter = {};
-
 ko.bindingHandlers.googlemap = {
     map: null,
     createMap: function(element, latitude, longitude) {
@@ -11,9 +9,9 @@ ko.bindingHandlers.googlemap = {
         ko.bindingHandlers.googlemap.map = new google.maps.Map(element, mapOptions);
     },
     createMarkers: function(mapMarkers) {
+        console.log(mapMarkers);
         var infoWindow = new google.maps.InfoWindow();
         for (var i = 0; i < mapMarkers.length; i++){
-            console.log(mapMarkers[i]);
             var latLng = new google.maps.LatLng(
                             mapMarkers[i].venue.location['geo:point']['geo:lat'],
                             mapMarkers[i].venue.location['geo:point']['geo:long']);
@@ -33,30 +31,17 @@ ko.bindingHandlers.googlemap = {
             });
         }
     },
-    getLastFmEvents: function(latitude, longitude) {
-        console.log(latitude, longitude);
-        var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
-        'lat=' + latitude + '&' +
-        'long=' + longitude + '&' +
-        'limit=20&' +               // TODO: fine tune OR make editable or self correcting
-        'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-        '&format=json'
-
-        var requestSettings = {
-            success: function(data, status, jqXHR) {
-                //console.log(data.events.event);
-                ko.bindingHandlers.googlemap.createMarkers(data.events.event);
-                // TODO:
-                // interate through data
-                // create mapMarkers
-                // create list items
-            }
-        }
-        $.ajax(requestURL,requestSettings)
-    },
-    init: function (element, valueAccessor) {
+    update: function (element, valueAccessor) {
         var value = valueAccessor();
-
+        //console.log(value.mapCenter);
+        var latitude = value.mapCenter.latitude;
+        var longitude = value.mapCenter.longitude;
+        ko.bindingHandlers.googlemap.createMap(element, latitude, longitude);
+        //console.log(value.lastFmEvents);
+        ko.bindingHandlers.googlemap.createMarkers(value.lastFmEvents);
+        //console.log(value.lastFmEvents)
+        //ko.bindingHandlers.googlemap.getLastFmEvents(latitude, longitude);
+        /*
         var geocoder = new google.maps.Geocoder();
 
         geocoder.geocode( { 'address': value.currentAddress }, function(results, status) {
@@ -72,54 +57,45 @@ ko.bindingHandlers.googlemap = {
                 alert('Geocoder error because: ' + status);
             }
         });
+*/
     }
 };
 
 var ViewModel =  function () {
     var self = this;
 
-    //self.mapMarkers = ko.observableArray(mapMarkers);
-
     var defaultLocation = 'Austin, TX';
+    var defaultLatLong = {
+        latitude: 30.267153,
+        longitude: -97.74306079999997
+    };
     self.currentAddress = ko.computed(function(address) {
         address = address || defaultLocation;
         return address;
     });
-    //self.mapCenter = ko.observable(mapCenter);
-/*
-    self.init = function() {
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode( { 'address': self.defaultLocation }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                console.log('LAT: ' + results[0]['geometry']['location']['A']);
-                console.log('LNG: ' + results[0]['geometry']['location']['F']);
-            } else {
-                alert('Geocoder error because: ' + status);
-            }
-        });
-    }
-*/
-    function getLastFmEvents(latitude, longitude) {
-        console.log(latitude, longitude);
-        var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
-        'lat=' + latitude + '&' +
-        'long=' + longitude + '&' +
-        'limit=10&' +               // TODO: fine tune OR make editable or self correcting
-        'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-        '&format=json'
+    self.mapCenter = ko.computed(function(latlong) {
+        latlong = latlong || defaultLatLong;
+        return latlong;
+    });
+    self.lastFmEvents = ko.observableArray();
 
+    self.getLastFmEvents = ko.computed(function() {
+        var latitude = self.mapCenter().latitude;
+        var longitude = self.mapCenter().longitude;
+        var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
+            'lat=' + latitude + '&' +
+            'long=' + longitude + '&' +
+            'limit=10&' +               // TODO: fine tune OR make editable or self correcting
+            'api_key=d824cbbb7759624aa8b3621a627b70b8' +
+            '&format=json'
         var requestSettings = {
             success: function(data, status, jqXHR) {
-                // TODO:
-                // interate through data
-                // create mapMarkers
-                // create list items
+                self.lastFmEvents(data.events.event);
+                //console.log(self.lastFmEvents());
             }
         }
-        $.ajax(requestURL,requestSettings);
-    };
-    //getLastFmEvents(self.mapCenter().latitude, self.mapCenter().longitude);
-    //self.getLastFmEvents(self.mapCenter().centerLat, self.mapCenter().centerLon);
+        $.ajax(requestURL,requestSettings)
+    });
 };
 
 ko.applyBindings(ViewModel);
