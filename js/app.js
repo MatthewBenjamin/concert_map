@@ -4,6 +4,7 @@ var map;
 var googleMapMarkers = []
 ko.bindingHandlers.googlemap = {
     //map: null,
+    /*
     createMarkers: function(mapMarkers) {
         console.log(mapMarkers);
         var infoWindow = new google.maps.InfoWindow();
@@ -20,17 +21,13 @@ ko.bindingHandlers.googlemap = {
                 content: mapMarkers[i].title,       // TODO: make function(outside of viewmodel) that sets HTML content
                 map: map
             });
-            /*
-            var infoWindow = new google.maps.InfoWindow({
-                //content: marker.content
-            }); */
             google.maps.event.addListener(marker, 'click', function() {
                 infoWindow.setContent(this.content);
                 infoWindow.open(map, this);
             });
             googleMapMarkers.push(marker);
         }
-    },
+    }, */
     init: function (element, valueAccessor) {
         var mapOptions = {
             zoom: 13,
@@ -45,7 +42,7 @@ ko.bindingHandlers.googlemap = {
         var longitude = value.mapCenter.longitude;
         console.log(latitude);
         map.setCenter( { lat: latitude, lng: longitude } );
-        ko.bindingHandlers.googlemap.createMarkers(value.lastFmEvents);
+        //ko.bindingHandlers.googlemap.createMarkers(value.lastFmEvents);
     }
 };
 
@@ -65,11 +62,13 @@ var ViewModel =  function () {
         //  more info --> pop up a new box (on top of everything with z-index) with lots of info
         //              about artists, venue, tickets, etc
         //  can close (or toggle by clicking list item again), or select a new list item
-        for (var i = 0; i < googleMapMarkers.length; i++) {
-            if (event.title === googleMapMarkers[i].title){
+
+        // TODO: rewrite this? uses title to find marker :( ...use forEach instead?
+        for (var i = 0; i < self.mapMarkers().length; i++) {
+            if (event.title === self.mapMarkers()[i].title){
                 //console.log('event name :', event.title);
                 //console.log('marker name :', googleMapMarkers[i].title);
-                google.maps.event.trigger(googleMapMarkers[i], 'click');
+                google.maps.event.trigger(self.mapMarkers()[i], 'click');
             }
         }
     }
@@ -110,6 +109,9 @@ var ViewModel =  function () {
                 '&format=json'
             var requestSettings = {
                 success: function(data, status, jqXHR) {
+                    self.mapMarkers().forEach(function (marker) {
+                        marker.setMap(null);
+                    });
                     self.lastFmEvents(data.events.event);
                 }
             };
@@ -121,7 +123,53 @@ var ViewModel =  function () {
 
     self.filteredList = ko.observableArray([]);
 
-    self.searchInput = ko.observable('search here');
+    self.mapMarkers = ko.computed(function() {
+        var markers = []
+        var infoWindow = new google.maps.InfoWindow();
+        var events = self.lastFmEvents();
+        console.log(events);
+        for (var i = 0; i < events.length; i++){
+            var latLng = new google.maps.LatLng(
+                            events[i].venue.location['geo:point']['geo:lat'],
+                            events[i].venue.location['geo:point']['geo:long']);
+
+            var marker = new google.maps.Marker({
+                position: latLng,
+                title: events[i].title,
+                content: events[i].title,       // TODO: make function(outside of viewmodel) that sets HTML content
+                icon: 'images/red.png',
+                map: map
+            });
+            /*
+            var infoWindow = new google.maps.InfoWindow({
+                //content: marker.content
+            }); */
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.setContent(this.content);
+                infoWindow.open(map, this);
+            });
+            markers.push(marker);
+
+        }
+        return markers;
+    });
+
+    self.mapMarkersSearch = ko.computed(function() {
+        var events = self.lastFmEvents()
+        for (var i = 0; i < events.length; i++) {
+            var searchedFor = self.filteredList().indexOf(events[i]) > -1;
+            if (self.filteredList() == self.lastFmEvents()) {
+                self.mapMarkers()[i].setIcon('images/red.png');
+            } else if (searchedFor) {
+                // TODO: custom color
+                self.mapMarkers()[i].setIcon('images/blue.png');
+            } else {
+                // TODO: no color
+                self.mapMarkers()[i].setIcon('images/clear.png');
+            }
+        }
+    });
+    self.searchInput = ko.observable();
 
     self.doesStringContain = function (targetString, searchTerm) {
         targetString = targetString.toLowerCase();
