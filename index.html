@@ -12,9 +12,13 @@
 
     <body>
 
-        <div id="search-location" data-bind="text: currentAddress()">Hi</div>
-        <ul id="list" data-bind="foreach: lastFmEvents">
-            <li data-bind="text: title"></li>
+        <div id="current-location" data-bind="text: currentAddress()"></div>
+        <br>
+        <div id="search-bar">
+            <input data-bind="value: searchInput">
+        </div>
+        <ul id="list" data-bind="foreach: filteredList">
+            <li data-bind="text: title, click: selectMarker"></li>
         </ul>
         <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter(), lastFmEvents: lastFmEvents() }"></div>
 

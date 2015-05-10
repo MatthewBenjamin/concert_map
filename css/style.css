@@ -3,3 +3,16 @@
     width: 99%;
     position: absolute;
 }
+
+#list, #current-location {
+    background-color: white;
+    z-index: 100;
+    position: absolute;
+}
+
+#search-bar {
+    z-index: 100;
+}
+li {
+    cursor: pointer;
+}
