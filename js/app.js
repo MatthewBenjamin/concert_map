@@ -14,20 +14,24 @@
         -show on map(in list events) : pan to map marker and open infoWindow
         -more info(in markers and list view): open info window style pop up(but not actually an info window)
             -large box, displays lots of additional info, including from other APIs
-
+-handle api (and other errors?) gracefully
 */
-// Custom Handler for Google Map
+
+// Google map
 var map;
 
+// Custom Handler for Google Map
 ko.bindingHandlers.googlemap = {
+    // create map
     init: function (element) {
         var mapOptions = {
             zoom: 13,
         };
         map = new google.maps.Map(element, mapOptions);
     },
+    // update map center when ViewModel.mapCenter value changes
     update: function (element, valueAccessor) {
-        console.log('update map');
+        //console.log('update map');
         var value = valueAccessor();
         var latitude = value.mapCenter.latitude;
         var longitude = value.mapCenter.longitude;
@@ -40,10 +44,15 @@ var ViewModel =  function () {
     self.defaultLocation = 'Austin, TX';
     self.currentAddress = ko.observable(self.defaultLocation);
     self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
+
+    // Last.fm API results
     self.lastFmEvents = ko.observableArray();
-    self.filteredList = ko.observableArray([]);
+
+    // searched for Last.fm results
+    self.filteredList = ko.observableArray();
     self.searchInput = ko.observable();
 
+    // Activates a map marker's click event when same event is clicked on in the list view
     self.selectMarker = function(event) {
         // TODO: rewrite this? uses title to find marker :( ...also use forEach instead (check rest of code
         // for other forReach possibilities)?
@@ -54,6 +63,7 @@ var ViewModel =  function () {
         }
     };
 
+    // Update mapCenter with new latLng when currentAddress changes
     var geocoder = new google.maps.Geocoder();
     self.getMapGeocode = ko.computed(function() {
         geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
@@ -75,6 +85,7 @@ var ViewModel =  function () {
         })
     });
 
+    // Get info from Last.fm API when mapCenter updates
     self.getLastFmEvents = ko.computed(function() {
         if (self.mapCenter().latitude && self.mapCenter().longitude) {
             var latitude = self.mapCenter().latitude;
@@ -97,7 +108,7 @@ var ViewModel =  function () {
         }
     });
 
-
+    // Create google map markers from last.fm API data
     self.mapMarkers = ko.computed(function() {
         var markers = []
         var infoWindow = new google.maps.InfoWindow();
@@ -126,6 +137,7 @@ var ViewModel =  function () {
         return markers;
     });
 
+    // Update marker icon based on search results
     self.mapMarkersSearch = ko.computed(function() {
         var events = self.lastFmEvents();
         for (var i = 0; i < events.length; i++) {
@@ -140,6 +152,7 @@ var ViewModel =  function () {
         }
     });
 
+    /*** SEARCH FUNCTIONS ***/
     self.doesStringContain = function (targetString, searchTerm) {
         targetString = targetString.toLowerCase();
         return targetString.indexOf(searchTerm) > -1;
@@ -151,11 +164,13 @@ var ViewModel =  function () {
             }
         }
     };
+    // Check if last.fm data has 'tags' field. If so, search them
     self.searchTags = function(currentEvent, searchTerm) {
         if (currentEvent.tags) {
             return self.doesListContain(currentEvent.tags.tag, searchTerm)
         }
-    }
+    };
+    // Search last.fm data
     self.searchLastFmEvents = ko.computed(function() {
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
