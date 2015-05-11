@@ -6,7 +6,9 @@
     when search box is selected (cursor is inside form for typing) display search field selection
     (i.e. all, artist, tags, venue, street/address, etc.)
 -list view
-    can view by event/artist, venue, tags
+    -can view by event/artist, venue, tags
+    -how to handle multiple events by same artist? (at same venue, different venues?) -->or just handle with different
+        list views
 -event info display (make html content)
     -infoWindow
     -list view
@@ -54,13 +56,8 @@ var ViewModel =  function () {
 
     // Activates a map marker's click event when same event is clicked on in the list view
     self.selectMarker = function(event) {
-        // TODO: rewrite this? uses title to find marker :( ...also use forEach instead (check rest of code
-        // for other forReach possibilities)?
-        for (var i = 0; i < self.mapMarkers().length; i++) {
-            if (event.title === self.mapMarkers()[i].title){
-                google.maps.event.trigger(self.mapMarkers()[i], 'click');
-            }
-        }
+        var eventIndex = self.lastFmEvents().indexOf(event);
+        google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
     };
 
     // Update mapCenter with new latLng when currentAddress changes
