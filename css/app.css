@@ -4,15 +4,25 @@
     position: absolute;
 }
 
-#list, #current-location {
+#list, #current-location, #search-bar {
     background-color: white;
     z-index: 100;
     position: absolute;
 }
 
+#current-location {
+    top: 40px;
+    left: 100px;
+}
+#list {
+    right: 50px;
+    top: 100px;
+}
+/*
 #search-bar {
     z-index: 100;
 }
+*/
 li {
     cursor: pointer;
 }

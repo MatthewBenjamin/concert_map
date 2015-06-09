@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <link href="css/style.css" rel="stylesheet" type="text/css"></link>
+        <link href="css/app.css" rel="stylesheet" type="text/css"></link>
         <title>Concert Map</title>
 
         <script type='text/javascript' src="http://maps.google.com/maps/api/js?sensor=false&.js"></script>
@@ -11,18 +11,18 @@
     </head>
 
     <body>
-
+        <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }"></div>
         <div id="current-location">
+            Current Location:
+            <br>
             <input data-bind="value: currentAddress">
         </div>
-        <br>
-        <div id="search-bar">
+        <div id="list">
             <input data-bind="textInput: searchInput">
+            <ul data-bind="foreach: filteredList">
+                <li data-bind="text: title, click: selectMarker"></li>
+            </ul>
         </div>
-        <ul id="list" data-bind="foreach: filteredList">
-            <li data-bind="text: title, click: selectMarker"></li>
-        </ul>
-        <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }"></div>
 
         <script type='text/javascript' src='js/libraries/jquery-2.1.3.min.js'></script>
         <script type='text/javascript' src='js/libraries/knockout-3.3.0.js'></script>
