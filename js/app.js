@@ -17,6 +17,12 @@
         -more info(in markers and list view): open info window style pop up(but not actually an info window)
             -large box, displays lots of additional info, including from other APIs
 -handle api (and other errors?) gracefully
+-event refresh button or auto-refresh when map moves a certain distance
+-instead of limiting results from last.fm, base request on map bounds (within reason?)
+-search autocomplete (display possible matches underneath (would need an additional function))
+-build markers based off of venue, not concerts, infoWindow shows all concerts
+    -will need to make self.lastFmVenues = ko.computed return array
+    -how to link click in list to marker click event?
 */
 
 // Google map
