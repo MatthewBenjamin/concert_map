@@ -1,0 +1,27 @@
+#menu {
+    position: absolute;
+    right: 0px;
+    top: 25px;
+    z-index: 99;
+}
+
+svg {
+    width: 42px;
+    fill: black;
+}
+
+.mobile-menu {
+    z-index: 100;
+    width: 300px;
+    min-height: 100%;
+    position: absolute;
+    top: -92px;
+    -webkit-transform: translate(-300px, 0);
+    transform: translate(-300px, 0);
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu.open {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+}

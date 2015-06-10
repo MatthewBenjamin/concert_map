@@ -39,7 +39,6 @@ ko.bindingHandlers.googlemap = {
     },
     // update map center when ViewModel.mapCenter value changes
     update: function (element, valueAccessor) {
-        //console.log('update map');
         var value = valueAccessor();
         var latitude = value.mapCenter.latitude;
         var longitude = value.mapCenter.longitude;
@@ -89,6 +88,7 @@ var ViewModel =  function () {
     });
 
     // Get info from Last.fm API when mapCenter updates
+    // TODO: add error handling in case of no results and/or failure
     self.getLastFmEvents = ko.computed(function() {
         if (self.mapCenter().latitude && self.mapCenter().longitude) {
             var latitude = self.mapCenter().latitude;
