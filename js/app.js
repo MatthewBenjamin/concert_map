@@ -63,9 +63,9 @@ var ViewModel =  function () {
     self.filteredList = ko.observableArray();
     self.searchInput = ko.observable();
 
-    // Activates a map marker's click event when same event is clicked on in the list view
-    self.selectMarker = function(event) {
-        var eventIndex = self.lastFmEvents().indexOf(event);
+    // Activates a map marker's click event when an event for that venue is clicked in the list view
+    self.selectMarker = function(lastFmEvent) {
+        var eventIndex = lastFmEvent.venueIndex;
         google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
         // TODO:
         // if mobileMenu --> closeMobileMenu
@@ -138,19 +138,22 @@ var ViewModel =  function () {
         var venues = [];
         for (var i = 0; i < events.length; i++) {
             var venueIndex = self.newVenue(events[i].venue.id, venues)
+            var venue = events[i].venue;
             if (venueIndex === -1) {
                 //console.log("it's new");
-                var venue = events[i].venue;
                 venue.concerts = [];
                 venue.concerts.push(events[i]);
                 venues.push(venue);
+                events[i].venueIndex = venues.indexOf(venue);
             } else {
                 //console.log('not new');
+                //events[i].venueIndex = i;
+                events[i].venueIndex = venueIndex;
                 venues[venueIndex].concerts.push(events[i]);
             }
 
         }
-        console.log(venues);
+        //console.log(venues);
         self.lastFmVenues(venues);
     });
 
