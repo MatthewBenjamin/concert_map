@@ -20,12 +20,13 @@
           </svg>
         </a>
         <div class="mobile-menu">
-            <div id="list">
+            <!--<div id="list"> -->
                 <input data-bind="textInput: searchInput">
                 <ul data-bind="foreach: filteredList">
                     <li data-bind="text: title, click: selectMarker"></li>
                 </ul>
-            </div>
+                <input data-bind="value: currentAddress">
+            <!-- </div> -->
         </div>
         <!--
         <div id="current-location">
@@ -45,22 +46,24 @@
         <script type='text/javascript' src="js/app.js"></script>
 
         <script>
-        // TODO: fix this and move to it's own file
-        // menu won't close and it not fixed at 100% height
-        // width and position changes when list items change (i.e. perform event search)
-        // height doesn't fit to window if list is too long (and too short if this is too short)
+        // TODO: move to it's own file or integrate into app.js
+        // close menu event event li is clicked
           /*
            * Open the drawer when the menu ison is clicked.
            */
           var menu = document.querySelector('#menu');
-          var main = document.querySelector('#canvas-map');
+          var main = document.querySelector('#map-canvas');
           var drawer = document.querySelector('.mobile-menu');
+          var events = document.querySelectorAll('li');
 
           menu.addEventListener('click', function(e) {
+            console.log('Menu click, open');
             drawer.classList.toggle('open');
             e.stopPropagation();
           });
+
           main.addEventListener('click', function() {
+            console.log('Map click, remove close');
             drawer.classList.remove('open');
           });
 

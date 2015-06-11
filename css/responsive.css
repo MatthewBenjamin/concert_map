@@ -10,12 +10,18 @@ svg {
     fill: black;
 }
 
+ul {
+    overflow: auto
+    height: 400px;
+}
+
 .mobile-menu {
     z-index: 100;
-    width: 300px;
-    min-height: 100%;
+    width: 270px;
+    height: 100%;
     position: absolute;
-    top: -92px;
+    top: 5px;
+    background-color: white;
     -webkit-transform: translate(-300px, 0);
     transform: translate(-300px, 0);
     transition: transform 0.3s ease;
