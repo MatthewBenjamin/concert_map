@@ -213,6 +213,24 @@ var ViewModel =  function () {
         return markers;
     });
 
+    // TODO: test this more
+    self.mapMarkersSearch = ko.computed(function() {
+        var venues = self.lastFmVenues();
+
+        for (var i = 0; i < venues.length; i++) {
+            for (var j = 0; j < venues[i].concerts.length; j++) {
+                var searchedFor = self.filteredList().indexOf(venues[i].concerts[j]) > -1;
+                console.log(searchedFor);
+                if (self.filteredList() == self.lastFmEvents()) {
+                    self.mapMarkers()[i].setIcon('images/red.png');
+                } else if (searchedFor) {
+                    self.mapMarkers()[i].setIcon('images/blue.png');
+                } else {
+                    self.mapMarkers()[i].setIcon('images/clear.png');
+                }
+            }
+        }
+    })
 /*
     // Update marker icon based on search results
     self.mapMarkersSearch = ko.computed(function() {
