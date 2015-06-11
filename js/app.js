@@ -1,5 +1,11 @@
 /*** TODOs ***
 
+*******************
+-build markers based off of venue, not concerts, infoWindow shows all concerts
+    -will need to make self.lastFmVenues = ko.computed return array
+    -how to link click in list to marker click event?
+*******************
+
 -organize code and comments
 
 -search display
@@ -20,9 +26,7 @@
 -event refresh button or auto-refresh when map moves a certain distance
 -instead of limiting results from last.fm, base request on map bounds (within reason?)
 -search autocomplete (display possible matches underneath (would need an additional function))
--build markers based off of venue, not concerts, infoWindow shows all concerts
-    -will need to make self.lastFmVenues = ko.computed return array
-    -how to link click in list to marker click event?
+
 */
 
 // Google map
@@ -63,6 +67,8 @@ var ViewModel =  function () {
     self.selectMarker = function(event) {
         var eventIndex = self.lastFmEvents().indexOf(event);
         google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
+        // TODO:
+        // if mobileMenu --> closeMobileMenu
     };
 
     // Update mapCenter with new latLng when currentAddress changes
@@ -111,21 +117,60 @@ var ViewModel =  function () {
         }
     });
 
+    // List of venue objects with associated concerts
+    self.lastFmVenues = ko.observableArray();
+
+    // check if venue is already in self.lastFmVenues
+    self.newVenue = function(venueId, venues) {
+        for (var i = 0; i < venues.length; i++) {
+            if (venueId === venues[i].id) {
+                //console.log('id match');
+                return i;
+            }
+        }
+        //console.log('new');
+        return -1;
+    }
+
+    // Build venues data from last.fm API data
+    self.buildVenues = ko.computed(function() {
+        var events = self.lastFmEvents();
+        var venues = [];
+        for (var i = 0; i < events.length; i++) {
+            var venueIndex = self.newVenue(events[i].venue.id, venues)
+            if (venueIndex === -1) {
+                //console.log("it's new");
+                var venue = events[i].venue;
+                venue.concerts = [];
+                venue.concerts.push(events[i]);
+                venues.push(venue);
+            } else {
+                //console.log('not new');
+                venues[venueIndex].concerts.push(events[i]);
+            }
+
+        }
+        console.log(venues);
+        self.lastFmVenues(venues);
+    });
+
     // Create google map markers from last.fm API data
     self.mapMarkers = ko.computed(function() {
-        var markers = []
+        var markers = [];
         var infoWindow = new google.maps.InfoWindow();
-        var events = self.lastFmEvents();
-        console.log(events);
-        for (var i = 0; i < events.length; i++){
+
+        var venues = self.lastFmVenues();
+        console.log(venues);
+
+        for (var i = 0; i < venues.length; i++){
             var latLng = new google.maps.LatLng(
-                            events[i].venue.location['geo:point']['geo:lat'],
-                            events[i].venue.location['geo:point']['geo:long']);
+                            venues[i].location['geo:point']['geo:lat'],
+                            venues[i].location['geo:point']['geo:long']);
 
             var marker = new google.maps.Marker({
                 position: latLng,
-                title: events[i].title,
-                content: events[i].title,       // TODO: make function(outside of viewmodel) that sets HTML content
+                title: venues[i].name,
+                content: venues[i].name,       // TODO: make function(outside of viewmodel) that sets HTML content
                 icon: 'images/red.png',
                 map: map
             });
@@ -137,9 +182,35 @@ var ViewModel =  function () {
             markers.push(marker);
 
         }
+
+        //var events = self.lastFmEvents();
+        //console.log(events);
+/*
+        for (var i = 0; i < events.length; i++){
+            var latLng = new google.maps.LatLng(
+                            events[i].venue.location['geo:point']['geo:lat'],
+                            events[i].venue.location['geo:point']['geo:long']);
+
+            var marker = new google.maps.Marker({
+                position: latLng,
+                title: events[i].title,
+                content: events[i].title,       // TODO: make function(outside of viewmodel) that sets HTML content
+                //icon: 'images/red.png',
+                map: map
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.setContent(this.content);
+                infoWindow.open(map, this);
+            });
+            markers.push(marker);
+
+        }
+*/
         return markers;
     });
 
+/*
     // Update marker icon based on search results
     self.mapMarkersSearch = ko.computed(function() {
         var events = self.lastFmEvents();
@@ -154,7 +225,7 @@ var ViewModel =  function () {
             }
         }
     });
-
+*/
     /*** SEARCH FUNCTIONS ***/
     self.doesStringContain = function (targetString, searchTerm) {
         targetString = targetString.toLowerCase();
