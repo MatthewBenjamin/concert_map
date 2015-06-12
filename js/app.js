@@ -1,11 +1,5 @@
 /*** TODOs ***
 
-*******************
--build markers based off of venue, not concerts, infoWindow shows all concerts
-    -will need to make self.lastFmVenues = ko.computed return array
-    -how to link click in list to marker click event?
-*******************
-
 -organize code and comments
 
 -search display
@@ -213,30 +207,18 @@ var ViewModel =  function () {
         return markers;
     });
 
-    // TODO: test this more
+    // TODO: test this more --> appears to work!
     self.mapMarkersSearch = ko.computed(function() {
         var venues = self.lastFmVenues();
+        var searchedEvents = self.filteredList();
+        var allEvents = self.lastFmEvents();
 
         for (var i = 0; i < venues.length; i++) {
+            var searchedFor;
             for (var j = 0; j < venues[i].concerts.length; j++) {
-                var searchedFor = self.filteredList().indexOf(venues[i].concerts[j]) > -1;
-                console.log(searchedFor);
-                if (self.filteredList() == self.lastFmEvents()) {
-                    self.mapMarkers()[i].setIcon('images/red.png');
-                } else if (searchedFor) {
-                    self.mapMarkers()[i].setIcon('images/blue.png');
-                } else {
-                    self.mapMarkers()[i].setIcon('images/clear.png');
-                }
+                searchedFor = searchedFor || self.filteredList().indexOf(venues[i].concerts[j]) > -1;
+                //console.log(searchedFor);
             }
-        }
-    })
-/*
-    // Update marker icon based on search results
-    self.mapMarkersSearch = ko.computed(function() {
-        var events = self.lastFmEvents();
-        for (var i = 0; i < events.length; i++) {
-            var searchedFor = self.filteredList().indexOf(events[i]) > -1;
             if (self.filteredList() == self.lastFmEvents()) {
                 self.mapMarkers()[i].setIcon('images/red.png');
             } else if (searchedFor) {
@@ -244,9 +226,11 @@ var ViewModel =  function () {
             } else {
                 self.mapMarkers()[i].setIcon('images/clear.png');
             }
+            searchedFor = null;
         }
-    });
-*/
+
+    })
+
     /*** SEARCH FUNCTIONS ***/
     self.doesStringContain = function (targetString, searchTerm) {
         targetString = targetString.toLowerCase();
