@@ -2,6 +2,24 @@
 
 -organize code and comments
 
+
+-event info display (make html content)
+    -infoWindow
+    -list view
+
+-handle api (and other errors?) gracefully
+-event refresh button or auto-refresh when map moves a certain distance
+
+
+Extra/Nice to have stuff:
+********************
+
+-pan to map marker (center it)
+-auto set map bounds based on markers?
+-more info(in markers and list view): open info window style pop up(but not actually an info window)
+    -large box, displays lots of additional info, including from other APIs
+********************
+-click on list item--> change CSS for that event in venue's infoWindow display
 -search display
     when search box is selected (cursor is inside form for typing) display search field selection
     (i.e. all, artist, tags, venue, street/address, etc.)
@@ -9,18 +27,8 @@
     -can view by event/artist, venue, tags
     -how to handle multiple events by same artist? (at same venue, different venues?) -->or just handle with different
         list views
--event info display (make html content)
-    -infoWindow
-    -list view
-    -2 buttons to add:
-        -show on map(in list events) : pan to map marker and open infoWindow
-        -more info(in markers and list view): open info window style pop up(but not actually an info window)
-            -large box, displays lots of additional info, including from other APIs
--handle api (and other errors?) gracefully
--event refresh button or auto-refresh when map moves a certain distance
 -instead of limiting results from last.fm, base request on map bounds (within reason?)
 -search autocomplete (display possible matches underneath (would need an additional function))
-
 */
 
 // Google map
@@ -42,6 +50,30 @@ ko.bindingHandlers.googlemap = {
         var longitude = value.mapCenter.longitude;
         map.setCenter( { lat: latitude, lng: longitude } );
     }
+};
+var infoWindowView = function(venueObject){
+    // TODO: instead of creating strings, create nodes/HTML objects with JS/jQuery?
+    var venueName = '<a href=' + venueObject.website + '>' + venueObject.name + '</a>';
+
+    // include this in venue more info window?
+    //var venueAddress = venueObject.location.street;
+    var htmlContent = venueName;
+
+    var concertContainer = '<hr><div class="concertWindow">#data#</div>';
+    var concertTitle = '<p class="infoConcertTitle">#title#</p>';
+    var concertDate = '<p class="infoConcertDate">#date#</p>';
+
+    var concerts = venueObject.concerts;
+
+    for (var i = 0; i < concerts.length; i++) {
+        var title = concertTitle.replace('#title#', concerts[i].title);
+        var date = concertDate.replace('#date#', concerts[i].startDate.substring(0, 11));
+        var titleDate = title + date;
+        var concertInfo = concertContainer.replace('#data#', titleDate);
+        htmlContent = htmlContent + concertInfo;
+    }
+
+    return htmlContent;
 };
 
 var ViewModel =  function () {
@@ -167,7 +199,8 @@ var ViewModel =  function () {
             var marker = new google.maps.Marker({
                 position: latLng,
                 title: venues[i].name,
-                content: venues[i].name,       // TODO: make function(outside of viewmodel) that sets HTML content
+                //content: venues[i].name,       // TODO: make function(outside of viewmodel) that sets HTML content
+                content: infoWindowView(venues[i]),
                 icon: 'images/red.png',
                 map: map
             });
