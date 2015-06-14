@@ -21,11 +21,16 @@
         </a>
         <div class="mobile-menu">
             <!--<div id="list"> -->
-                <input data-bind="textInput: searchInput">
+                <input id="event-search" class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
                 <ul data-bind="foreach: filteredList">
-                    <li data-bind="text: title, click: selectMarker"></li>
+                    <li>
+                        <hr>
+                        <p data-bind="text: title, click: selectMarker"></p>
+                        <p data-bind="text: venue.name, click: selectMarker"></p>
+                        <p data-bind="text: startDate, click: selectMarker"></p>
+                    </li>
                 </ul>
-                <input data-bind="value: currentAddress">
+                <input class="search-box" data-bind="value: currentAddress">
             <!-- </div> -->
         </div>
         <!--
@@ -54,16 +59,21 @@
           var menu = document.querySelector('#menu');
           var main = document.querySelector('#map-canvas');
           var drawer = document.querySelector('.mobile-menu');
-          var events = document.querySelectorAll('li');
+          var events = document.querySelector('ul');
 
           menu.addEventListener('click', function(e) {
-            console.log('Menu click, open');
+            //console.log('Menu click, open');
             drawer.classList.toggle('open');
             e.stopPropagation();
           });
 
           main.addEventListener('click', function() {
-            console.log('Map click, remove close');
+            //console.log('Map click, remove close');
+            drawer.classList.remove('open');
+          });
+
+          events.addEventListener('click', function() {
+            //console.log("You've clicked on an event!");
             drawer.classList.remove('open');
           });
 

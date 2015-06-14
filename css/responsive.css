@@ -1,7 +1,7 @@
 #menu {
     position: absolute;
-    right: 0px;
-    top: 25px;
+    right: 110px;
+    top: -2px;
     z-index: 99;
 }
 
@@ -11,23 +11,69 @@ svg {
 }
 
 ul {
-    overflow: auto
-    height: 400px;
+    overflow: auto;
+    height: calc(100% - 75px);
+    /* TODO: change to longform margin: 0,0,15,15 but check syntax */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 0px;
+}
+
+.search-box {
+    margin-top: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+}
+
+#event-search {
+    margin-top: 10px
 }
 
 .mobile-menu {
     z-index: 100;
-    width: 270px;
-    height: 100%;
+    width: 220px;
+    height: calc(100% - 90px);
+    /* set max height for BIG SIZE screens? i.e. no other media query */
     position: absolute;
-    top: 5px;
-    background-color: white;
-    -webkit-transform: translate(-300px, 0);
-    transform: translate(-300px, 0);
-    transition: transform 0.3s ease;
+    right: 15px;
+    bottom: 15px;
+    background-color: #393232;
+    color: white;
+}
+@media screen and (max-width: 514px) {
+    #menu {
+        left: 5px;
+        top: 40px;
+    }
+    /*
+    ::-webkit-scrollbar { 
+        display: none; 
+    }
+    */
+    ul {
+        height: calc(100% - 70px);
+    }
+    .mobile-menu {
+        z-index: 100;
+        width: 220px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #393232;
+        color: white;
+        -webkit-transform: translate(-220px, 0);
+        transform: translate(-220px, 0);
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-menu.open {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
 }
 
-.mobile-menu.open {
-    -webkit-transform: translate(0, 0);
-    transform: translate(0, 0);
-}
+/* @media screen and (min-width: BIG SIZE) ???? or is this the same as medium?

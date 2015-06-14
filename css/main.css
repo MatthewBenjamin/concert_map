@@ -1,7 +1,9 @@
 #map-canvas {
-    height: 98%;
-    width: 99%;
+    height: 100%;
+    width: 100%;
     position: absolute;
+    top: 0;
+    left: 0;
 }
 
 #list, #current-location, #search-bar {
@@ -25,6 +27,24 @@
     z-index: 100;
 }
 */
+ul {
+    list-style: none;
+}
+
 li {
     cursor: pointer;
+    /*padding: 10px;
+    border: solid;*/
+}
+
+.concertWindow {
+
+}
+
+.infoConcertTitle {
+    font-weight: bold;
+}
+
+.infoConcertDate {
+
 }
