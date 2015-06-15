@@ -199,7 +199,6 @@ var ViewModel =  function () {
             var marker = new google.maps.Marker({
                 position: latLng,
                 title: venues[i].name,
-                //content: venues[i].name,       // TODO: make function(outside of viewmodel) that sets HTML content
                 content: infoWindowView(venues[i]),
                 icon: 'images/red.png',
                 map: map
@@ -208,6 +207,9 @@ var ViewModel =  function () {
             google.maps.event.addListener(marker, 'click', function() {
                 infoWindow.setContent(this.content);
                 infoWindow.open(map, this);
+                // TODO: fine tune centering location with mobile side menu
+                map.setCenter(latLng);
+                //map.panBy(300,0);
             });
             markers.push(marker);
 

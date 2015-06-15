@@ -1,8 +1,24 @@
-#menu {
+.menu {
     position: absolute;
+    z-index: 100px;
+    display: none;
+}
+#small-menu {
+    top: 40px;
+    left: 5px;
+}
+#big-menu {
     right: 110px;
     top: -2px;
-    z-index: 99;
+}
+@media screen and (min-width: 515px) {
+    #big-menu {
+        display: block;
+}
+
+    .close {
+        display: none;
+    }
 }
 
 svg {
@@ -34,7 +50,9 @@ ul {
 
 .mobile-menu {
     z-index: 100;
-    width: 220px;
+    width: calc(100% / 3);
+    max-width: 260px;
+    min-width: 200px;
     height: calc(100% - 90px);
     /* set max height for BIG SIZE screens? i.e. no other media query */
     position: absolute;
@@ -44,9 +62,8 @@ ul {
     color: white;
 }
 @media screen and (max-width: 514px) {
-    #menu {
-        left: 5px;
-        top: 40px;
+    #small-menu {
+        display: block;
     }
     /*
     ::-webkit-scrollbar { 

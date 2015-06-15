@@ -14,13 +14,17 @@
 
     <body>
         <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }"></div>
-        <a id="menu">
+        <a id="small-menu" class="menu">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
+          </svg>
+        </a>
+        <a id="big-menu" class="menu">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
         </a>
         <div class="mobile-menu">
-            <!--<div id="list"> -->
                 <input id="event-search" class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
                 <ul data-bind="foreach: filteredList">
                     <li>
@@ -31,21 +35,8 @@
                     </li>
                 </ul>
                 <input class="search-box" data-bind="value: currentAddress">
-            <!-- </div> -->
         </div>
-        <!--
-        <div id="current-location">
-            Current Location:
-            <br>
-            <input data-bind="value: currentAddress">
-        </div>
-        <div id="list">
-            <input data-bind="textInput: searchInput">
-            <ul data-bind="foreach: filteredList">
-                <li data-bind="text: title, click: selectMarker"></li>
-            </ul>
-        </div>
--->
+
         <script type='text/javascript' src='js/libraries/jquery-2.1.3.min.js'></script>
         <script type='text/javascript' src='js/libraries/knockout-3.3.0.js'></script>
         <script type='text/javascript' src="js/app.js"></script>
@@ -56,16 +47,21 @@
           /*
            * Open the drawer when the menu ison is clicked.
            */
-          var menu = document.querySelector('#menu');
+          var smallMenu = document.querySelector('#small-menu');
+          var bigMenu = document.querySelector('#big-menu');
           var main = document.querySelector('#map-canvas');
           var drawer = document.querySelector('.mobile-menu');
           var events = document.querySelector('ul');
 
-          menu.addEventListener('click', function(e) {
-            //console.log('Menu click, open');
+          smallMenu.addEventListener('click', function(e) {
+            console.log('Menu click, open');
             drawer.classList.toggle('open');
             e.stopPropagation();
           });
+
+          bigMenu.addEventListener('click', function(e) {
+            drawer.classList.toggle('close');
+          })
 
           main.addEventListener('click', function() {
             //console.log('Map click, remove close');
