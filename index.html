@@ -14,7 +14,7 @@
 
     <body>
         <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: closeList()"></div>
-        <a id="small-menu" class="menu" data-bind="click: toggleList()">
+        <a id="small-menu" class="menu" data-bind="click: function(){toggleList()}">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
