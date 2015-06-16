@@ -81,7 +81,19 @@ var ViewModel =  function () {
     self.defaultLocation = 'Austin, TX';
     self.currentAddress = ko.observable(self.defaultLocation);
     self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
-
+    self.displayList = ko.observable(false);
+    self.toggleList = function() {
+        console.log('toggleList');
+        //var displayList = self.displayList();
+        if (self.displayList()) {
+            self.displayList(false);
+        } else {
+            self.displayList(true);
+        }
+    };
+    self.closeList = function() {
+        self.displayList(false);
+    };
     // Last.fm API results
     self.lastFmEvents = ko.observableArray();
 

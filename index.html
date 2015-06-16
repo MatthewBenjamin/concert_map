@@ -13,8 +13,8 @@
     </head>
 
     <body>
-        <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }"></div>
-        <a id="small-menu" class="menu">
+        <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: closeList()"></div>
+        <a id="small-menu" class="menu" data-bind="click: toggleList()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
@@ -24,7 +24,7 @@
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
         </a>
-        <div class="mobile-menu">
+        <div class="mobile-menu" data-bind="css: { open: displayList() }">
                 <input id="event-search" class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
                 <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
                 <ul data-bind="foreach: filteredList">
@@ -43,6 +43,7 @@
         <script type='text/javascript' src='js/libraries/knockout-3.3.0.js'></script>
         <script type='text/javascript' src="js/app.js"></script>
 
+<!--
         <script>
         // TODO: move to it's own file or integrate into app.js
         // close menu event event li is clicked
@@ -76,5 +77,6 @@
           });
 
         </script>
+-->
     </body>
 </html>
