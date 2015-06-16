@@ -26,7 +26,9 @@
         </a>
         <div class="mobile-menu">
                 <input id="event-search" class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
+                <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
                 <ul data-bind="foreach: filteredList">
+
                     <li>
                         <hr>
                         <p data-bind="text: title, click: selectMarker"></p>

@@ -1,7 +1,6 @@
 /*** TODOs ***
 
--organize code and comments
-
+-move menu toggle into knockout
 
 -event info display (make html content)
     -infoWindow
@@ -10,6 +9,7 @@
 -handle api (and other errors?) gracefully
 -event refresh button or auto-refresh when map moves a certain distance
 
+-organize code and comments
 
 Extra/Nice to have stuff:
 ********************
