@@ -14,26 +14,26 @@
 
     <body>
         <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: closeList()"></div>
-        <a id="small-menu" class="menu" data-bind="click: function(){toggleList()}">
+        <a id="menu" class="menu" data-bind="click: function(){toggleList()}">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
         </a>
+        <!--
         <a id="big-menu" class="menu">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
-        </a>
+        </a> -->
         <div class="mobile-menu" data-bind="css: { open: displayList() }">
                 <input id="event-search" class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
                 <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
                 <ul data-bind="foreach: filteredList">
-
-                    <li>
+                    <li data-bind=" click: selectMarker">
                         <hr>
-                        <p data-bind="text: title, click: selectMarker"></p>
-                        <p data-bind="text: venue.name, click: selectMarker"></p>
-                        <p data-bind="text: startDate, click: selectMarker"></p>
+                        <p data-bind="text: title"></p>
+                        <p data-bind="text: venue.name"></p>
+                        <p data-bind="text: startDate"></p>
                     </li>
                 </ul>
                 <input class="search-box" data-bind="value: currentAddress">

@@ -82,17 +82,15 @@ var ViewModel =  function () {
     self.currentAddress = ko.observable(self.defaultLocation);
     self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
     self.displayList = ko.observable(false);
+    self.closeList = function() {
+        self.displayList(false);
+    };
     self.toggleList = function() {
-        console.log('toggleList');
-        //var displayList = self.displayList();
         if (self.displayList()) {
-            self.displayList(false);
+            self.closeList();
         } else {
             self.displayList(true);
         }
-    };
-    self.closeList = function() {
-        self.displayList(false);
     };
     // Last.fm API results
     self.lastFmEvents = ko.observableArray();

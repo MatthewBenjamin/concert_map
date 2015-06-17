@@ -1,24 +1,7 @@
-.menu {
+#menu {
     position: absolute;
     z-index: 100px;
-    display: none;
-}
-#small-menu {
-    top: 40px;
-    left: 5px;
-}
-#big-menu {
-    right: 110px;
-    top: -2px;
-}
-@media screen and (min-width: 515px) {
-    #big-menu {
-        display: block;
-}
-
-    .close {
-        display: none;
-    }
+    display: block;
 }
 
 svg {
@@ -27,13 +10,14 @@ svg {
 }
 
 ul {
+    list-style: none;
     overflow: auto;
     height: calc(100% - 75px);
     /* TODO: change to longform margin: 0,0,15,15 but check syntax */
     margin-top: 0px;
     margin-bottom: 0px;
-    margin-left: 15px;
-    margin-right: 15px;
+    /* margin-left: 15px;
+    margin-right: 15px; */
     padding: 0px;
 }
 
@@ -61,9 +45,11 @@ ul {
     background-color: #393232;
     color: white;
 }
+
 @media screen and (max-width: 514px) {
-    #small-menu {
-        display: block;
+    #menu {
+        top: 40px;
+        left: 5px;
     }
     /*
     ::-webkit-scrollbar { 
@@ -74,14 +60,11 @@ ul {
         height: calc(100% - 70px);
     }
     .mobile-menu {
-        z-index: 100;
         width: 220px;
         height: 100%;
         position: absolute;
         top: 0;
         left: 0;
-        background-color: #393232;
-        color: white;
         -webkit-transform: translate(-220px, 0);
         transform: translate(-220px, 0);
         transition: transform 0.3s ease;
@@ -93,4 +76,17 @@ ul {
     }
 }
 
+@media screen and (min-width: 515px) {
+    #menu {
+        right: 110px;
+        top: -2px;
+    }
+
+    .close {
+        display: none;
+    }
+    .mobile-menu.open {
+        display: none;
+    }
+}
 /* @media screen and (min-width: BIG SIZE) ???? or is this the same as medium?

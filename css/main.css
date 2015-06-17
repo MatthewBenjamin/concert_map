@@ -23,17 +23,20 @@
 #search-bar {
     z-index: 100;
 }
-*/
+
 ul {
     list-style: none;
 }
-
+*/
 li {
     cursor: pointer;
+    padding-left: 15px;
     /*padding: 10px;
     border: solid;*/
 }
-
+li:hover {
+    background-color: #9FC490;
+}
 .concertWindow {
 
 }
