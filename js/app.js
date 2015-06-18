@@ -1,36 +1,3 @@
-/*** TODOs ***
-
--move menu toggle into knockout
-
--event info display (make html content)
-    -infoWindow
-    -list view
-
--handle api (and other errors?) gracefully
--event refresh button or auto-refresh when map moves a certain distance
-
--organize code and comments
-
-Extra/Nice to have stuff:
-********************
-
--pan to map marker (center it)
--auto set map bounds based on markers?
--more info(in markers and list view): open info window style pop up(but not actually an info window)
-    -large box, displays lots of additional info, including from other APIs
-********************
--click on list item--> change CSS for that event in venue's infoWindow display
--search display
-    when search box is selected (cursor is inside form for typing) display search field selection
-    (i.e. all, artist, tags, venue, street/address, etc.)
--list view
-    -can view by event/artist, venue, tags
-    -how to handle multiple events by same artist? (at same venue, different venues?) -->or just handle with different
-        list views
--instead of limiting results from last.fm, base request on map bounds (within reason?)
--search autocomplete (display possible matches underneath (would need an additional function))
-*/
-
 // Google map
 var map;
 
