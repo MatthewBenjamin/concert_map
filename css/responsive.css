@@ -1,7 +1,15 @@
-#menu {
+.menu {
     position: absolute;
     z-index: 100px;
     display: block;
+}
+
+#small-menu {
+    display: block;
+}
+
+#big-menu {
+    display: none;
 }
 
 svg {
@@ -12,7 +20,7 @@ svg {
 ul {
     list-style: none;
     overflow: auto;
-    height: calc(100% - 75px);
+    height: 100%;
     /* TODO: change to longform margin: 0,0,15,15 but check syntax */
     margin-top: 0px;
     margin-bottom: 0px;
@@ -29,7 +37,12 @@ ul {
 }
 
 #event-search {
-    margin-top: 10px
+    /* margin-top: 10px; */
+    position: absolute;
+}
+
+#location-search {
+    position: absolute;
 }
 
 .mobile-menu {
@@ -37,17 +50,19 @@ ul {
     width: calc(100% / 3);
     max-width: 260px;
     min-width: 200px;
-    height: calc(100% - 90px);
+    height: calc(100% - 150px);
     /* set max height for BIG SIZE screens? i.e. no other media query */
     position: absolute;
     right: 15px;
     bottom: 15px;
-    background-color: #393232;
-    color: white;
+    background-color: rgba(255,255,255,0.6);
+    color: black;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
 @media screen and (max-width: 514px) {
-    #menu {
+    #small-menu {
+        display: block;
         top: 40px;
         left: 5px;
     }
@@ -65,6 +80,8 @@ ul {
         position: absolute;
         top: 0;
         left: 0;
+        background-color: whitesmoke;
+        color: black;
         -webkit-transform: translate(-220px, 0);
         transform: translate(-220px, 0);
         transition: transform 0.3s ease;
@@ -77,16 +94,55 @@ ul {
 }
 
 @media screen and (min-width: 515px) {
-    #menu {
+    /*
+    #big-menu {
+        display: block;
+        right: 110px;
+        top: -2px;
+    } */
+    #small-menu {
         right: 110px;
         top: -2px;
     }
-
+    .mobile-menu {
+        display: none;
+    }
     .close {
         display: none;
     }
     .mobile-menu.open {
-        display: none;
+        /*display: none; */
+    }
+    .bigOpen {
+        display: block
+    }
+    #event-search{
+        top: 10px;
+        right: 170px;
+        /*width: 300px;
+        max-width: 260px;*/
+        min-width: 300px;
+        background-color: rgba(255,255,255,0.6);
+        height: 31px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    #event-search input {
+        width: calc(100% - 10px);
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    #location-search {
+        bottom: 50px;
+        left: 50px;
+        width: 250px;
+        background-color: rgba(255,255,255,0.6);
+        height: 31px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    #location-search input {
+        width: 230px;
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
 }
 /* @media screen and (min-width: BIG SIZE) ???? or is this the same as medium?

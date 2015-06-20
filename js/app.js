@@ -48,15 +48,23 @@ var ViewModel =  function () {
     self.defaultLocation = 'Austin, TX';
     self.currentAddress = ko.observable(self.defaultLocation);
     self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
-    self.displayList = ko.observable(false);
-    self.closeList = function() {
-        self.displayList(false);
+
+    // toggle drawer menu
+    self.displayMobile = ko.observable(false);
+    self.closeMobile = function() {
+        self.displayMobile(false);
     };
-    self.toggleList = function() {
-        if (self.displayList()) {
-            self.closeList();
+    self.openMobile = function() {
+        self.displayMobile(true);
+    };
+
+    // toggle menu on larger screens
+    self.displayBigMenu = ko.observable(true);
+    self.toggleBigMenu = function() {
+        if (self.displayBigMenu()) {
+            self.displayBigMenu(false);
         } else {
-            self.displayList(true);
+            self.displayBigMenu(true);
         }
     };
     // Last.fm API results
