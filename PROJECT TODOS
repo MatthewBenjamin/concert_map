@@ -1,6 +1,7 @@
 *** TODOs ***
 
--move menu toggle into knockout
+-fix List menu implementation (for medium screen esp).
+    -2 boolean variables?
 
 -event info display (make html content)
     -infoWindow
