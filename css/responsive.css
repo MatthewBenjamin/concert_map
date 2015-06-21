@@ -1,20 +1,7 @@
-.menu {
+#menu-toggle {
     position: absolute;
     z-index: 100px;
     display: block;
-}
-
-#small-menu {
-    display: block;
-}
-
-#big-menu {
-    display: none;
-}
-
-svg {
-    width: 42px;
-    fill: black;
 }
 
 ul {
@@ -24,8 +11,6 @@ ul {
     /* TODO: change to longform margin: 0,0,15,15 but check syntax */
     margin-top: 0px;
     margin-bottom: 0px;
-    /* margin-left: 15px;
-    margin-right: 15px; */
     padding: 0px;
 }
 
@@ -37,54 +22,70 @@ ul {
 }
 
 #event-search {
-    /* margin-top: 10px; */
     position: absolute;
+    height: 31px;
 }
 
 #location-search {
     position: absolute;
+    height: 31px;
 }
 
 .mobile-menu {
     z-index: 100;
-    width: calc(100% / 3);
-    max-width: 260px;
-    min-width: 200px;
-    height: calc(100% - 150px);
-    /* set max height for BIG SIZE screens? i.e. no other media query */
-    position: absolute;
-    right: 15px;
     bottom: 15px;
-    background-color: rgba(255,255,255,0.6);
+    position: absolute;
     color: black;
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
+.search-box {
+    width: calc(100% - 10px);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 0;
+}
+
 @media screen and (max-width: 514px) {
-    #small-menu {
+    #menu-toggle {
         display: block;
         top: 40px;
         left: 5px;
     }
-    /*
-    ::-webkit-scrollbar { 
-        display: none; 
+
+    #event-list ul {
+        height: 100%;
+        font-size: large;
     }
-    */
-    ul {
-        height: calc(100% - 70px);
-    }
+
     .mobile-menu {
         width: 220px;
-        height: 100%;
         position: absolute;
-        top: 0;
         left: 0;
-        background-color: whitesmoke;
-        color: black;
+        background-color: rgba(255,255,255,0.85);
         -webkit-transform: translate(-220px, 0);
         transform: translate(-220px, 0);
         transition: transform 0.3s ease;
+    }
+
+    .search-box {
+        font-size: larger;
+        text-align: center;
+        height: 26px;
+    }
+
+    #event-search {
+        top: 0;
+        height: 40px;
+    }
+
+    #event-list {
+        top: 40px;
+        height: calc(100% - 80px);
+    }
+    #location-search {
+        bottom: 0;
+        height: 40px;
     }
 
     .mobile-menu.open {
@@ -94,13 +95,10 @@ ul {
 }
 
 @media screen and (min-width: 515px) {
-    /*
-    #big-menu {
-        display: block;
-        right: 110px;
-        top: -2px;
-    } */
-    #small-menu {
+    .mobile-menu {
+        background-color: rgba(255,255,255,0.6);
+    }
+    #menu-toggle {
         right: 110px;
         top: -2px;
     }
@@ -116,33 +114,28 @@ ul {
     .bigOpen {
         display: block
     }
-    #event-search{
+    #event-list {
+        width: calc(100% / 3);
+        max-width: 260px;
+        min-width: 200px;
+        height: calc(100% - 150px);
+        right: 15px;
+    }
+    #event-search {
         top: 10px;
         right: 170px;
         /*width: 300px;
         max-width: 260px;*/
         min-width: 300px;
-        background-color: rgba(255,255,255,0.6);
-        height: 31px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
-    #event-search input {
-        width: calc(100% - 10px);
-        margin-top: 5px;
-        margin-bottom: 5px;
     }
     #location-search {
         bottom: 50px;
         left: 50px;
         width: 250px;
-        background-color: rgba(255,255,255,0.6);
-        height: 31px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
     #location-search input {
         width: 230px;
-        margin-top: 5px;
-        margin-bottom: 5px;
+
     }
 }
 /* @media screen and (min-width: BIG SIZE) ???? or is this the same as medium?

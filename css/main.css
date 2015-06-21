@@ -6,39 +6,21 @@
     left: 0;
 }
 
-#list, #current-location, #search-bar {
-    background-color: white;
-    z-index: 100;
-    position: absolute;
+svg {
+    width: 42px;
+    fill: black;
 }
 
-/*
-#current-location {
-    top: 40px;
-    left: 100px;
-}
-*/
-
-/*
-#search-bar {
-    z-index: 100;
-}
-
-ul {
-    list-style: none;
-}
-*/
 li {
     cursor: pointer;
     padding-left: 15px;
     margin-top: -16px;
-    /*padding: 10px;
-    border: solid;*/
 }
 
 li:hover {
     background-color: rgba(162, 222, 208, .3);
 }
+
 .concertWindow {
 
 }

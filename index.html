@@ -14,22 +14,16 @@
 
     <body>
         <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: function(){closeMobile()}"></div>
-        <a id="small-menu" class="menu" data-bind="click: function() { openMobile(); toggleBigMenu() }">
+        <a id="menu-toggle" id="small-menu" class="menu" data-bind="click: function() { openMobile(); toggleBigMenu() }">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
         </a>
-        <!--
-        <a id="big-menu" class="menu" data-bind="click: function(){ toggleBigMenu() }">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
-          </svg>
-        </a> -->
         <!-- TODO remane mobileOpen to conform with naming conventions (but knockout doesn't like dashes) -->
         <div id="event-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <input class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
         </div>
-        <div class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
+        <div id="event-list" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
             <ul data-bind="foreach: filteredList, click: function(){ closeMobile() }">
                 <li data-bind=" click: selectMarker">
@@ -48,40 +42,5 @@
         <script type='text/javascript' src='js/libraries/knockout-3.3.0.js'></script>
         <script type='text/javascript' src="js/app.js"></script>
 
-<!--
-        <script>
-        // TODO: move to it's own file or integrate into app.js
-        // close menu event event li is clicked
-          /*
-           * Open the drawer when the menu ison is clicked.
-           */
-          var smallMenu = document.querySelector('#small-menu');
-          var bigMenu = document.querySelector('#big-menu');
-          var main = document.querySelector('#map-canvas');
-          var drawer = document.querySelector('.mobile-menu');
-          var events = document.querySelector('ul');
-
-          smallMenu.addEventListener('click', function(e) {
-            console.log('Menu click, open');
-            drawer.classList.toggle('open');
-            e.stopPropagation();
-          });
-
-          bigMenu.addEventListener('click', function(e) {
-            drawer.classList.toggle('close');
-          })
-
-          main.addEventListener('click', function() {
-            //console.log('Map click, remove close');
-            drawer.classList.remove('open');
-          });
-
-          events.addEventListener('click', function() {
-            //console.log("You've clicked on an event!");
-            drawer.classList.remove('open');
-          });
-
-        </script>
--->
     </body>
 </html>
