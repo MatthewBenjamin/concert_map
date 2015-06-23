@@ -26,7 +26,7 @@
         <div id="event-list" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
             <ul data-bind="foreach: filteredList, click: function(){ closeMobile() }">
-                <li data-bind=" click: selectMarker">
+                <li data-bind="click: selectMarker">
                     <hr>
                     <p data-bind="text: title"></p>
                     <p data-bind="text: venue.name"></p>
@@ -36,6 +36,19 @@
         </div>
         <div id="location-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <input class="search-box" data-bind="value: currentAddress">
+        </div>
+        <!-- TODO: display currentEvent in #event-info, transform window into view when event is selected) -->
+        <div class="event-info" data-bind="css: { eventOpen: showEventInfo() }">
+            <div data-bind="with: currentEvent">
+                <p data-bind="text: title"></p>
+            </div>
+            <p>Artists:</p>
+            <ul data-bind="foreach: currentEventArtists">
+                <li>
+                    <p data-bind="text: $data, click: function() { console.log(this) }"></p>
+                </li>
+            </ul>
+            <button data-bind="click: function() { showEventInfo(false) }">Close</button>
         </div>
 
         <script type='text/javascript' src='js/libraries/jquery-2.1.3.min.js'></script>

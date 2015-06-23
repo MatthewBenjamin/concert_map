@@ -74,8 +74,18 @@ var ViewModel =  function () {
     self.filteredList = ko.observableArray();
     self.searchInput = ko.observable();
 
+    self.currentEvent = ko.observable();
+    self.currentEventArtists = ko.observableArray();
+    self.currentVenue = ko.observable();
+
+    self.showEventInfo = ko.observable(false);
+    self.showVenueInfo = ko.observable(false);
+
     // Activates a map marker's click event when an event for that venue is clicked in the list view
     self.selectMarker = function(lastFmEvent) {
+        self.currentEvent(lastFmEvent);
+        self.currentEventArtists(self.currentEvent().artists.artist);
+        self.showEventInfo(true)
         var eventIndex = lastFmEvent.venueIndex;
         google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
         // TODO:
