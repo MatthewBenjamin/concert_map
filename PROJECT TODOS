@@ -1,16 +1,25 @@
 *** TODOs ***
 
--fix List menu implementation (for medium screen esp).
-    -2 boolean variables?
+---Functionality Stuff ---
 
--event info display (make html content)
-    -infoWindow
-    -list view
+    -use currentEvent to data-bind to more info DIV, click on list view event pops up more info, more info has link to click on map marker
 
--handle api (and other errors?) gracefully
--event refresh button or auto-refresh when map moves a certain distance
+    -add self.currentEvent observable to ViewModel and data bind concerts to infoWindows? but needs default display if just clicking on a map marker and not a specific concert in list view
 
--organize code and comments
+    -handle api (and other errors?) gracefully
+
+    -event refresh button or auto-refresh when map moves a certain distance
+---View/Design Stuff---
+
+    -event info display (make html content)
+        -infoWindow
+        -list view
+---Code Quality Stuff---
+
+    -refactor CSS to use one media query?
+
+    -organize code and comments
+
 
 Extra/Nice to have stuff:
 ********************
