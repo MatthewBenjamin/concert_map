@@ -4,16 +4,43 @@
 
     -use currentEvent to data-bind to more info DIV, click on list view event pops up more info, more info has link to click on map marker
 
-    -add self.currentEvent observable to ViewModel and data bind concerts to infoWindows? but needs default display if just clicking on a map marker and not a specific concert in list view
-
     -handle api (and other errors?) gracefully
 
     -event refresh button or auto-refresh when map moves a certain distance
----View/Design Stuff---
 
+---View/Design Stuff---
+    -fix panning/centering on to map marker
     -event info display (make html content)
         -infoWindow
         -list view
+
+        -change google info windows to just data-bind info from currentVenue (then maybe can highlight currentEvent)?
+
+        currentEvent info display:
+            -show title
+            -formatted time (make formatted time subobject for lastFmEvents)
+            -artist list (click on artist brings up another info display or links to last.fm)
+            -show description (if applicable)
+            -show tags? (click tag to search for that tag)
+            -venue (click shows currentVenue info display)
+            -link to last fm event page and/or website
+
+        currentVenue(make this observable variable) info display:
+            -name
+            -address/phone#
+            -list of concerts (click on one pops up currentEvent info display)
+            -link to website and/or last fm page
+            -four square or other info (to include another API)
+            -image? (responsiveness issues)
+
+        currentArtist
+            -name
+            -genre tag
+            -upcoming shows
+            -youtube search results (another API)
+            -link to last fm page/website
+
+
 ---Code Quality Stuff---
 
     -refactor CSS to use one media query?
@@ -24,7 +51,6 @@
 Extra/Nice to have stuff:
 ********************
 
--pan to map marker (center it)
 -auto set map bounds based on markers?
 -more info(in markers and list view): open info window style pop up(but not actually an info window)
     -large box, displays lots of additional info, including from other APIs
