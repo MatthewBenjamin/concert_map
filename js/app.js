@@ -80,20 +80,21 @@ var ViewModel =  function () {
     self.searchInput = ko.observable();
 
     // display detailed info for an event, venue, or artist
-    // TODO: update to use ko.mappings (possibly other observables like lastFmEvents)
     self.currentEvent = ko.observable();
-    //self.currentEventArtists = ko.observableArray();
     self.currentVenue = ko.observable();
+    self.currentArtist = ko.observable();
 
     self.showEventInfo = ko.observable(false);
     self.showVenueInfo = ko.observable(false);
     self.showArtistInfo = ko.observable(false);
 
+    self.selectEvent = function(lastFmEvent) {
+        self.currentEvent(ko.mapping.fromJS(lastFmEvent));
+        self.showEventInfo(true)
+    };
     // Activates a map marker's click event when an event for that venue is clicked in the list view
     self.selectMarker = function(lastFmEvent) {
-        self.currentEvent(ko.mapping.fromJS(lastFmEvent));
-        //self.currentEventArtists(self.currentEvent().artists.artist);
-        self.showEventInfo(true)
+        self.selectEvent(lastFmEvent);
         var eventIndex = lastFmEvent.venueIndex;
         google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
     };
@@ -121,6 +122,19 @@ var ViewModel =  function () {
         })
     });
 
+    // clean up some lastFm that would otherwise cause problems
+    function parseLastFmEvents(data) {
+        console.log(data);
+        var artistArray = []
+        for (var i = 0; i < data.length; i++) {
+            if (typeof data[i].artists.artist === 'string') {
+                artistArray.push(data[i].artists.artist);
+                data[i].artists.artist = artistArray;
+                artistArray = [];
+            }
+        }
+    };
+
     // Get info from Last.fm API when mapCenter updates
     // TODO: add error handling in case of no results and/or failure
     self.getLastFmEvents = ko.computed(function() {
@@ -138,10 +152,7 @@ var ViewModel =  function () {
                     self.mapMarkers().forEach(function (marker) {
                         marker.setMap(null);
                     });
-                    //var mappedResults = ko.mapping.fromJS(data.events.event);
-                    //var unmappedResults = ko.mapping.toJS(mappedResults());
-                    //self.lastFmEvents(data.events.event);
-                    //console.log(results());
+                    parseLastFmEvents(data.events.event);
                     self.lastFmEvents(data.events.event);
                 }
             };
