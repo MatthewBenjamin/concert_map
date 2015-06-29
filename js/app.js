@@ -20,6 +20,7 @@ ko.bindingHandlers.googlemap = {
 };
 var infoWindowView = function(venueObject){
     // TODO: instead of creating strings, create nodes/HTML objects with JS/jQuery?
+    //ko.mapping.toJS(venueObject);
     var venueName = '<a href=' + venueObject.website + '>' + venueObject.name + '</a>';
 
     // include this in venue more info window?
@@ -45,8 +46,10 @@ var infoWindowView = function(venueObject){
 
 var ViewModel =  function () {
     var self = this;
-    self.defaultLocation = 'Austin, TX';
-    self.currentAddress = ko.observable(self.defaultLocation);
+
+    // map location
+    var defaultLocation = 'Austin, TX';
+    self.currentAddress = ko.observable(defaultLocation);
     self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
 
     // toggle drawer menu
@@ -58,7 +61,7 @@ var ViewModel =  function () {
         self.displayMobile(true);
     };
 
-    // toggle menu on larger screens
+    // toggle large screen menu
     self.displayBigMenu = ko.observable(true);
     self.toggleBigMenu = function() {
         if (self.displayBigMenu()) {
@@ -67,29 +70,32 @@ var ViewModel =  function () {
             self.displayBigMenu(true);
         }
     };
-    // Last.fm API results
-    self.lastFmEvents = ko.observableArray();
 
-    // searched for Last.fm results
+    // Last.fm event API results
+    self.lastFmEvents = ko.observableArray();
+    //self.mappedEvents = ko.mapping.fromJS(self.lastFmEvents);
+
+    // search last fm results
     self.filteredList = ko.observableArray();
     self.searchInput = ko.observable();
 
+    // display detailed info for an event, venue, or artist
+    // TODO: update to use ko.mappings (possibly other observables like lastFmEvents)
     self.currentEvent = ko.observable();
-    self.currentEventArtists = ko.observableArray();
+    //self.currentEventArtists = ko.observableArray();
     self.currentVenue = ko.observable();
 
     self.showEventInfo = ko.observable(false);
     self.showVenueInfo = ko.observable(false);
+    self.showArtistInfo = ko.observable(false);
 
     // Activates a map marker's click event when an event for that venue is clicked in the list view
     self.selectMarker = function(lastFmEvent) {
-        self.currentEvent(lastFmEvent);
-        self.currentEventArtists(self.currentEvent().artists.artist);
+        self.currentEvent(ko.mapping.fromJS(lastFmEvent));
+        //self.currentEventArtists(self.currentEvent().artists.artist);
         self.showEventInfo(true)
         var eventIndex = lastFmEvent.venueIndex;
         google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
-        // TODO:
-        // if mobileMenu --> closeMobileMenu
     };
 
     // Update mapCenter with new latLng when currentAddress changes
@@ -106,6 +112,7 @@ var ViewModel =  function () {
                     if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
                         self.mapCenter(mapCenter);
                     } else {
+                        // TODO: remove this else state (or just the console.log?)
                         console.log('init');
                     }
             } else {
@@ -131,6 +138,10 @@ var ViewModel =  function () {
                     self.mapMarkers().forEach(function (marker) {
                         marker.setMap(null);
                     });
+                    //var mappedResults = ko.mapping.fromJS(data.events.event);
+                    //var unmappedResults = ko.mapping.toJS(mappedResults());
+                    //self.lastFmEvents(data.events.event);
+                    //console.log(results());
                     self.lastFmEvents(data.events.event);
                 }
             };
@@ -153,7 +164,7 @@ var ViewModel =  function () {
         return -1;
     }
 
-    // Build venues data from last.fm API data
+    // Build venue array from last.fm API data
     self.buildVenues = ko.computed(function() {
         var events = self.lastFmEvents();
         var venues = [];
@@ -178,7 +189,7 @@ var ViewModel =  function () {
         self.lastFmVenues(venues);
     });
 
-    // Create google map markers from last.fm API data
+    // Create google map markers from lastFmVenues
     self.mapMarkers = ko.computed(function() {
         var markers = [];
         var infoWindow = new google.maps.InfoWindow();
@@ -203,80 +214,32 @@ var ViewModel =  function () {
                 infoWindow.setContent(this.content);
                 infoWindow.open(map, this);
                 // TODO: fine tune centering location with mobile side menu
-                map.setCenter(latLng);
+                //map.setCenter(latLng);
                 //map.panBy(300,0);
             });
             markers.push(marker);
 
         }
 
-        //var events = self.lastFmEvents();
-        //console.log(events);
-/*
-        for (var i = 0; i < events.length; i++){
-            var latLng = new google.maps.LatLng(
-                            events[i].venue.location['geo:point']['geo:lat'],
-                            events[i].venue.location['geo:point']['geo:long']);
-
-            var marker = new google.maps.Marker({
-                position: latLng,
-                title: events[i].title,
-                content: events[i].title,       // TODO: make function(outside of viewmodel) that sets HTML content
-                //icon: 'images/red.png',
-                map: map
-            });
-
-            google.maps.event.addListener(marker, 'click', function() {
-                infoWindow.setContent(this.content);
-                infoWindow.open(map, this);
-            });
-            markers.push(marker);
-
-        }
-*/
         return markers;
     });
 
-    // TODO: test this more --> appears to work!
-    self.mapMarkersSearch = ko.computed(function() {
-        var venues = self.lastFmVenues();
-        var searchedEvents = self.filteredList();
-        var allEvents = self.lastFmEvents();
-
-        for (var i = 0; i < venues.length; i++) {
-            var searchedFor;
-            for (var j = 0; j < venues[i].concerts.length; j++) {
-                searchedFor = searchedFor || self.filteredList().indexOf(venues[i].concerts[j]) > -1;
-                //console.log(searchedFor);
-            }
-            if (self.filteredList() == self.lastFmEvents()) {
-                self.mapMarkers()[i].setIcon('images/red.png');
-            } else if (searchedFor) {
-                self.mapMarkers()[i].setIcon('images/blue.png');
-            } else {
-                self.mapMarkers()[i].setIcon('images/clear.png');
-            }
-            searchedFor = null;
-        }
-
-    })
-
     /*** SEARCH FUNCTIONS ***/
-    self.doesStringContain = function (targetString, searchTerm) {
+    function doesStringContain(targetString, searchTerm) {
         targetString = targetString.toLowerCase();
         return targetString.indexOf(searchTerm) > -1;
     };
-    self.doesListContain = function(targetList, searchTerm) {
+    function doesListContain(targetList, searchTerm) {
         for (var i = 0; i < targetList.length; i++) {
-            if (self.doesStringContain(targetList[i], searchTerm)) {
+            if (doesStringContain(targetList[i], searchTerm)) {
                 return true;
             }
         }
     };
     // Check if last.fm data has 'tags' field. If so, search them
-    self.searchTags = function(currentEvent, searchTerm) {
+    function searchTags(currentEvent, searchTerm) {
         if (currentEvent.tags) {
-            return self.doesListContain(currentEvent.tags.tag, searchTerm)
+            return doesListContain(currentEvent.tags.tag, searchTerm)
         }
     };
     // Search last.fm data
@@ -295,11 +258,34 @@ var ViewModel =  function () {
                         searchResults.push(currentEvent);
                 }
             }
-            // TODO: add "NO RESULTS" output -OR- add this to list render?
             self.filteredList(searchResults);
         } else {
             self.filteredList(self.lastFmEvents())
         }
+    });
+
+    // change marker icon based on search results
+    self.mapMarkersSearch = ko.computed(function() {
+        var venues = self.lastFmVenues();
+        var searchedEvents = self.filteredList();
+        var allEvents = self.lastFmEvents();
+
+        for (var i = 0; i < venues.length; i++) {
+            var searchedFor;
+            for (var j = 0; j < venues[i].concerts.length; j++) {
+                searchedFor = searchedFor || self.filteredList().indexOf(venues[i].concerts[j]) > -1;
+            }
+
+            if (self.filteredList() == self.lastFmEvents()) {
+                self.mapMarkers()[i].setIcon('images/red.png');
+            } else if (searchedFor) {
+                self.mapMarkers()[i].setIcon('images/blue.png');
+            } else {
+                self.mapMarkers()[i].setIcon('images/clear.png');
+            }
+            searchedFor = null;
+        }
+
     });
 };
 

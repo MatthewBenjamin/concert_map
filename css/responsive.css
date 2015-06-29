@@ -2,9 +2,10 @@
     position: absolute;
     top: 100px;
     left: 100px;
-    background-color: black;
-    color: white;
+    background-color: white;
+    color: black;
     display: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
 .eventOpen {
@@ -17,7 +18,7 @@
     display: block;
 }
 
-ul {
+.mobile-menu ul {
     list-style: none;
     overflow: auto;
     height: 100%;
@@ -25,6 +26,10 @@ ul {
     margin-top: 0px;
     margin-bottom: 0px;
     padding: 0px;
+}
+
+.event-info ul {
+    margin: 5px;
 }
 
 .search-box {
