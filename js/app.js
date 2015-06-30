@@ -188,6 +188,10 @@ var ViewModel =  function () {
                     });
                     parseLastFmEvents(data.events.event);
                     self.lastFmEvents(data.events.event);
+                },
+                error: function() {
+                    // TODO: display user friendlier message (in list view?)
+                    alert('lastfm error', status);
                 }
             };
             $.ajax(requestURL,requestSettings)
