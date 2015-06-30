@@ -23,6 +23,9 @@ var infoWindowView = function(venueObject){
     //ko.mapping.toJS(venueObject);
     var venueName = '<a href=' + venueObject.website + '>' + venueObject.name + '</a>';
 
+    //data bind doesn't work here
+    //var venueName = '<p data-bind="text: venueObject.name, click: showVenueInfo(true)"></p>';
+
     // include this in venue more info window?
     //var venueAddress = venueObject.location.street;
     var htmlContent = venueName;
@@ -87,11 +90,37 @@ var ViewModel =  function () {
     self.showEventInfo = ko.observable(false);
     self.showVenueInfo = ko.observable(false);
     self.showArtistInfo = ko.observable(false);
+    self.showExtraInfo = ko.computed(function() {
+        if (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo()) {
+            //console.log(self.showEventInfo, self.showVenueInfo, self.showArtistInfo)
+            return true;
+        } else {
+            return false;
+        }
+    });
 
     self.selectEvent = function(lastFmEvent) {
         self.currentEvent(ko.mapping.fromJS(lastFmEvent));
         self.showEventInfo(true)
+        self.showVenueInfo(false);
+        self.showArtistInfo(false);
     };
+
+    self.selectVenue = function() {
+        console.log('show venue');
+        //self.currentVenue(self.lastFmVenues()[currentEvent().venueIndex]);
+        self.showVenueInfo(true);
+        self.showEventInfo(false);
+        self.showArtistInfo(false);
+    };
+
+    self.selectArtist = function(artist) {
+        self.currentArtist(artist);
+        self.showArtistInfo(true);
+        self.showEventInfo(false);
+        self.showVenueInfo(false);
+    };
+
     // Activates a map marker's click event when an event for that venue is clicked in the list view
     self.selectMarker = function(lastFmEvent) {
         self.selectEvent(lastFmEvent);
@@ -131,6 +160,11 @@ var ViewModel =  function () {
                 artistArray.push(data[i].artists.artist);
                 data[i].artists.artist = artistArray;
                 artistArray = [];
+            }
+            if (!data[i].tags) {
+                data[i].tags = {
+                    tag: []
+                };
             }
         }
     };

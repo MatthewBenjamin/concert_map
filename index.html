@@ -38,31 +38,41 @@
             <input class="search-box" data-bind="value: currentAddress">
         </div>
         <!-- TODO: display currentEvent in #event-info, transform window into view when event is selected) -->
-        <div class="event-info" data-bind="css: { eventOpen: showEventInfo() }, with: currentEvent">
-            <div>
-                <p data-bind="text: title"></p>
-                <p data-bind="text: startDate"></p>
-            </div>
-            <p>Artists:</p>
-            <ul data-bind="foreach: artists.artist">
-                <li>
-                    <p data-bind="text: $data"></p>
-                </li>
-            </ul>
-<!--
-            <p data-bind="if: currentEvent().description">Description: <span data-bind="html: currentEvent().description"></span></p>
-            -->
-            <!-- TODO: make currentEventTags observable array? -->
-            <!-- ATM nested object properties aren't working.... -->
-            <!--
-            <p data-bind="if: currentEvent().tags">Tags:
-                <ul data-bind="foreach: currentEvent().tags.tag">
-                    <li data-bind="text: $data"></li>
+        <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }, with: currentEvent">
+            <div data-bind="visible: showEventInfo(), with: currentEvent">
+                <div>
+                    <p data-bind="text: title"></p>
+                    <p data-bind="text: startDate"></p>
+                </div>
+                <p>Artists:</p>
+                <ul data-bind="foreach: artists.artist">
+                    <li>
+                        <p data-bind="text: $data, click: function() { selectArtist($data); }"></p>
+                    </li>
                 </ul>
-            </p>
-            <p data-bind="text: currentEvent().venue.name"></p>
-            <p>Last.fm Event Page: <span data-bind="text: currentEvent().url"></span> -->
-            <button data-bind="click: function() { showEventInfo(false); }">Close</button>
+                <div data-bind="if: tags.tag().length > 0">
+                    Tags:
+                        <ul data-bind="foreach: tags.tag">
+                            <li>
+                                <p data-bind="text: $data, click: function() { searchInput($data); }"></p>
+                            </li>
+                        </ul>
+                </div>
+                <p>Venue: <span data-bind="text: venue.name, click: function() { selectVenue(); }"></span></p>
+                <p>Last FM Event Page: <a data-bind="attr: { href: url }, text: url"></a></p>
+                <p data-bind="if: website">Website: <a data-bind="attr: { href: website },text: website"></a></p>
+                <p data-bind="if: description">Description: <span data-bind="html: description"></span></p>
+            </div>
+
+            <div data-bind="visible: showVenueInfo(), with: currentEvent">
+                <p data-bind="text: venue.name"></p>
+            </div>
+
+            <div data-bind="visible: showArtistInfo()">
+                <p data-bind="text: currentArtist()"></p>
+            </div>
+
+            <button data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">Close</button>
         </div>
 
         <script type='text/javascript' src='js/libraries/jquery-2.1.3.min.js'></script>
