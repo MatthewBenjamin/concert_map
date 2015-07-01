@@ -66,6 +66,20 @@
 
             <div data-bind="visible: showVenueInfo(), with: currentEvent">
                 <p data-bind="text: venue.name"></p>
+                <p>Last FM URL: <a data-bind="attr: { href: venue.url }, text: venue.url"></a></p>
+                <p data-bind="if: venue.website">Website: <a data-bind="attr: { href: venue.website }, text: venue.website"></a></p>
+                <p>Address:
+                    <span data-bind="text: venue.location.street"></span>
+                    <span data-bind="text: venue.location.city"></span>
+                    <span data-bind="text: venue.location.postalcode"></span>
+                </p>
+                <p>Phone #: <span data-bind="text: venue.phonenumber"></span></p>
+                <p>Upcoming Events:</p>
+                <ul data-bind="foreach: venue.concerts">
+                    <li>
+                        <p data-bind="text: title"></p>
+                    </li>
+                </ul>
             </div>
 
             <div data-bind="visible: showArtistInfo()">
