@@ -87,6 +87,8 @@ var ViewModel =  function () {
     self.currentEvent = ko.observable();
     self.currentVenue = ko.observable();
     self.currentArtist = ko.observable();
+    self.currentArtistInfo = ko.observable();
+    self.currentArtistVideos = ko.observable();
 
     self.showEventInfo = ko.observable(false);
     self.showVenueInfo = ko.observable(false);
@@ -197,6 +199,27 @@ var ViewModel =  function () {
                 }
             };
             $.ajax(requestURL,requestSettings)
+        }
+    });
+
+
+    self.getArtistInfo = ko.computed(function() {
+        if (self.currentArtist()) {
+            var artist = self.currentArtist().replace(/\s+/g, '+');
+            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
+                'artist=' + artist + '&' +
+                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
+                '&format=json'
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                    console.log(data);
+                    self.currentArtistInfo(ko.mapping.fromJS(data));
+                },
+                error: function() {
+                    alert('ERROR', data, status, jqXHR);
+                }
+            };
+            $.ajax(requestURL, requestSettings);
         }
     });
 
