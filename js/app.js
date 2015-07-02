@@ -76,7 +76,8 @@ var ViewModel =  function () {
 
     // Last.fm event API results
     self.lastFmEvents = ko.observableArray();
-    //self.mappedEvents = ko.mapping.fromJS(self.lastFmEvents);
+    // List of venue objects with associated concerts
+    self.lastFmVenues = ko.observableArray();
 
     // search last fm results
     self.filteredList = ko.observableArray();
@@ -106,9 +107,10 @@ var ViewModel =  function () {
         self.showArtistInfo(false);
     };
 
-    self.selectVenue = function() {
-        console.log('show venue');
-        //self.currentVenue(self.lastFmVenues()[currentEvent().venueIndex]);
+    self.selectVenue = function(venue) {
+        // TODO: will var venue be used? or will venue always come from currentEvent?
+        var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
+        self.currentVenue(venue);
         self.showVenueInfo(true);
         self.showEventInfo(false);
         self.showArtistInfo(false);
@@ -197,9 +199,6 @@ var ViewModel =  function () {
             $.ajax(requestURL,requestSettings)
         }
     });
-
-    // List of venue objects with associated concerts
-    self.lastFmVenues = ko.observableArray();
 
     // check if venue is already in self.lastFmVenues
     self.newVenue = function(venueId, venues) {

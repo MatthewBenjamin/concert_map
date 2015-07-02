@@ -54,7 +54,7 @@
                     Tags:
                         <ul data-bind="foreach: tags.tag">
                             <li>
-                                <p data-bind="text: $data, click: function() { searchInput($data); }"></p>
+                                <p data-bind="text: $data, click: searchInput"></p>
                             </li>
                         </ul>
                 </div>
@@ -64,20 +64,20 @@
                 <p data-bind="if: description">Description: <span data-bind="html: description"></span></p>
             </div>
 
-            <div data-bind="visible: showVenueInfo(), with: currentEvent">
-                <p data-bind="text: venue.name"></p>
-                <p>Last FM URL: <a data-bind="attr: { href: venue.url }, text: venue.url"></a></p>
-                <p data-bind="if: venue.website">Website: <a data-bind="attr: { href: venue.website }, text: venue.website"></a></p>
+            <div data-bind="visible: showVenueInfo(), with: currentVenue">
+                <p data-bind="text: name"></p>
+                <p>Last FM URL: <a data-bind="attr: { href: url }, text: url"></a></p>
+                <p data-bind="if: website">Website: <a data-bind="attr: { href: website }, text: website"></a></p>
                 <p>Address:
-                    <span data-bind="text: venue.location.street"></span>
-                    <span data-bind="text: venue.location.city"></span>
-                    <span data-bind="text: venue.location.postalcode"></span>
+                    <span data-bind="text: location.street"></span>
+                    <span data-bind="text: location.city"></span>
+                    <span data-bind="text: location.postalcode"></span>
                 </p>
-                <p>Phone #: <span data-bind="text: venue.phonenumber"></span></p>
+                <p>Phone #: <span data-bind="text: phonenumber"></span></p>
                 <p>Upcoming Events:</p>
-                <ul data-bind="foreach: venue.concerts">
+                <ul data-bind="foreach: concerts">
                     <li>
-                        <p data-bind="text: title"></p>
+                        <p data-bind="text: title, click: self.selectEvent"></p>
                     </li>
                 </ul>
             </div>
