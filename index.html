@@ -37,7 +37,6 @@
         <div id="location-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <input class="search-box" data-bind="value: currentAddress">
         </div>
-        <!-- TODO: display currentEvent in #event-info, transform window into view when event is selected) -->
         <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }, with: currentEvent">
             <div data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
@@ -84,6 +83,22 @@
 
             <div data-bind="visible: showArtistInfo()">
                 <p data-bind="text: currentArtist()"></p>
+                <div data-bind="if: currentArtistInfo()">
+                    <p>Tags:</p>
+                    <ul data-bind="foreach: currentArtistInfo().tags.tag">
+                        <li>
+                            <p data-bind="text: name"></p>
+                        </li>
+                    </ul>
+                    <p>Bio</p>
+                    <p data-bind="html: currentArtistInfo().bio.summary"></p>
+                </div>
+                <p>Youtube Search Results:</p>
+                <ul data-bind="foreach: currentArtistVideos">
+                    <li>
+                        <p data-bind="text: snippet.title"></p>
+                    </li>
+                </ul>
             </div>
 
             <button data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">Close</button>

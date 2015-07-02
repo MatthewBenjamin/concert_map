@@ -87,8 +87,15 @@ var ViewModel =  function () {
     self.currentEvent = ko.observable();
     self.currentVenue = ko.observable();
     self.currentArtist = ko.observable();
+    self.currentArtistSearch = ko.computed(function() {
+        var artist;
+        if (self.currentArtist()) {
+            artist = self.currentArtist().replace(/\s+/g, '+');
+        }
+        return artist;
+    });
     self.currentArtistInfo = ko.observable();
-    self.currentArtistVideos = ko.observable();
+    self.currentArtistVideos = ko.observableArray();
 
     self.showEventInfo = ko.observable(false);
     self.showVenueInfo = ko.observable(false);
@@ -204,16 +211,16 @@ var ViewModel =  function () {
 
 
     self.getArtistInfo = ko.computed(function() {
-        if (self.currentArtist()) {
-            var artist = self.currentArtist().replace(/\s+/g, '+');
+        if (self.currentArtistSearch()) {
+            //var artist = self.currentArtist().replace(/\s+/g, '+');
             var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
-                'artist=' + artist + '&' +
+                'artist=' + self.currentArtistSearch() + '&' +
                 'api_key=d824cbbb7759624aa8b3621a627b70b8' +
                 '&format=json'
             var requestSettings = {
                 success: function(data, status, jqXHR) {
                     console.log(data);
-                    self.currentArtistInfo(ko.mapping.fromJS(data));
+                    self.currentArtistInfo(ko.mapping.fromJS(data.artist));
                 },
                 error: function() {
                     alert('ERROR', data, status, jqXHR);
@@ -223,6 +230,23 @@ var ViewModel =  function () {
         }
     });
 
+    self.getArtistVideos = ko.computed(function() {
+        if (self.currentArtistSearch()) {
+            var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
+                'q=' + self.currentArtistSearch() +
+                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI'
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                    console.log(data.items);
+                    self.currentArtistVideos(data.items);
+                },
+                error: function() {
+                    alert('ERROR', data, status, jqXHR);
+                }
+            };
+            $.ajax(requestURL, requestSettings);
+        }
+    });
     // check if venue is already in self.lastFmVenues
     self.newVenue = function(venueId, venues) {
         for (var i = 0; i < venues.length; i++) {
