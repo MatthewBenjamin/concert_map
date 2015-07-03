@@ -86,6 +86,7 @@ var ViewModel =  function () {
     // display detailed info for an event, venue, or artist
     self.currentEvent = ko.observable();
     self.currentVenue = ko.observable();
+    self.currentVenueFourSquare = ko.observableArray();
     self.currentArtist = ko.observable();
     self.currentArtistSearch = ko.computed(function() {
         var artist;
@@ -242,6 +243,47 @@ var ViewModel =  function () {
                 },
                 error: function() {
                     alert('ERROR', data, status, jqXHR);
+                }
+            };
+            $.ajax(requestURL, requestSettings);
+        }
+    });
+
+    function getFourSquareById(id) {
+        var requestURL = 'https://api.foursquare.com/v2/venues/' +
+        id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
+        var requestSettings = {
+            success: function(data, status, jqXHR) {
+                console.log(data);
+            }
+        }
+        $.ajax(requestURL, requestSettings);
+    }
+
+    self.findFourSquareVenue = ko.computed(function() {
+        if (self.currentVenue()) {
+            var lat = self.currentVenue().location['geo:point']['geo:lat'];
+            var lon = self.currentVenue().location['geo:point']['geo:long'];
+            //console.log(typeof lat,lon);
+            var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
+                'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
+                'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
+                'v=20130815&' +
+                'll=' + lat + ',' + lon + '&' +
+                'query=' + self.currentVenue().name + '&' +
+                'intent=match'
+            if (self.currentVenue().website) {
+                requestURL = requestURL + '&url=' + self.currentVenue().website;
+            }
+            //console.log(requestURL);
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                     if (data.response.venues.length > 0) {
+                        getFourSquareById(data.response.venues[0].id);
+                     }
+                },
+                error: function() {
+                    alert('FOUR SQUARE API ERROR', data, status, jqXHR);
                 }
             };
             $.ajax(requestURL, requestSettings);
