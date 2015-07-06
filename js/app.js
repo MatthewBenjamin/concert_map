@@ -19,32 +19,52 @@ ko.bindingHandlers.googlemap = {
     }
 };
 var infoWindowView = function(venueObject){
+    var html = $('#info-window')[0];
+    console.log(html);
+    return html;
+    /*
     // TODO: instead of creating strings, create nodes/HTML objects with JS/jQuery?
     //ko.mapping.toJS(venueObject);
-    var venueName = '<a href=' + venueObject.website + '>' + venueObject.name + '</a>';
+    var $container = $('<div class="infoVenueWindow"></div>');
+    //console.log($container);
+    //var $venueName = $('<a href=' + venueObject.website + '>' + venueObject.name + '</a>').appendTo($container);
+    var $venueName = $('<a data-bind="click: function() { console.log(\'hi\'); }">' + venueObject.name + '</a>').appendTo($container);
+    //console.log($venueName);
+    //$venueName.appendTo($container);
+    //console.log(container);
+    //var venueName = '<p data-bind="click: function(){ console.log(\'hi\'); }">test</p>';
 
     //data bind doesn't work here
     //var venueName = '<p data-bind="text: venueObject.name, click: showVenueInfo(true)"></p>';
 
     // include this in venue more info window?
     //var venueAddress = venueObject.location.street;
-    var htmlContent = venueName;
-
-    var concertContainer = '<hr><div class="concertWindow">#data#</div>';
-    var concertTitle = '<p class="infoConcertTitle">#title#</p>';
-    var concertDate = '<p class="infoConcertDate">#date#</p>';
+    //var htmlContent = venueName;
 
     var concerts = venueObject.concerts;
 
     for (var i = 0; i < concerts.length; i++) {
-        var title = concertTitle.replace('#title#', concerts[i].title);
-        var date = concertDate.replace('#date#', concerts[i].startDate.substring(0, 11));
-        var titleDate = title + date;
-        var concertInfo = concertContainer.replace('#data#', titleDate);
-        htmlContent = htmlContent + concertInfo;
+        var $concertContainer = $('<div class="concertWindow"></div>').appendTo($container);
+        var concertTitle = '<p class="infoConcertTitle">#title#</p>';
+        var concertDate = '<p class="infoConcertDate">#date#</p>';
+        var $title = $(concertTitle.replace('#title#', concerts[i].title)).appendTo($concertContainer);
+        var $date = $(concertDate.replace('#date#', concerts[i].startDate.substring(0, 11))).appendTo($concertContainer);
+        //var titleDate = title + date;
+        //var concertInfo = concertContainer.replace('#data#', titleDate);
+        //htmlContent = htmlContent + concertInfo;
+        //console.log($concertContainer);
     }
-
-    return htmlContent;
+    //console.log($(htmlContent)[0]);
+    //var test = $(htmlContent);
+    //var testParse = $.parseHTML(htmlContent);
+    //var same = test == testParse;
+    //console.log(test);
+    //$container.append(htmlContent);
+    //console.log($container);
+    //return htmlContent;
+    //console.log($container);
+    return $container[0];
+    */
 };
 
 var ViewModel =  function () {
@@ -137,6 +157,7 @@ var ViewModel =  function () {
     self.selectMarker = function(lastFmEvent) {
         self.selectEvent(lastFmEvent);
         var eventIndex = lastFmEvent.venueIndex;
+        //self.currentVenue(self.lastFmVenues()[eventIndex]);
         google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
     };
 
@@ -344,11 +365,13 @@ var ViewModel =  function () {
                 title: venues[i].name,
                 content: infoWindowView(venues[i]),
                 icon: 'images/red.png',
-                map: map
+                map: map,
+                venueIndex: i
             });
 
             google.maps.event.addListener(marker, 'click', function() {
                 infoWindow.setContent(this.content);
+                self.currentVenue(self.lastFmVenues()[this.venueIndex]);
                 infoWindow.open(map, this);
                 // TODO: fine tune centering location with mobile side menu
                 //map.setCenter(latLng);
@@ -357,7 +380,7 @@ var ViewModel =  function () {
             markers.push(marker);
 
         }
-
+        //console.log($('.infoVenueWindow'));
         return markers;
     });
 

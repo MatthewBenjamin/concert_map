@@ -83,15 +83,15 @@
 
             <div data-bind="visible: showArtistInfo()">
                 <p data-bind="text: currentArtist()"></p>
-                <div data-bind="if: currentArtistInfo()">
+                <div data-bind="with: currentArtistInfo">
                     <p>Tags:</p>
-                    <ul data-bind="foreach: currentArtistInfo().tags.tag">
+                    <ul data-bind="foreach: tags.tag">
                         <li>
                             <p data-bind="text: name"></p>
                         </li>
                     </ul>
                     <p>Bio</p>
-                    <p data-bind="html: currentArtistInfo().bio.summary"></p>
+                    <p data-bind="html: bio.summary"></p>
                 </div>
                 <p>Youtube Search Results:</p>
                 <ul data-bind="foreach: currentArtistVideos">
@@ -102,6 +102,16 @@
             </div>
 
             <button data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">Close</button>
+        </div>
+
+        <div id="info-window" data-bind="with: currentVenue">
+            <h3 data-bind="text: name, click: function() { console.log('hi'); }"></h3>
+            <ul data-bind="foreach: concerts">
+                <li>
+                    <hr>
+                    <h4 data-bind="text: title"></h4>
+                    <p data-bind="text: startDate"></p>
+                </li>
         </div>
 
         <script type='text/javascript' src='js/libraries/jquery-2.1.3.min.js'></script>
