@@ -11,6 +11,20 @@ svg {
     fill: black;
 }
 
+#info-window {
+    z-index: 100;
+}
+#close-button {
+    display: block;
+    width: 42px;
+    right: 0;
+    position: absolute;
+}
+
+.svg-button {
+    width: 42px;
+}
+
 li {
     cursor: pointer;
     padding-left: 15px;

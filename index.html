@@ -14,7 +14,7 @@
 
     <body>
         <div id="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: function(){closeMobile()}"></div>
-        <a id="menu-toggle" id="small-menu" class="menu" data-bind="click: function() { openMobile(); toggleBigMenu() }">
+        <a id="menu-toggle" data-bind="click: function() { openMobile(); toggleBigMenu() }">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
@@ -38,6 +38,11 @@
             <input class="search-box" data-bind="value: currentAddress">
         </div>
         <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }, with: currentEvent">
+
+            <a id="close-button" data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">
+                <img class="svg-button" src="images/close.svg" alt="CLOSE">
+            </a>
+
             <div data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
                     <p data-bind="text: title"></p>
@@ -100,14 +105,12 @@
                     </li>
                 </ul>
             </div>
-
-            <button data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">Close</button>
         </div>
 
         <div id="info-window" data-bind="with: currentVenue">
             <h3 data-bind="text: name, click: function() { console.log('hi'); }"></h3>
             <ul data-bind="foreach: concerts">
-                <li>
+                <li data-bind="click: selectEvent">
                     <hr>
                     <h4 data-bind="text: title"></h4>
                     <p data-bind="text: startDate"></p>

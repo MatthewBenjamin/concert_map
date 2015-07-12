@@ -1,18 +1,19 @@
 .extra-info {
     position: absolute;
-    top: 100px;
-    left: 100px;
+    top: 10px;
+    left: 85px;
     background-color: white;
     color: black;
     display: block;
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    width: 400px;
+    width: 350px;
     height: 500px;
     overflow: auto;
     word-wrap: break-word;
     -webkit-transform: translate(0, -605px);
     transform: translate(0, -605px);
     transition: transform 0.3s ease;
+    z-index: 90;
 }
 
 .extra-info.open {
@@ -23,7 +24,7 @@
 
 #menu-toggle {
     position: absolute;
-    z-index: 100px;
+    z-index: 100;
     display: block;
 }
 
