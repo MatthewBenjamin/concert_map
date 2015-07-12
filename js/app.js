@@ -20,7 +20,7 @@ ko.bindingHandlers.googlemap = {
 };
 var infoWindowView = function(venueObject){
     var html = $('#info-window')[0];
-    console.log(html);
+    //console.log(html);
     return html;
     /*
     // TODO: instead of creating strings, create nodes/HTML objects with JS/jQuery?
@@ -187,17 +187,22 @@ var ViewModel =  function () {
     // clean up some lastFm that would otherwise cause problems
     function parseLastFmEvents(data) {
         console.log(data);
-        var artistArray = []
+        var emptyArray = []
         for (var i = 0; i < data.length; i++) {
             if (typeof data[i].artists.artist === 'string') {
-                artistArray.push(data[i].artists.artist);
-                data[i].artists.artist = artistArray;
-                artistArray = [];
+                emptyArray.push(data[i].artists.artist);
+                data[i].artists.artist = emptyArray;
+                emptyArray = [];
             }
             if (!data[i].tags) {
                 data[i].tags = {
                     tag: []
                 };
+            }
+            if (typeof data[i].tags.tag === 'string') {
+                emptyArray.push(data[i].tags.tag);
+                data[i].tags.tag = emptyArray;
+                emptyArray = [];
             }
         }
     };
@@ -275,7 +280,7 @@ var ViewModel =  function () {
         id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
         var requestSettings = {
             success: function(data, status, jqXHR) {
-                console.log(data);
+                //console.log(data);
             }
         }
         $.ajax(requestURL, requestSettings);
