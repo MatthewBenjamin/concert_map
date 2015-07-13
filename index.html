@@ -23,6 +23,11 @@
         <div id="event-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <input class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
         </div>
+        <div id="list-toggle" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
+            <button class="list-button">EVENTS</button>
+            <button class="list-button">VENUES</button>
+            <button id="info-button">SHOW INFO POP-UP</button>
+        </div>
         <div id="event-list" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
             <ul data-bind="foreach: filteredList, click: function(){ closeMobile() }">

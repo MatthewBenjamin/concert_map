@@ -158,7 +158,7 @@ var ViewModel =  function () {
         self.selectEvent(lastFmEvent);
         var eventIndex = lastFmEvent.venueIndex;
         //self.currentVenue(self.lastFmVenues()[eventIndex]);
-        google.maps.event.trigger(self.mapMarkers()[eventIndex], 'click');
+        google.maps.event.trigger(self.mapMarkers()[eventIndex], 'mouseup');
     };
 
     // Update mapCenter with new latLng when currentAddress changes
@@ -375,7 +375,7 @@ var ViewModel =  function () {
             });
 
             google.maps.event.addListener(marker, 'mouseup', function() {
-                //console.log('you clicked a marker!');
+                console.log(this);
                 infoWindow.setContent(this.content);
                 self.currentVenue(self.lastFmVenues()[this.venueIndex]);
                 infoWindow.open(map, this);

@@ -13,7 +13,7 @@
     -webkit-transform: translate(0, -605px);
     transform: translate(0, -605px);
     transition: transform 0.3s ease;
-    z-index: 90;
+    z-index: 100;
 }
 
 .extra-info.open {
@@ -75,6 +75,12 @@
 }
 
 @media screen and (max-width: 514px) {
+    .extra-info {
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
     #menu-toggle {
         display: block;
         top: 40px;
@@ -87,12 +93,12 @@
     }
 
     .mobile-menu {
-        width: 220px;
+        width: 260px;
         position: absolute;
         left: 0;
         background-color: rgba(255,255,255,0.85);
-        -webkit-transform: translate(-220px, 0);
-        transform: translate(-220px, 0);
+        -webkit-transform: translate(-260px, 0);
+        transform: translate(-260px, 0);
         transition: transform 0.3s ease;
     }
 
@@ -107,9 +113,28 @@
         height: 40px;
     }
 
-    #event-list {
+    #list-toggle {
         top: 40px;
-        height: calc(100% - 80px);
+        height: 80px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #event-list {
+        top: 120px;
+        height: calc(100% - 160px);
+    }
+
+    button {
+        height: 40px;
+        background-color: rgba(255,255,255,0.85);
+        font-weight: bold;
+    }
+    .list-button {
+        width: 50%;
+    }
+    #info-button {
+        width: 100%;
     }
     #location-search {
         bottom: 0;
