@@ -374,7 +374,8 @@ var ViewModel =  function () {
                 venueIndex: i
             });
 
-            google.maps.event.addListener(marker, 'click', function() {
+            google.maps.event.addListener(marker, 'mouseup', function() {
+                //console.log('you clicked a marker!');
                 infoWindow.setContent(this.content);
                 self.currentVenue(self.lastFmVenues()[this.venueIndex]);
                 infoWindow.open(map, this);
