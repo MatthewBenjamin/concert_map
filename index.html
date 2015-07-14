@@ -24,18 +24,26 @@
             <input class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
         </div>
         <div id="list-toggle" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
-            <button class="list-button">EVENTS</button>
-            <button class="list-button">VENUES</button>
+            <button class="list-button" data-bind="css: { pressed: listEvents() }, click: function () { eventButton(); }">EVENTS</button>
+            <button class="list-button" data-bind="css: { pressed: listVenues() }, click: function () { venueButton(); }">VENUES</button>
             <button id="info-button">SHOW INFO POP-UP</button>
         </div>
-        <div id="event-list" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
-            <span class="no-results" data-bind="visible: !filteredList().length">no results</span>
-            <ul data-bind="foreach: filteredList, click: function(){ closeMobile() }">
-                <li data-bind="click: selectMarker">
+        <div id="event-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }, visible: listEvents()">
+            <span class="no-results" data-bind="visible: !filteredEvents().length">no results</span>
+            <ul data-bind="foreach: filteredEvents, click: function(){ closeMobile() }">
+                <li data-bind="click: selectEvent">
                     <hr>
                     <p data-bind="text: title"></p>
                     <p data-bind="text: venue.name"></p>
                     <p data-bind="text: startDate"></p>
+                </li>
+            </ul>
+        </div>
+        <div id="venue-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }, visible: listVenues()">
+            <ul data-bind="foreach: lastFmVenues, click: function() { closeMobile() }">
+                <li data-bind="click: selectVenue">
+                    <hr>
+                    <p data-bind="text: name"></p>
                 </li>
             </ul>
         </div>

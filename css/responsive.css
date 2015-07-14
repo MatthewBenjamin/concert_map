@@ -74,6 +74,24 @@
     padding: 0;
 }
 
+button {
+    height: 40px;
+    background-color: rgba(255,255,255,0.85);
+    font-weight: bold;
+}
+
+.pressed {
+    font-weight: normal;
+}
+
+.list-button {
+    width: 50%;
+}
+
+#info-button {
+    width: 100%;
+}
+
 @media screen and (max-width: 514px) {
     .extra-info {
         top: 0;
@@ -86,8 +104,7 @@
         top: 40px;
         left: 5px;
     }
-
-    #event-list ul {
+    .list  ul {
         height: 100%;
         font-size: large;
     }
@@ -120,22 +137,11 @@
         flex-wrap: wrap;
     }
 
-    #event-list {
+    .list {
         top: 120px;
         height: calc(100% - 160px);
     }
 
-    button {
-        height: 40px;
-        background-color: rgba(255,255,255,0.85);
-        font-weight: bold;
-    }
-    .list-button {
-        width: 50%;
-    }
-    #info-button {
-        width: 100%;
-    }
     #location-search {
         bottom: 0;
         height: 40px;
@@ -167,13 +173,25 @@
     .bigOpen {
         display: block;
     }
-    #event-list {
+    .list {
         width: calc(100% / 3);
         max-width: 260px;
         min-width: 200px;
         height: calc(100% - 150px);
         right: 15px;
     }
+
+    #list-toggle {
+        top: 40px;
+        right: 15px;
+        height: 80px;
+        width: calc(100% / 3);
+        max-width: 260px;
+        min-width: 200px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
     #event-search {
         top: 10px;
         right: 170px;

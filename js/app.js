@@ -99,8 +99,9 @@ var ViewModel =  function () {
     // List of venue objects with associated concerts
     self.lastFmVenues = ko.observableArray();
 
-    // search last fm results
-    self.filteredList = ko.observableArray();
+    // search last fm data
+    self.filteredEvents = ko.observableArray();
+    self.filteredVenues = ko.observableArray();
     self.searchInput = ko.observable();
 
     // display detailed info for an event, venue, or artist
@@ -130,7 +131,21 @@ var ViewModel =  function () {
         }
     });
 
+    self.listEvents = ko.observable(true);
+    self.listVenues = ko.observable(false);
+
+    self.eventButton = function() {
+        self.listEvents(true);
+        self.listVenues(false);
+    }
+
+    self.venueButton = function() {
+        self.listEvents(false);
+        self.listVenues(true);
+    }
+
     self.selectEvent = function(lastFmEvent) {
+        self.selectMarker(lastFmEvent.venueIndex);
         self.currentEvent(ko.mapping.fromJS(lastFmEvent));
         self.showEventInfo(true)
         self.showVenueInfo(false);
@@ -140,6 +155,7 @@ var ViewModel =  function () {
     self.selectVenue = function(venue) {
         // TODO: will var venue be used? or will venue always come from currentEvent?
         var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
+        self.selectMarker(lastFmVenues.indexOf(venue));
         self.currentVenue(venue);
         self.showVenueInfo(true);
         self.showEventInfo(false);
@@ -154,11 +170,11 @@ var ViewModel =  function () {
     };
 
     // Activates a map marker's click event when an event for that venue is clicked in the list view
-    self.selectMarker = function(lastFmEvent) {
-        self.selectEvent(lastFmEvent);
-        var eventIndex = lastFmEvent.venueIndex;
+    self.selectMarker = function(venueIndex) {
+        //self.selectEvent(lastFmEvent);
+        //var eventIndex = lastFmEvent.venueIndex;
         //self.currentVenue(self.lastFmVenues()[eventIndex]);
-        google.maps.event.trigger(self.mapMarkers()[eventIndex], 'mouseup');
+        google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
     };
 
     // Update mapCenter with new latLng when currentAddress changes
@@ -375,7 +391,7 @@ var ViewModel =  function () {
             });
 
             google.maps.event.addListener(marker, 'mouseup', function() {
-                console.log(this);
+                //console.log(this.venueIndex);
                 infoWindow.setContent(this.content);
                 self.currentVenue(self.lastFmVenues()[this.venueIndex]);
                 infoWindow.open(map, this);
@@ -412,7 +428,8 @@ var ViewModel =  function () {
     self.searchLastFmEvents = ko.computed(function() {
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
-            var searchResults = [];
+            var eventhResults = [];
+            var venueResults = [];
             for (var i = 0; i < self.lastFmEvents().length; i++) {
                 var currentEvent = self.lastFmEvents()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
@@ -421,28 +438,28 @@ var ViewModel =  function () {
                     doesStringContain(currentEvent.description, searchTerm) ||
                     doesListContain(currentEvent.artists.artist, searchTerm) ||
                     searchTags(currentEvent, searchTerm)) {
-                        searchResults.push(currentEvent);
+                        eventResults.push(currentEvent);
                 }
             }
-            self.filteredList(searchResults);
+            self.filteredEvents(eventResults);
         } else {
-            self.filteredList(self.lastFmEvents())
+            self.filteredEvents(self.lastFmEvents())
         }
     });
 
     // change marker icon based on search results
     self.mapMarkersSearch = ko.computed(function() {
         var venues = self.lastFmVenues();
-        var searchedEvents = self.filteredList();
+        var searchedEvents = self.filteredEvents();
         var allEvents = self.lastFmEvents();
 
         for (var i = 0; i < venues.length; i++) {
             var searchedFor;
             for (var j = 0; j < venues[i].concerts.length; j++) {
-                searchedFor = searchedFor || self.filteredList().indexOf(venues[i].concerts[j]) > -1;
+                searchedFor = searchedFor || self.filteredEvents().indexOf(venues[i].concerts[j]) > -1;
             }
 
-            if (self.filteredList() == self.lastFmEvents()) {
+            if (self.filteredEvents() == self.lastFmEvents()) {
                 self.mapMarkers()[i].setIcon('images/red.png');
             } else if (searchedFor) {
                 self.mapMarkers()[i].setIcon('images/blue.png');
