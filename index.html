@@ -44,13 +44,14 @@
                 <li data-bind="click: selectVenue">
                     <hr>
                     <p data-bind="text: name"></p>
+                    <p>Number of Events: <span data-bind="text: concerts.length"></span></p>
                 </li>
             </ul>
         </div>
         <div id="location-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <input class="search-box" data-bind="value: currentAddress">
         </div>
-        <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }, with: currentEvent">
+        <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
 
             <a id="close-button" data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">
                 <img class="svg-button" src="images/close.svg" alt="CLOSE">
