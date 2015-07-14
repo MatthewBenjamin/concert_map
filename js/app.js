@@ -119,12 +119,24 @@ var ViewModel =  function () {
     self.currentArtistInfo = ko.observable();
     self.currentArtistVideos = ko.observableArray();
 
+    self.extraInfoBoolean = ko.observable(true);
     self.showEventInfo = ko.observable(false);
     self.showVenueInfo = ko.observable(false);
     self.showArtistInfo = ko.observable(false);
+    self.toggleExtraInfo = function() {
+        if (self.extraInfoBoolean()) {
+            self.extraInfoBoolean(false);
+        } else {
+            self.showEventInfo(false);
+            self.showVenueInfo(false);
+            self.showArtistInfo(false);
+            self.extraInfoBoolean(true);
+        }
+        //console.log(self.extraInfoBoolean());
+    }
     self.showExtraInfo = ko.computed(function() {
-        if (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo()) {
-            //console.log(self.showEventInfo, self.showVenueInfo, self.showArtistInfo)
+        if ( (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo())
+            && self.extraInfoBoolean() ) {
             return true;
         } else {
             return false;

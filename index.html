@@ -26,7 +26,7 @@
         <div id="list-toggle" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <button class="list-button" data-bind="css: { pressed: listEvents() }, click: function () { eventButton(); }">EVENTS</button>
             <button class="list-button" data-bind="css: { pressed: listVenues() }, click: function () { venueButton(); }">VENUES</button>
-            <button id="info-button">SHOW INFO POP-UP</button>
+            <button id="info-button" data-bind="css: { pressed: extraInfoBoolean() }, click: toggleExtraInfo">SHOW INFO POP-UP</button>
         </div>
         <div id="event-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }, visible: listEvents()">
             <span class="no-results" data-bind="visible: !filteredEvents().length">no results</span>
