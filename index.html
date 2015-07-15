@@ -40,7 +40,7 @@
             </ul>
         </div>
         <div id="venue-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }, visible: listVenues()">
-            <ul data-bind="foreach: lastFmVenues, click: function() { closeMobile() }">
+            <ul data-bind="foreach: filteredVenues, click: function() { closeMobile() }">
                 <li data-bind="click: selectVenue">
                     <hr>
                     <p data-bind="text: name"></p>
