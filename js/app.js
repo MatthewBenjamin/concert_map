@@ -18,7 +18,7 @@ ko.bindingHandlers.googlemap = {
         map.setCenter( { lat: latitude, lng: longitude } );
     }
 };
-var infoWindowView = function(venueObject){
+var infoWindowView = function(){
     var html = $('#info-window')[0];
     //console.log(html);
     return html;
@@ -157,6 +157,7 @@ var ViewModel =  function () {
     }
 
     self.selectEvent = function(lastFmEvent) {
+        console.log(lastFmEvent);
         self.selectMarker(lastFmEvent.venueIndex);
         self.currentEvent(ko.mapping.fromJS(lastFmEvent));
         self.showEventInfo(true)
@@ -166,7 +167,11 @@ var ViewModel =  function () {
 
     self.selectVenue = function(venue) {
         // TODO: will var venue be used? or will venue always come from currentEvent?
-        var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
+        //console.log('argument venue: ', venue);
+        //var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
+        //console.log('var venue: ', venue);
+        console.log(venue);
+        console.log(lastFmVenues.indexOf(venue));
         self.selectMarker(lastFmVenues.indexOf(venue));
         self.currentVenue(venue);
         self.showVenueInfo(true);
@@ -186,6 +191,7 @@ var ViewModel =  function () {
         //self.selectEvent(lastFmEvent);
         //var eventIndex = lastFmEvent.venueIndex;
         //self.currentVenue(self.lastFmVenues()[eventIndex]);
+        console.log(venueIndex);
         google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
     };
 
@@ -355,9 +361,8 @@ var ViewModel =  function () {
         return -1;
     }
 
-    // Build venue array from last.fm API data
-    self.buildVenues = ko.computed(function() {
-        var events = self.lastFmEvents();
+    // TODO: put this into a helper function to call for both lastFmVenues & filteredVenues
+    function buildVenueList(events, setVenueIndex) {
         var venues = [];
         for (var i = 0; i < events.length; i++) {
             var venueIndex = self.newVenue(events[i].venue.id, venues)
@@ -367,19 +372,36 @@ var ViewModel =  function () {
                 venue.concerts = [];
                 venue.concerts.push(events[i]);
                 venues.push(venue);
-                events[i].venueIndex = venues.indexOf(venue);
+                if (setVenueIndex) {
+                    events[i].venueIndex = venues.indexOf(venue);
+                }
+
             } else {
                 //console.log('not new');
                 //events[i].venueIndex = i;
                 events[i].venueIndex = venueIndex;
+                //if (setVenueIndex) {
                 venues[venueIndex].concerts.push(events[i]);
+                //}
+
             }
 
         }
+        return venues;
+    }
+    // Build venue array from last.fm API data
+    self.buildAllVenues = ko.computed(function() {
+        var events = self.lastFmEvents();
+        var venues = buildVenueList(events, true);
         //console.log(venues);
         self.lastFmVenues(venues);
     });
 
+    self.buildFilteredVenues = ko.computed(function() {
+        var events = filteredEvents();
+        var venues = buildVenueList(events, false);
+        self.filteredVenues(venues);
+    })
     // Create google map markers from lastFmVenues
     self.mapMarkers = ko.computed(function() {
         var markers = [];
@@ -396,7 +418,7 @@ var ViewModel =  function () {
             var marker = new google.maps.Marker({
                 position: latLng,
                 title: venues[i].name,
-                content: infoWindowView(venues[i]),
+                content: infoWindowView(),
                 icon: 'images/red.png',
                 map: map,
                 venueIndex: i
@@ -405,6 +427,7 @@ var ViewModel =  function () {
             google.maps.event.addListener(marker, 'mouseup', function() {
                 //console.log(this.venueIndex);
                 infoWindow.setContent(this.content);
+                console.log(this);
                 self.currentVenue(self.lastFmVenues()[this.venueIndex]);
                 infoWindow.open(map, this);
                 // TODO: fine tune centering location with mobile side menu
@@ -440,7 +463,7 @@ var ViewModel =  function () {
     self.searchLastFmEvents = ko.computed(function() {
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
-            var eventhResults = [];
+            var eventResults = [];
             var venueResults = [];
             for (var i = 0; i < self.lastFmEvents().length; i++) {
                 var currentEvent = self.lastFmEvents()[i];
