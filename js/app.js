@@ -440,8 +440,7 @@ var ViewModel =  function () {
     self.searchLastFmEvents = ko.computed(function() {
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
-            var eventhResults = [];
-            var venueResults = [];
+            var eventResults = [];
             for (var i = 0; i < self.lastFmEvents().length; i++) {
                 var currentEvent = self.lastFmEvents()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
