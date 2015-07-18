@@ -1,4 +1,39 @@
-/* ALL SCREEN SIZES */
+/* Global / All Screen Sizes */
+
+/* Google Map */
+#map-canvas {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+
+/* TODO: make a class for this? */
+li {
+    cursor: pointer;
+    padding-left: 15px;
+    margin-top: -16px;
+}
+
+li:hover {
+    background-color: rgba(162, 222, 208, .3);
+}
+
+
+/* TODO: style infoWindows and put/organize these into proper section of this CSS file */
+.concertWindow {
+
+}
+
+.infoConcertTitle {
+    font-weight: bold;
+}
+
+.infoConcertDate {
+
+}
 
 /* Hamburger menu button */
 #menu-toggle {
@@ -7,6 +42,14 @@
     display: block;
 }
 
+svg {
+    width: 42px;
+    fill: black;
+}
+
+.svg-button {
+    width: 42px;
+}
 
 /* event/location search, lists, & button toggle */
 .mobile-menu {
@@ -41,7 +84,7 @@
 }
 
 
-/* List */
+/* Event/Venue List */
 .mobile-menu ul {
     list-style: none;
     overflow: auto;
@@ -76,6 +119,13 @@
     display: block;
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
+}
+
+#close-button {
+    display: block;
+    width: 42px;
+    right: 0;
+    position: absolute;
 }
 
 .event-info ul {
