@@ -51,7 +51,7 @@
         <div id="location-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
             <input class="search-box" data-bind="value: currentAddress">
         </div>
-        <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
+        <div id="extra-info" data-bind="css: { 'open': showExtraInfo() }">
 
             <a id="close-button" data-bind="click: function() { showEventInfo(false); showVenueInfo(false); showArtistInfo(false); }">
                 <img class="svg-button" src="images/close.svg" alt="CLOSE">

@@ -1,52 +1,33 @@
-.extra-info {
-    position: absolute;
-    top: 10px;
-    left: 85px;
-    background-color: white;
-    color: black;
-    display: block;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    width: 350px;
-    height: 500px;
-    overflow: auto;
-    word-wrap: break-word;
-    -webkit-transform: translate(0, -605px);
-    transform: translate(0, -605px);
-    transition: transform 0.3s ease;
-    z-index: 100;
-}
+/* ALL SCREEN SIZES */
 
-.extra-info.open {
-    display: block;
-    -webkit-transform: translate(0, 0);
-    transform: translate(0, 0);
-}
-
+/* Hamburger menu button */
 #menu-toggle {
     position: absolute;
     z-index: 100;
     display: block;
 }
 
-.mobile-menu ul {
-    list-style: none;
-    overflow: auto;
-    height: 100%;
-    /* TODO: change to longform margin: 0,0,15,15 but check syntax */
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
+
+/* event/location search, lists, & button toggle */
+.mobile-menu {
+    z-index: 100;
+    bottom: 15px;
+    position: absolute;
+    color: black;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
-.event-info ul {
-    margin: 5px;
-}
 
+/* Event and location search */
 .search-box {
     margin-top: 10px;
     margin-right: auto;
     margin-left: auto;
     display: block;
+    width: calc(100% - 10px);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 0;
 }
 
 #event-search {
@@ -59,20 +40,50 @@
     height: 31px;
 }
 
-.mobile-menu {
-    z-index: 100;
-    bottom: 15px;
-    position: absolute;
-    color: black;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+
+/* List */
+.mobile-menu ul {
+    list-style: none;
+    overflow: auto;
+    height: 100%;
+    /* TODO: change to longform margin: 0,0,15,15 but check syntax */
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
 }
 
-.search-box {
-    width: calc(100% - 10px);
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding: 0;
+
+/* Extra -info display */
+#extra-info {
+    position: absolute;
+    top: 10px;
+    left: 85px;
+    background-color: white;
+    color: black;
+    display: block;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    width: 350px;
+    height: 500px;
+    overflow: auto;
+    word-wrap: break-word;
+    -webkit-transform: translate(0, -515px);
+    transform: translate(0, -515px);
+    transition: transform 0.3s ease;
+    z-index: 100;
 }
+
+#extra-info.open {
+    display: block;
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+
+.event-info ul {
+    margin: 5px;
+}
+
+
+/* Toggle Buttons (list and extra-info) */
 
 button {
     height: 40px;
@@ -92,21 +103,19 @@ button {
     width: 100%;
 }
 
+
+/* SMALL SCREENS */
 @media screen and (max-width: 514px) {
-    .extra-info {
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-    }
+    /* Hamburger menu button */
     #menu-toggle {
-        display: block;
         top: 40px;
         left: 5px;
     }
-    .list  ul {
-        height: 100%;
-        font-size: large;
+
+    /* event/location search, lists, & button toggle */
+    .mobile-menu.open {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
     }
 
     .mobile-menu {
@@ -119,6 +128,8 @@ button {
         transition: transform 0.3s ease;
     }
 
+
+    /* Event and location search */
     .search-box {
         font-size: larger;
         text-align: center;
@@ -130,11 +141,16 @@ button {
         height: 40px;
     }
 
-    #list-toggle {
-        top: 40px;
-        height: 80px;
-        display: flex;
-        flex-wrap: wrap;
+    #location-search {
+        bottom: 0;
+        height: 40px;
+    }
+
+
+    /* List */
+    .list  ul {
+        height: 100%;
+        font-size: large;
     }
 
     .list {
@@ -142,37 +158,76 @@ button {
         height: calc(100% - 160px);
     }
 
-    #location-search {
-        bottom: 0;
-        height: 40px;
+
+    /* Extra -info display */
+    #extra-info {
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        -webkit-transform: translate(0, calc(-100% - 5px));
+        transform: translate(0, calc(-100% - 5px));
     }
 
-    .mobile-menu.open {
-        -webkit-transform: translate(0, 0);
-        transform: translate(0, 0);
+
+    /* Toggle Buttons (list and extra-info) */
+    #list-toggle {
+        top: 40px;
+        height: 80px;
+        display: flex;
+        flex-wrap: wrap;
     }
 }
 
+/* MEDIUM SCREENS */
+
 @media screen and (min-width: 515px) {
-    .mobile-menu {
-        background-color: rgba(255,255,255,0.6);
+    /* Hamburger menu button */
+    /* TODO: rename this class in html and here to conform to style guidelines (i.e. "big-open") */
+    .bigOpen {
+        display: block;
     }
+
     #menu-toggle {
         right: 110px;
         top: -2px;
     }
+
+
+    /* event/location search, lists, & button toggle */
+    /* Display: none; ??? do i still need this? */
     .mobile-menu {
+        background-color: rgba(255,255,255,0.6);
         display: none;
     }
+
     .close {
         display: none;
     }
-    .mobile-menu.open {
-        /*display: none; */
+
+
+    /* Event and location search */
+    #event-search {
+        top: 10px;
+        right: 170px;
+        /*width: 300px;
+        max-width: 260px;*/
+        min-width: 300px;
     }
-    .bigOpen {
-        display: block;
+
+    #location-search {
+        bottom: 50px;
+        left: 50px;
+        width: 250px;
     }
+
+    #location-search input {
+        width: 230px;
+
+    }
+
+
+    /* List */
     .list {
         width: calc(100% / 3);
         max-width: 260px;
@@ -181,6 +236,9 @@ button {
         right: 15px;
     }
 
+
+    /* Extra -info display */
+    /* Toggle Buttons (list and extra-info) */
     #list-toggle {
         top: 40px;
         right: 15px;
@@ -191,22 +249,12 @@ button {
         display: flex;
         flex-wrap: wrap;
     }
-
-    #event-search {
-        top: 10px;
-        right: 170px;
-        /*width: 300px;
-        max-width: 260px;*/
-        min-width: 300px;
-    }
-    #location-search {
-        bottom: 50px;
-        left: 50px;
-        width: 250px;
-    }
-    #location-search input {
-        width: 230px;
-
-    }
 }
-/* @media screen and (min-width: BIG SIZE) ???? or is this the same as medium?
+
+/* LARGE SCREENS */
+    /* Hamburger menu button */
+    /* event/location search, lists, & button toggle */
+    /* Event and location search */
+    /* List */
+    /* Extra -info display */
+    /* Toggle Buttons (list and extra-info) */
