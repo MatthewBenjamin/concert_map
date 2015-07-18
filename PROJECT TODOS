@@ -8,7 +8,7 @@ Need to refactor CSS and app.js
 ---Functionality Stuff ---
     -handle api (and other errors?) gracefully (timeout is way too long atm)
 
-
+    -store 4square and youtube API data to lastFm object for caching purposes
 ---View/Design Stuff---
     -fix panning/centering on to map marker
     -parse event time in parse LastFm data function & display as desired, time is displayed in:
