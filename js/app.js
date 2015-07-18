@@ -214,7 +214,7 @@ var ViewModel =  function () {
 
     // clean up some lastFm that would otherwise cause problems
     function parseLastFmEvents(data) {
-        console.log(data);
+        //console.log(data);
         var emptyArray = []
         for (var i = 0; i < data.length; i++) {
             if (typeof data[i].artists.artist === 'string') {
@@ -231,6 +231,12 @@ var ViewModel =  function () {
                 emptyArray.push(data[i].tags.tag);
                 data[i].tags.tag = emptyArray;
                 emptyArray = [];
+            }
+            data[i].timeInfo = {
+                day: data[i].startDate.substring(0,3),
+                date: data[i].startDate.substring(5,11),
+                year: data[i].startDate.substring(12,16),
+                time: data[i].startDate.substring(17,22)
             }
         }
     };
@@ -430,6 +436,7 @@ var ViewModel =  function () {
             }
         }
     };
+    // TODO: tags now always exist, so this might not be needed
     // Check if last.fm data has 'tags' field. If so, search them
     function searchTags(currentEvent, searchTerm) {
         if (currentEvent.tags) {
