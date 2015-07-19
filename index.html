@@ -3,8 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <link href="css/main.css" rel="stylesheet" type="text/css"></link>
-        <link href="css/responsive.css" rel="stylesheet" type="text/css"></link>
+        <link href="css/style.css" rel="stylesheet" type="text/css"></link>
         <title>Concert Map</title>
 
         <script type='text/javascript' src="http://maps.google.com/maps/api/js?sensor=false&.js"></script>
@@ -20,15 +19,15 @@
           </svg>
         </a>
         <!-- TODO remane mobileOpen to conform with naming conventions (but knockout doesn't like dashes) -->
-        <div id="event-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
+        <div id="event-search" class="mobile-menu" data-bind="css: { open: displayMobile(), 'big-open': displayBigMenu() }">
             <input class="search-box" data-bind="textInput: searchInput" placeholder="search concerts">
         </div>
-        <div id="list-toggle" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
+        <div id="list-toggle" class="mobile-menu" data-bind="css: { open: displayMobile(), 'big-open': displayBigMenu() }">
             <button class="list-button" data-bind="css: { pressed: listEvents() }, click: function () { eventButton(); }">EVENTS</button>
             <button class="list-button" data-bind="css: { pressed: listVenues() }, click: function () { venueButton(); }">VENUES</button>
             <button id="info-button" data-bind="css: { pressed: extraInfoBoolean() }, click: toggleExtraInfo">SHOW INFO POP-UP</button>
         </div>
-        <div id="event-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }, visible: listEvents()">
+        <div id="event-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), 'big-open': displayBigMenu() }, visible: listEvents()">
             <span class="no-results" data-bind="visible: !filteredEvents().length">no results</span>
             <ul data-bind="foreach: filteredEvents, click: function(){ closeMobile() }">
                 <li data-bind="click: selectEvent">
@@ -39,7 +38,7 @@
                 </li>
             </ul>
         </div>
-        <div id="venue-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }, visible: listVenues()">
+        <div id="venue-list" class="mobile-menu list" data-bind="css: { open: displayMobile(), 'big-open': displayBigMenu() }, visible: listVenues()">
             <ul data-bind="foreach: lastFmVenues, click: function() { closeMobile() }">
                 <li data-bind="click: selectVenue">
                     <hr>
@@ -48,7 +47,7 @@
                 </li>
             </ul>
         </div>
-        <div id="location-search" class="mobile-menu" data-bind="css: { open: displayMobile(), bigOpen: displayBigMenu() }">
+        <div id="location-search" class="mobile-menu" data-bind="css: { open: displayMobile(), 'big-open': displayBigMenu() }">
             <input class="search-box" data-bind="value: currentAddress">
         </div>
         <div id="extra-info" data-bind="css: { 'open': showExtraInfo() }">
