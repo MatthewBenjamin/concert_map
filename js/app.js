@@ -18,72 +18,21 @@ ko.bindingHandlers.googlemap = {
         map.setCenter( { lat: latitude, lng: longitude } );
     }
 };
+
+// Grab HTML for infoWindow
 var infoWindowView = function(venueObject){
     var html = $('#info-window')[0];
-    //console.log(html);
     return html;
-    /*
-    // TODO: instead of creating strings, create nodes/HTML objects with JS/jQuery?
-    //ko.mapping.toJS(venueObject);
-    var $container = $('<div class="infoVenueWindow"></div>');
-    //console.log($container);
-    //var $venueName = $('<a href=' + venueObject.website + '>' + venueObject.name + '</a>').appendTo($container);
-    var $venueName = $('<a data-bind="click: function() { console.log(\'hi\'); }">' + venueObject.name + '</a>').appendTo($container);
-    //console.log($venueName);
-    //$venueName.appendTo($container);
-    //console.log(container);
-    //var venueName = '<p data-bind="click: function(){ console.log(\'hi\'); }">test</p>';
-
-    //data bind doesn't work here
-    //var venueName = '<p data-bind="text: venueObject.name, click: showVenueInfo(true)"></p>';
-
-    // include this in venue more info window?
-    //var venueAddress = venueObject.location.street;
-    //var htmlContent = venueName;
-
-    var concerts = venueObject.concerts;
-
-    for (var i = 0; i < concerts.length; i++) {
-        var $concertContainer = $('<div class="concertWindow"></div>').appendTo($container);
-        var concertTitle = '<p class="infoConcertTitle">#title#</p>';
-        var concertDate = '<p class="infoConcertDate">#date#</p>';
-        var $title = $(concertTitle.replace('#title#', concerts[i].title)).appendTo($concertContainer);
-        var $date = $(concertDate.replace('#date#', concerts[i].startDate.substring(0, 11))).appendTo($concertContainer);
-        //var titleDate = title + date;
-        //var concertInfo = concertContainer.replace('#data#', titleDate);
-        //htmlContent = htmlContent + concertInfo;
-        //console.log($concertContainer);
-    }
-    //console.log($(htmlContent)[0]);
-    //var test = $(htmlContent);
-    //var testParse = $.parseHTML(htmlContent);
-    //var same = test == testParse;
-    //console.log(test);
-    //$container.append(htmlContent);
-    //console.log($container);
-    //return htmlContent;
-    //console.log($container);
-    return $container[0];
-    */
 };
 
 var ViewModel =  function () {
+    /* TODO: re-org codebase:
+        1) variables/observables
+        2) functions
+        *** both according to functionality
+    */
     var self = this;
-
-    // map location
-    var defaultLocation = 'Austin, TX';
-    self.currentAddress = ko.observable(defaultLocation);
-    self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
-
-    // toggle drawer menu
-    self.displayMobile = ko.observable(false);
-    self.closeMobile = function() {
-        self.displayMobile(false);
-    };
-    self.openMobile = function() {
-        self.displayMobile(true);
-    };
-
+    // TODO: change to one class (toggle) for all screen sizes?
     // toggle large screen menu
     self.displayBigMenu = ko.observable(true);
     self.toggleBigMenu = function() {
@@ -94,21 +43,53 @@ var ViewModel =  function () {
         }
     };
 
+    /*** VARIABLES/OBSERVABLES ***/
+
+    /* Data observables */
+
+    // map location
+    var defaultLocation = 'Austin, TX';
+    self.currentAddress = ko.observable(defaultLocation);
+    self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
+
     // Last.fm event API results
     self.lastFmEvents = ko.observableArray();
     // List of venue objects with associated concerts
     self.lastFmVenues = ko.observableArray();
 
     // search last fm data
-    self.filteredEvents = ko.observableArray();
-    self.filteredVenues = ko.observableArray();
     self.searchInput = ko.observable();
+    self.filteredEvents = ko.observableArray();
+    //self.filteredVenues = ko.observableArray();
 
     // display detailed info for an event, venue, or artist
     self.currentEvent = ko.observable();
     self.currentVenue = ko.observable();
-    self.currentVenueFourSquare = ko.observableArray();
+    self.currentVenueFourSquare = ko.observable();
     self.currentArtist = ko.observable();
+    // last.fm artist data
+    self.currentArtistInfo = ko.observable();
+    self.currentArtistYoutube = ko.observableArray();
+
+    /* UI observables */
+
+    // toggle extra-info display
+    self.extraInfoBoolean = ko.observable(true);
+    // control what is shown in extra-info display
+    self.showEventInfo = ko.observable(false);
+    self.showVenueInfo = ko.observable(false);
+    self.showArtistInfo = ko.observable(false);
+
+    // toggle menu
+    self.displayMobile = ko.observable(false);
+    // toggle list display between events and venues
+    self.listEvents = ko.observable(true);
+    self.listVenues = ko.observable(false);
+
+
+    /*** COMPUTED OBSERVABLES ***/
+
+    // remove spaces from artist name
     self.currentArtistSearch = ko.computed(function() {
         var artist;
         if (self.currentArtist()) {
@@ -116,24 +97,8 @@ var ViewModel =  function () {
         }
         return artist;
     });
-    self.currentArtistInfo = ko.observable();
-    self.currentArtistVideos = ko.observableArray();
 
-    self.extraInfoBoolean = ko.observable(true);
-    self.showEventInfo = ko.observable(false);
-    self.showVenueInfo = ko.observable(false);
-    self.showArtistInfo = ko.observable(false);
-    self.toggleExtraInfo = function() {
-        if (self.extraInfoBoolean()) {
-            self.extraInfoBoolean(false);
-        } else {
-            self.showEventInfo(false);
-            self.showVenueInfo(false);
-            self.showArtistInfo(false);
-            self.extraInfoBoolean(true);
-        }
-        //console.log(self.extraInfoBoolean());
-    }
+    // toggle extra-info display
     self.showExtraInfo = ko.computed(function() {
         if ( (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo())
             && self.extraInfoBoolean() ) {
@@ -143,212 +108,6 @@ var ViewModel =  function () {
         }
     });
 
-    self.listEvents = ko.observable(true);
-    self.listVenues = ko.observable(false);
-
-    self.eventButton = function() {
-        self.listEvents(true);
-        self.listVenues(false);
-    }
-
-    self.venueButton = function() {
-        self.listEvents(false);
-        self.listVenues(true);
-    }
-
-    self.selectEvent = function(lastFmEvent) {
-        self.selectMarker(lastFmEvent.venueIndex);
-        self.currentEvent(ko.mapping.fromJS(lastFmEvent));
-        self.showEventInfo(true)
-        self.showVenueInfo(false);
-        self.showArtistInfo(false);
-    };
-
-    self.selectVenue = function(venue) {
-        // TODO: will var venue be used? or will venue always come from currentEvent?
-        var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
-        self.selectMarker(lastFmVenues.indexOf(venue));
-        self.currentVenue(venue);
-        self.showVenueInfo(true);
-        self.showEventInfo(false);
-        self.showArtistInfo(false);
-    };
-
-    self.selectArtist = function(artist) {
-        self.currentArtist(artist);
-        self.showArtistInfo(true);
-        self.showEventInfo(false);
-        self.showVenueInfo(false);
-    };
-
-    // Activates a map marker's click event when an event for that venue is clicked in the list view
-    self.selectMarker = function(venueIndex) {
-        //self.selectEvent(lastFmEvent);
-        //var eventIndex = lastFmEvent.venueIndex;
-        //self.currentVenue(self.lastFmVenues()[eventIndex]);
-        google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
-    };
-
-    // Update mapCenter with new latLng when currentAddress changes
-    var geocoder = new google.maps.Geocoder();
-    self.getMapGeocode = ko.computed(function() {
-        geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                    var latitude = results[0]['geometry']['location']['A'];
-                    var longitude = results[0]['geometry']['location']['F'];
-                    var mapCenter = {
-                        latitude: latitude,
-                        longitude: longitude
-                    };
-                    if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
-                        self.mapCenter(mapCenter);
-                    } else {
-                        // TODO: remove this else state (or just the console.log?)
-                        console.log('init');
-                    }
-            } else {
-                alert('Geocoder error because: ' + status);
-            }
-        })
-    });
-
-    // clean up some lastFm that would otherwise cause problems
-    function parseLastFmEvents(data) {
-        //console.log(data);
-        var emptyArray = []
-        for (var i = 0; i < data.length; i++) {
-            if (typeof data[i].artists.artist === 'string') {
-                emptyArray.push(data[i].artists.artist);
-                data[i].artists.artist = emptyArray;
-                emptyArray = [];
-            }
-            if (!data[i].tags) {
-                data[i].tags = {
-                    tag: []
-                };
-            }
-            if (typeof data[i].tags.tag === 'string') {
-                emptyArray.push(data[i].tags.tag);
-                data[i].tags.tag = emptyArray;
-                emptyArray = [];
-            }
-            data[i].timeInfo = {
-                day: data[i].startDate.substring(0,3),
-                date: data[i].startDate.substring(5,11),
-                year: data[i].startDate.substring(12,16),
-                time: data[i].startDate.substring(17,22)
-            }
-        }
-    };
-
-    // Get info from Last.fm API when mapCenter updates
-    // TODO: add error handling in case of no results and/or failure
-    self.getLastFmEvents = ko.computed(function() {
-        if (self.mapCenter().latitude && self.mapCenter().longitude) {
-            var latitude = self.mapCenter().latitude;
-            var longitude = self.mapCenter().longitude;
-            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
-                'lat=' + latitude + '&' +
-                'long=' + longitude + '&' +
-                'limit=20&' +               // TODO: fine tune OR make editable or self correcting
-                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json'
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    self.mapMarkers().forEach(function (marker) {
-                        marker.setMap(null);
-                    });
-                    parseLastFmEvents(data.events.event);
-                    self.lastFmEvents(data.events.event);
-                },
-                error: function() {
-                    // TODO: display user friendlier message (in list view?)
-                    alert('lastfm error', status);
-                }
-            };
-            $.ajax(requestURL,requestSettings)
-        }
-    });
-
-
-    self.getArtistInfo = ko.computed(function() {
-        if (self.currentArtistSearch()) {
-            //var artist = self.currentArtist().replace(/\s+/g, '+');
-            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
-                'artist=' + self.currentArtistSearch() + '&' +
-                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json'
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    console.log(data);
-                    self.currentArtistInfo(ko.mapping.fromJS(data.artist));
-                },
-                error: function() {
-                    alert('ERROR', data, status, jqXHR);
-                }
-            };
-            $.ajax(requestURL, requestSettings);
-        }
-    });
-
-    self.getArtistVideos = ko.computed(function() {
-        if (self.currentArtistSearch()) {
-            var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
-                'q=' + self.currentArtistSearch() +
-                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI'
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    console.log(data.items);
-                    self.currentArtistVideos(data.items);
-                },
-                error: function() {
-                    alert('ERROR', data, status, jqXHR);
-                }
-            };
-            $.ajax(requestURL, requestSettings);
-        }
-    });
-
-    function getFourSquareById(id) {
-        var requestURL = 'https://api.foursquare.com/v2/venues/' +
-        id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
-        var requestSettings = {
-            success: function(data, status, jqXHR) {
-                //console.log(data);
-            }
-        }
-        $.ajax(requestURL, requestSettings);
-    }
-
-    self.findFourSquareVenue = ko.computed(function() {
-        if (self.currentVenue()) {
-            var lat = self.currentVenue().location['geo:point']['geo:lat'];
-            var lon = self.currentVenue().location['geo:point']['geo:long'];
-            //console.log(typeof lat,lon);
-            var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
-                'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
-                'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
-                'v=20130815&' +
-                'll=' + lat + ',' + lon + '&' +
-                'query=' + self.currentVenue().name + '&' +
-                'intent=match'
-            if (self.currentVenue().website) {
-                requestURL = requestURL + '&url=' + self.currentVenue().website;
-            }
-            //console.log(requestURL);
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                     if (data.response.venues.length > 0) {
-                        getFourSquareById(data.response.venues[0].id);
-                     }
-                },
-                error: function() {
-                    alert('FOUR SQUARE API ERROR', data, status, jqXHR);
-                }
-            };
-            $.ajax(requestURL, requestSettings);
-        }
-    });
     // check if venue is already in self.lastFmVenues
     self.newVenue = function(venueId, venues) {
         for (var i = 0; i < venues.length; i++) {
@@ -361,7 +120,7 @@ var ViewModel =  function () {
         return -1;
     }
 
-    // Build venue array from last.fm API data
+    // Build venues array from last.fm data
     self.buildVenues = ko.computed(function() {
         var events = self.lastFmEvents();
         var venues = [];
@@ -424,7 +183,8 @@ var ViewModel =  function () {
         return markers;
     });
 
-    /*** SEARCH FUNCTIONS ***/
+    // Search Functions
+
     function doesStringContain(targetString, searchTerm) {
         targetString = targetString.toLowerCase();
         return targetString.indexOf(searchTerm) > -1;
@@ -436,13 +196,7 @@ var ViewModel =  function () {
             }
         }
     };
-    // TODO: tags now always exist, so this might not be needed
-    // Check if last.fm data has 'tags' field. If so, search them
-    function searchTags(currentEvent, searchTerm) {
-        if (currentEvent.tags) {
-            return doesListContain(currentEvent.tags.tag, searchTerm)
-        }
-    };
+
     // Search last.fm data
     self.searchLastFmEvents = ko.computed(function() {
         if (self.searchInput()) {
@@ -455,7 +209,7 @@ var ViewModel =  function () {
                     doesStringContain(currentEvent.title, searchTerm) ||
                     doesStringContain(currentEvent.description, searchTerm) ||
                     doesListContain(currentEvent.artists.artist, searchTerm) ||
-                    searchTags(currentEvent, searchTerm)) {
+                    doesListContain(currentEvent.tags.tag, searchTerm)) {
                         eventResults.push(currentEvent);
                 }
             }
@@ -488,6 +242,248 @@ var ViewModel =  function () {
         }
 
     });
+
+    /*** UI FUNCTIONS ***/
+
+    // TODO: change to close/openMenu
+    self.closeMobile = function() {
+        self.displayMobile(false);
+    };
+    self.openMobile = function() {
+        self.displayMobile(true);
+    };
+
+    self.toggleExtraInfo = function() {
+        if (self.extraInfoBoolean()) {
+            self.extraInfoBoolean(false);
+        } else {
+            self.showEventInfo(false);
+            self.showVenueInfo(false);
+            self.showArtistInfo(false);
+            self.extraInfoBoolean(true);
+        }
+        //console.log(self.extraInfoBoolean());
+    };
+
+    self.eventButton = function() {
+        self.listEvents(true);
+        self.listVenues(false);
+    }
+
+    self.venueButton = function() {
+        self.listEvents(false);
+        self.listVenues(true);
+    }
+
+    self.selectEvent = function(lastFmEvent) {
+        self.selectMarker(lastFmEvent.venueIndex);
+        self.currentEvent(ko.mapping.fromJS(lastFmEvent));
+        self.showEventInfo(true)
+        self.showVenueInfo(false);
+        self.showArtistInfo(false);
+    };
+
+    self.selectVenue = function(venue) {
+        // TODO: will var venue be used? or will venue always come from currentEvent?
+        var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
+        self.selectMarker(lastFmVenues.indexOf(venue));
+        self.currentVenue(venue);
+        self.showVenueInfo(true);
+        self.showEventInfo(false);
+        self.showArtistInfo(false);
+    };
+
+    self.selectArtist = function(artist) {
+        self.currentArtist(artist);
+        self.showArtistInfo(true);
+        self.showEventInfo(false);
+        self.showVenueInfo(false);
+    };
+
+    // Activates a map marker's click event when an event for that venue is clicked in the list view
+    self.selectMarker = function(venueIndex) {
+        //self.selectEvent(lastFmEvent);
+        //var eventIndex = lastFmEvent.venueIndex;
+        //self.currentVenue(self.lastFmVenues()[eventIndex]);
+        google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
+    };
+
+
+    /*** API CALLS ***/
+
+    /* Google Map */
+
+    // Update mapCenter with new latLng when currentAddress changes
+    var geocoder = new google.maps.Geocoder();
+    self.getMapGeocode = ko.computed(function() {
+        geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                    var latitude = results[0]['geometry']['location']['A'];
+                    var longitude = results[0]['geometry']['location']['F'];
+                    var mapCenter = {
+                        latitude: latitude,
+                        longitude: longitude
+                    };
+                    if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
+                        self.mapCenter(mapCenter);
+                    } else {
+                        // TODO: remove this else state (or just the console.log?)
+                        console.log('init');
+                    }
+            } else {
+                alert('Geocoder error because: ' + status);
+            }
+        })
+    });
+
+    /* Last.fm */
+
+    // clean up lastFm data
+    function parseLastFmEvents(data) {
+        //console.log(data);
+        var emptyArray = []
+        for (var i = 0; i < data.length; i++) {
+            if (typeof data[i].artists.artist === 'string') {
+                emptyArray.push(data[i].artists.artist);
+                data[i].artists.artist = emptyArray;
+                emptyArray = [];
+            }
+            // TODO: add for loop to store additional artist info (name here, later youtube/last.fm) as object in artist array
+            if (!data[i].tags) {
+                data[i].tags = {
+                    tag: []
+                };
+            }
+            if (typeof data[i].tags.tag === 'string') {
+                emptyArray.push(data[i].tags.tag);
+                data[i].tags.tag = emptyArray;
+                emptyArray = [];
+            }
+            data[i].timeInfo = {
+                day: data[i].startDate.substring(0,3),
+                date: data[i].startDate.substring(5,11),
+                year: data[i].startDate.substring(12,16),
+                time: data[i].startDate.substring(17,22)
+            }
+        }
+    };
+
+    // Get Last.fm data when mapCenter updates
+    // TODO: add error handling in case of no results and/or failure
+    self.getLastFmEvents = ko.computed(function() {
+        if (self.mapCenter().latitude && self.mapCenter().longitude) {
+            var latitude = self.mapCenter().latitude;
+            var longitude = self.mapCenter().longitude;
+            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
+                'lat=' + latitude + '&' +
+                'long=' + longitude + '&' +
+                'limit=20&' +               // TODO: fine tune OR make editable or self correcting
+                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
+                '&format=json'
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                    self.mapMarkers().forEach(function (marker) {
+                        marker.setMap(null);
+                    });
+                    parseLastFmEvents(data.events.event);
+                    self.lastFmEvents(data.events.event);
+                },
+                error: function() {
+                    // TODO: display user friendlier message (in list view?)
+                    alert('lastfm error', status);
+                }
+            };
+            $.ajax(requestURL,requestSettings)
+        }
+    });
+
+    // Get last.fm artist info to display in extra-info
+    self.getArtistInfo = ko.computed(function() {
+        if (self.currentArtistSearch()) {
+            //var artist = self.currentArtist().replace(/\s+/g, '+');
+            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
+                'artist=' + self.currentArtistSearch() + '&' +
+                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
+                '&format=json'
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                    console.log(data);
+                    self.currentArtistInfo(ko.mapping.fromJS(data.artist));
+                },
+                error: function() {
+                    alert('ERROR', data, status, jqXHR);
+                }
+            };
+            $.ajax(requestURL, requestSettings);
+        }
+    });
+
+    /* Youtube */
+
+    // get Youtube search results for currentArtist, display in extra-info
+    self.getArtistVideos = ko.computed(function() {
+        if (self.currentArtistSearch()) {
+            var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
+                'q=' + self.currentArtistSearch() +
+                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI'
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                    console.log(data.items);
+                    self.currentArtistYoutube(data.items);
+                },
+                error: function() {
+                    alert('ERROR', data, status, jqXHR);
+                }
+            };
+            $.ajax(requestURL, requestSettings);
+        }
+    });
+
+    /* 4 Square */
+
+    // Get detailed venue info based on 4square ID
+    function getFourSquareById(id) {
+        var requestURL = 'https://api.foursquare.com/v2/venues/' +
+        id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
+        var requestSettings = {
+            success: function(data, status, jqXHR) {
+                //console.log(data);
+            }
+        }
+        $.ajax(requestURL, requestSettings);
+    }
+
+    // Lookup 4square venue ID, then get detailed info
+    self.findFourSquareVenue = ko.computed(function() {
+        if (self.currentVenue()) {
+            var lat = self.currentVenue().location['geo:point']['geo:lat'];
+            var lon = self.currentVenue().location['geo:point']['geo:long'];
+            //console.log(typeof lat,lon);
+            var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
+                'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
+                'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
+                'v=20130815&' +
+                'll=' + lat + ',' + lon + '&' +
+                'query=' + self.currentVenue().name + '&' +
+                'intent=match'
+            if (self.currentVenue().website) {
+                requestURL = requestURL + '&url=' + self.currentVenue().website;
+            }
+            //console.log(requestURL);
+            var requestSettings = {
+                success: function(data, status, jqXHR) {
+                     if (data.response.venues.length > 0) {
+                        getFourSquareById(data.response.venues[0].id);
+                     }
+                },
+                error: function() {
+                    alert('FOUR SQUARE API ERROR', status);
+                }
+            };
+            $.ajax(requestURL, requestSettings);
+        }
+    });
+
 };
 
 ko.applyBindings(ViewModel);
