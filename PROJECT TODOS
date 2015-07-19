@@ -1,14 +1,16 @@
 *** TODOs ***
 
 
-***DO INFO WINDOWS ALWAYS WORK CORRECTLY?***
+***DOES DATA-BINDING IN INFO WINDOWS ALWAYS WORK CORRECTLY?***
 
-Need to refactor CSS and app.js
+Refactor app.js
+
+check how currentEvent/Venue/Artist is called
 
 ---Functionality Stuff ---
     -handle api (and other errors?) gracefully (timeout is way too long atm)
 
-    -store 4square and youtube API data to lastFm object for caching purposes
+
 ---View/Design Stuff---
     -fix panning/centering on to map marker
     -parse event time in parse LastFm data function & display as desired, time is displayed in:
@@ -19,6 +21,7 @@ Need to refactor CSS and app.js
                 -handle if data is empty
                 -close 'X' button sometimes lies on top of titles
                 -have close button and title not move when scrolling (put in a header div)
+    -click on tag to search in extra-info closes extra-info and opens list view
 
 ---Code Quality Stuff---
 
@@ -29,6 +32,7 @@ Need to refactor CSS and app.js
 
 Extra/Nice to have stuff:
 ********************
+-store last.fm artist, youtube API and 4square data to lastFm object for caching purposes
 -event refresh button or auto-refresh when map moves a certain distance?
 -auto set map bounds based on markers?
 -more info(in markers and list view): open info window style pop up(but not actually an info window)
@@ -44,3 +48,4 @@ Extra/Nice to have stuff:
         list views
 -instead of limiting results from last.fm, base request on map bounds (within reason?)
 -search autocomplete (display possible matches underneath (would need an additional function))
+-add intro how-to app tour
