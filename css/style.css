@@ -10,7 +10,7 @@
 }
 
 
-/* TODO: make a class for this? */
+/* TODO: make a class for this? where to put/organize this? */
 li {
     cursor: pointer;
     padding-left: 15px;
@@ -54,10 +54,22 @@ svg {
 /* event/location search, lists, & button toggle */
 .mobile-menu {
     z-index: 100;
-    bottom: 15px;
     position: absolute;
     color: black;
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+
+/* TODO: make a class for ULs with this styling? */
+/* Event/Venue List */
+.mobile-menu ul {
+    list-style: none;
+    overflow: auto;
+    height: 100%;
+    /* TODO: change to longform margin: 0,0,15,15 but check syntax */
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 
@@ -73,6 +85,7 @@ svg {
     padding: 0;
 }
 
+/* TODO: does height belong here or in diff media query? (for event and location search) */
 #event-search {
     position: absolute;
     height: 31px;
@@ -84,39 +97,20 @@ svg {
 }
 
 
-/* Event/Venue List */
-.mobile-menu ul {
-    list-style: none;
-    overflow: auto;
-    height: 100%;
-    /* TODO: change to longform margin: 0,0,15,15 but check syntax */
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
-}
-
-
 /* Extra -info display */
 #extra-info {
     position: absolute;
-    top: 10px;
-    left: 85px;
     background-color: white;
     color: black;
     display: block;
     box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    width: 350px;
-    height: 500px;
     overflow: auto;
     word-wrap: break-word;
-    -webkit-transform: translate(0, -515px);
-    transform: translate(0, -515px);
     transition: transform 0.3s ease;
     z-index: 100;
 }
 
 #extra-info.open {
-    display: block;
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
 }
@@ -234,10 +228,6 @@ button {
 @media screen and (min-width: 515px) {
     /* Hamburger menu button */
     /* TODO: rename this class in html and here to conform to style guidelines (i.e. "big-open") */
-    .bigOpen {
-        display: block;
-    }
-
     #menu-toggle {
         right: 110px;
         top: -2px;
@@ -251,8 +241,9 @@ button {
         display: none;
     }
 
-    .close {
-        display: none;
+    /* TODO: change big-open to mobile-menu.toggle ? */
+    .big-open {
+        display: block;
     }
 
 
@@ -284,10 +275,19 @@ button {
         min-width: 200px;
         height: calc(100% - 150px);
         right: 15px;
+        bottom: 15px;
     }
 
 
     /* Extra -info display */
+    #extra-info {
+        -webkit-transform: translate(0, -515px);
+        transform: translate(0, -515px);
+        top: 10px;
+        left: 85px;
+        width: 350px;
+        height: 500px;
+    }
     /* Toggle Buttons (list and extra-info) */
     #list-toggle {
         top: 40px;
