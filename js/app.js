@@ -26,22 +26,7 @@ var infoWindowView = function(venueObject){
 };
 
 var ViewModel =  function () {
-    /* TODO: re-org codebase:
-        1) variables/observables
-        2) functions
-        *** both according to functionality
-    */
     var self = this;
-    // TODO: change to one class (toggle) for all screen sizes?
-    // toggle large screen menu
-    self.displayBigMenu = ko.observable(true);
-    self.toggleBigMenu = function() {
-        if (self.displayBigMenu()) {
-            self.displayBigMenu(false);
-        } else {
-            self.displayBigMenu(true);
-        }
-    };
 
     /*** VARIABLES/OBSERVABLES ***/
 
@@ -81,7 +66,8 @@ var ViewModel =  function () {
     self.showArtistInfo = ko.observable(false);
 
     // toggle menu
-    self.displayMobile = ko.observable(false);
+    self.displaySmallMenu = ko.observable(false);
+    self.displayLargeMenu = ko.observable(true);
     // toggle list display between events and venues
     self.listEvents = ko.observable(true);
     self.listVenues = ko.observable(false);
@@ -245,14 +231,19 @@ var ViewModel =  function () {
 
     /*** UI FUNCTIONS ***/
 
-    // TODO: change to close/openMenu
-    self.closeMobile = function() {
-        self.displayMobile(false);
+    self.closeSmallMenu = function() {
+        self.displaySmallMenu(false);
     };
-    self.openMobile = function() {
-        self.displayMobile(true);
+    self.openSmallMenu = function() {
+        self.displaySmallMenu(true);
     };
-
+    self.toggleLargeMenu = function() {
+        if (self.displayLargeMenu()) {
+            self.displayLargeMenu(false);
+        } else {
+            self.displayLargeMenu(true);
+        }
+    };
     self.toggleExtraInfo = function() {
         if (self.extraInfoBoolean()) {
             self.extraInfoBoolean(false);
@@ -265,12 +256,12 @@ var ViewModel =  function () {
         //console.log(self.extraInfoBoolean());
     };
 
-    self.eventButton = function() {
+    self.showEvents = function() {
         self.listEvents(true);
         self.listVenues(false);
     }
 
-    self.venueButton = function() {
+    self.showVenues = function() {
         self.listEvents(false);
         self.listVenues(true);
     }
@@ -284,7 +275,7 @@ var ViewModel =  function () {
     };
 
     self.selectVenue = function(venue) {
-        // TODO: will var venue be used? or will venue always come from currentEvent?
+        // can't pass venue object from currentEvent extra-info
         var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
         self.selectMarker(lastFmVenues.indexOf(venue));
         self.currentVenue(venue);
@@ -300,6 +291,11 @@ var ViewModel =  function () {
         self.showVenueInfo(false);
     };
 
+    self.closeExtraInfo = function() {
+        self.showEventInfo(false);
+        self.showVenueInfo(false);
+        self.showArtistInfo(false);
+    };
     // Activates a map marker's click event when an event for that venue is clicked in the list view
     self.selectMarker = function(venueIndex) {
         //self.selectEvent(lastFmEvent);
@@ -327,7 +323,7 @@ var ViewModel =  function () {
                     if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
                         self.mapCenter(mapCenter);
                     } else {
-                        // TODO: remove this else state (or just the console.log?)
+                        // TODO: remove this else statement (or just the console.log?)
                         console.log('init');
                     }
             } else {

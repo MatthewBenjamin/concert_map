@@ -157,7 +157,7 @@ button {
     }
 
     /* event/location search, lists, & button toggle */
-    .mobile-menu.open {
+    .mobile-menu.small {
         -webkit-transform: translate(0, 0);
         transform: translate(0, 0);
     }
@@ -235,14 +235,25 @@ button {
 
 
     /* event/location search, lists, & button toggle */
-    /* Display: none; ??? do i still need this? */
+
+    /* TODO: this still displays when shouldn't be */
+    #list-toggle {
+        top: 40px;
+        right: 15px;
+        height: 80px;
+        width: calc(100% / 3);
+        max-width: 260px;
+        min-width: 200px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
     .mobile-menu {
         background-color: rgba(255,255,255,0.6);
         display: none;
     }
 
-    /* TODO: change big-open to mobile-menu.toggle ? */
-    .big-open {
+    .mobile-menu.large {
         display: block;
     }
 
@@ -287,17 +298,6 @@ button {
         left: 85px;
         width: 350px;
         height: 500px;
-    }
-    /* Toggle Buttons (list and extra-info) */
-    #list-toggle {
-        top: 40px;
-        right: 15px;
-        height: 80px;
-        width: calc(100% / 3);
-        max-width: 260px;
-        min-width: 200px;
-        display: flex;
-        flex-wrap: wrap;
     }
 }
 
