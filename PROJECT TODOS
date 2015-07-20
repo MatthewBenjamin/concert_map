@@ -2,6 +2,8 @@
 
 
 ***DOES DATA-BINDING IN INFO WINDOWS ALWAYS WORK CORRECTLY?***
+-------->NO: nothing displays when location changes
+            currentVenue() has correct object, maybe infoWindows' html content aren't getting filled when location changes?
 
 Refactor app.js
 
