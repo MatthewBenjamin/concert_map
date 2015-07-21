@@ -1,5 +1,9 @@
 /* Global / All Screen Sizes */
 
+body {
+    font-family: Georgia, Serif;
+}
+
 /* Google Map */
 #map-canvas {
     height: 100%;
