@@ -32,7 +32,7 @@
             <ul data-bind="foreach: filteredEvents, click: function(){ closeSmallMenu() }">
                 <li data-bind="click: selectEvent">
                     <hr>
-                    <p data-bind="text: title"></p>
+                    <h4 data-bind="text: title"></h4>
                     <p data-bind="text: venue.name"></p>
                     <p data-bind="text: startDate"></p>
                 </li>
@@ -42,23 +42,24 @@
             <ul data-bind="foreach: lastFmVenues, click: function() { closeSmallMenu() }">
                 <li data-bind="click: selectVenue">
                     <hr>
-                    <p data-bind="text: name"></p>
-                    <p>Number of Events: <span data-bind="text: concerts.length"></span></p>
+                    <h4 data-bind="text: name"></h4>
+                    <p><span data-bind="text: concerts.length"></span> events</p>
                 </li>
             </ul>
         </div>
+
         <div id="location-search" class="mobile-menu" data-bind="css: { small: displaySmallMenu(), large: displayLargeMenu() }">
             <input class="search-box" data-bind="value: currentAddress">
         </div>
-        <div id="extra-info" data-bind="css: { 'open': showExtraInfo() }">
 
-            <a id="close-button" data-bind="click: function() { closeExtraInfo(); }">
-                <img class="svg-button" src="images/close.svg" alt="CLOSE">
-            </a>
+        <div id="extra-info" data-bind="css: { 'open': showExtraInfo() }">
 
             <div data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
-                    <p data-bind="text: title"></p>
+                    <a id="close-button" data-bind="click: function() { closeExtraInfo(); }">
+                        <img class="svg-button" src="images/close.svg" alt="CLOSE">
+                    </a>
+                    <h3 data-bind="text: title"></h3>
                     <p data-bind="text: startDate"></p>
                 </div>
                 <p>Artists:</p>
@@ -76,22 +77,22 @@
                         </ul>
                 </div>
                 <p>Venue: <span data-bind="text: venue.name, click: function() { selectVenue(); }"></span></p>
-                <p>Last FM Event Page: <a data-bind="attr: { href: url }, text: url"></a></p>
-                <p data-bind="if: website">Website: <a data-bind="attr: { href: website },text: website"></a></p>
+                <a data-bind="attr: { href: url }">Last FM Event Page</a>
+                <a data-bind="if: website, attr: { href: website }">Offical Site</a>
                 <p data-bind="if: description">Description: <span data-bind="html: description"></span></p>
             </div>
 
             <div data-bind="visible: showVenueInfo(), with: currentVenue">
-                <p data-bind="text: name"></p>
-                <p>Last FM URL: <a data-bind="attr: { href: url }, text: url"></a></p>
-                <p data-bind="if: website">Website: <a data-bind="attr: { href: website }, text: website"></a></p>
+                <h3 data-bind="text: name"></h3>
                 <p>Address:
                     <span data-bind="text: location.street"></span>
                     <span data-bind="text: location.city"></span>
                     <span data-bind="text: location.postalcode"></span>
                 </p>
+                <p>Last FM URL: <a data-bind="attr: { href: url }, text: url"></a></p>
+                <p data-bind="if: website">Website: <a data-bind="attr: { href: website }, text: website"></a></p>
                 <p>Phone #: <span data-bind="text: phonenumber"></span></p>
-                <p>Upcoming Events:</p>
+                <h4>Upcoming Events:</h4>
                 <ul data-bind="foreach: concerts">
                     <li>
                         <p data-bind="text: title, click: self.selectEvent"></p>
@@ -100,7 +101,7 @@
             </div>
 
             <div data-bind="visible: showArtistInfo()">
-                <p data-bind="text: currentArtist()"></p>
+                <h3 data-bind="text: currentArtist()"></h3>
                 <div data-bind="with: currentArtistInfo">
                     <p>Tags:</p>
                     <ul data-bind="foreach: tags.tag">
@@ -121,7 +122,7 @@
         </div>
 
         <div id="info-window" data-bind="with: currentVenue">
-            <h3 data-bind="text: name, click: function() { console.log('hi'); }"></h3>
+            <h3 data-bind="text: name, click: selectVenue;"></h3>
             <ul data-bind="foreach: concerts">
                 <li data-bind="click: selectEvent">
                     <hr>
