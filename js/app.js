@@ -443,7 +443,8 @@ var ViewModel =  function () {
         id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
         var requestSettings = {
             success: function(data, status, jqXHR) {
-                //console.log(data);
+                console.log(data);
+                self.currentVenueFourSquare(data.response.venue);
             }
         }
         $.ajax(requestURL, requestSettings);
@@ -468,6 +469,7 @@ var ViewModel =  function () {
             //console.log(requestURL);
             var requestSettings = {
                 success: function(data, status, jqXHR) {
+                    console.log(data);
                      if (data.response.venues.length > 0) {
                         getFourSquareById(data.response.venues[0].id);
                      }
