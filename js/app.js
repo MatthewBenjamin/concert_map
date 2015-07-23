@@ -278,7 +278,7 @@ var ViewModel =  function () {
         // can't pass venue object from currentEvent extra-info
         var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
         self.selectMarker(lastFmVenues.indexOf(venue));
-        self.currentVenue(venue);
+        //self.currentVenue(venue);
         self.showVenueInfo(true);
         self.showEventInfo(false);
         self.showArtistInfo(false);
@@ -462,11 +462,7 @@ var ViewModel =  function () {
                 'v=20130815&' +
                 'll=' + lat + ',' + lon + '&' +
                 'query=' + self.currentVenue().name + '&' +
-                'intent=match'
-            if (self.currentVenue().website) {
-                requestURL = requestURL + '&url=' + self.currentVenue().website;
-            }
-            //console.log(requestURL);
+                'intent=match';
             var requestSettings = {
                 success: function(data, status, jqXHR) {
                     console.log(data);
