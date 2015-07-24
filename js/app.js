@@ -468,6 +468,8 @@ var ViewModel =  function () {
                     console.log(data);
                      if (data.response.venues.length > 0) {
                         getFourSquareById(data.response.venues[0].id);
+                     } else {
+                        self.currentVenueFourSquare(null);
                      }
                 },
                 error: function() {
