@@ -98,14 +98,18 @@
                     </li>
                 </ul>
 
-                <!-- TODO: sometimes description is not defined -->
                 <!-- what else to put here? -->
-                <!-- only update when 4square is found, i.e. if venue has no 4square then old 4square is shown -->
                 <div data-bind="with: currentVenueFourSquare">
                     <h4>4 Square Info:</h4>
                         <a data-bind="attr: { href: canonicalUrl }">4 square page</a>
                         <p data-bind="text: $data.description"></p>
                         <p data-bind="text: rating"></p>
+                        <p>Categories</p>
+                        <ul data-bind="foreach: categories">
+                            <li>
+                                <p data-bind="text: shortName"></p>
+                            </li>
+                        </ul>
                 </div>
 
             </div>
@@ -125,7 +129,7 @@
                 <p>Youtube Search Results:</p>
                 <ul data-bind="foreach: currentArtistYoutube">
                     <li>
-                        <p data-bind="text: snippet.title"></p>
+                        <p><a data-bind="text: snippet.title, attr : { href: url }"></a></p>
                     </li>
                 </ul>
             </div>

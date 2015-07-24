@@ -425,6 +425,10 @@ var ViewModel =  function () {
             var requestSettings = {
                 success: function(data, status, jqXHR) {
                     console.log(data.items);
+                    for (var i = 0; i < data.items.length; i ++) {
+                        data.items[i].url = 'https://www.youtube.com/watch?v=' +
+                            data.items[i].id.videoId;
+                    }
                     self.currentArtistYoutube(data.items);
                 },
                 error: function() {
