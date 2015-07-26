@@ -20,8 +20,20 @@ ko.bindingHandlers.googlemap = {
 };
 
 // Grab HTML for infoWindow
-var infoWindowView = function(venueObject){
-    var html = $('#info-window')[0];
+var infoWindowView = function(){
+    //var html = $('#info-window').clone()[0];
+    //console.log(html);
+    var html = '<div id="info-window" data-bind="with: currentVenue">' +
+                    '<h3 data-bind="text: name, click: selectVenue;"></h3>' +
+                    '<ul data-bind="foreach: concerts">' +
+                        '<li data-bind="click: selectEvent">' +
+                            '<hr>' +
+                            '<h4 data-bind="text: title">blah</h4>' +
+                            '<p data-bind="text: startDate">hi</p>' +
+                        '</li>' +
+                '</div>';
+    html = $.parseHTML(html)[0];
+    console.log(html);
     return html;
 };
 
@@ -147,7 +159,7 @@ var ViewModel =  function () {
             var marker = new google.maps.Marker({
                 position: latLng,
                 title: venues[i].name,
-                content: infoWindowView(venues[i]),
+                content: infoWindowView(),
                 icon: 'images/red.png',
                 map: map,
                 venueIndex: i
@@ -162,7 +174,9 @@ var ViewModel =  function () {
                 //map.setCenter(latLng);
                 //map.panBy(300,0);
             });
+
             markers.push(marker);
+            ko.applyBindings(self, marker.content);
 
         }
         //console.log($('.infoVenueWindow'));
