@@ -16,15 +16,47 @@ body {
 
 /* TODO: make a class for this? where to put/organize this? */
 li {
-    cursor: pointer;
     padding-left: 15px;
     margin-top: -16px;
 }
 
-li:hover {
+.clickable:hover {
+    cursor: pointer;
     background-color: rgba(162, 222, 208, .3);
 }
 
+/* Map Marker Info Windows */
+.info-window {
+
+}
+
+.window-header {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.window-list {
+    padding: 0;
+    padding-top: 1px;
+    margin: 0;
+    margin-top: 10px;
+}
+
+.window-list-element {
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.window-event-name {
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+.window-event-date {
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-left:5px;
+}
 
 /* TODO: style infoWindows and put/organize these into proper section of this CSS file */
 .concertWindow {

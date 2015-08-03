@@ -15,25 +15,53 @@ ko.bindingHandlers.googlemap = {
         var value = valueAccessor();
         var latitude = value.mapCenter.latitude;
         var longitude = value.mapCenter.longitude;
+        console.log(latitude, longitude);
         map.setCenter( { lat: latitude, lng: longitude } );
     }
 };
 
 // Grab HTML for infoWindow
 var infoWindowView = function(){
+    /*
+    var venueName = '<a href=' + venueObject.website + '>' + venueObject.name + '</a>';
+
+    //data bind doesn't work here
+    //var venueName = '<p data-bind="text: venueObject.name, click: showVenueInfo(true)"></p>';
+
+    // include this in venue more info window?
+    //var venueAddress = venueObject.location.street;
+    var htmlContent = venueName;
+
+    var concertContainer = '<hr><div class="concertWindow">#data#</div>';
+    var concertTitle = '<p class="infoConcertTitle">#title#</p>';
+    var concertDate = '<p class="infoConcertDate">#date#</p>';
+
+    var concerts = venueObject.concerts;
+
+    for (var i = 0; i < concerts.length; i++) {
+        var title = concertTitle.replace('#title#', concerts[i].title);
+        var date = concertDate.replace('#date#', concerts[i].startDate.substring(0, 11));
+        var titleDate = title + date;
+        var concertInfo = concertContainer.replace('#data#', titleDate);
+        htmlContent = htmlContent + concertInfo;
+    }
+    */
     //var html = $('#info-window').clone()[0];
     //console.log(html);
-    var html = '<div id="info-window" data-bind="with: currentVenue">' +
-                    '<h3 data-bind="text: name, click: selectVenue;"></h3>' +
-                    '<ul data-bind="foreach: concerts">' +
-                        '<li data-bind="click: selectEvent">' +
+    var html = '<div class="info-window" data-bind="with: currentVenue">' +
+                    '<h2 class="window-header clickable" data-bind="text: name, click: selectVenue;"></h2>' +
+                    '<ul class="window-list" data-bind="foreach: concerts">' +
+                        '<li class="window-list-element clickable" data-bind="click: selectEvent">' +
                             '<hr>' +
-                            '<h4 data-bind="text: title">blah</h4>' +
-                            '<p data-bind="text: startDate">hi</p>' +
+                            '<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
+                            '<p class="window-event-date">' +
+                                '<span data-bind="text: timeInfo.day"></span>, ' +
+                                '<span data-bind="text: timeInfo.date"></span>' +
+                            '</p>' +
                         '</li>' +
                 '</div>';
     html = $.parseHTML(html)[0];
-    console.log(html);
+    //console.log(html);
     return html;
 };
 
@@ -328,12 +356,13 @@ var ViewModel =  function () {
     self.getMapGeocode = ko.computed(function() {
         geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                    var latitude = results[0]['geometry']['location']['A'];
-                    var longitude = results[0]['geometry']['location']['F'];
+                    var latitude = results[0]['geometry']['location']['G'];
+                    var longitude = results[0]['geometry']['location']['K'];
                     var mapCenter = {
                         latitude: latitude,
                         longitude: longitude
                     };
+                    //console.log(results);
                     if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
                         self.mapCenter(mapCenter);
                     } else {
