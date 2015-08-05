@@ -344,6 +344,7 @@ var ViewModel =  function () {
         //var eventIndex = lastFmEvent.venueIndex;
         //self.currentVenue(self.lastFmVenues()[eventIndex]);
         google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
+        map.panTo(self.mapMarkers()[venueIndex].position);
     };
 
 
