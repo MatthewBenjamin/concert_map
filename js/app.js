@@ -1,6 +1,14 @@
 // Google map
 var map;
 
+// Google Map Error Handling
+setTimeout(function() {
+    if (!map) {
+        // TODO: replace this with message in help overlay
+        $('body').append('Google Map could not be loaded');
+    }
+}, 8000);
+
 // Custom Handler for Google Map
 ko.bindingHandlers.googlemap = {
     // create map
@@ -54,7 +62,7 @@ var infoWindowView = function(){
                         '<li class="window-list-element clickable" data-bind="click: selectEvent">' +
                             '<hr>' +
                             '<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
-                            '<p class="window-event-date">' +
+                            '<p class="window-event-date date">' +
                                 '<span data-bind="text: timeInfo.day"></span>, ' +
                                 '<span data-bind="text: timeInfo.date"></span>' +
                             '</p>' +
@@ -107,10 +115,17 @@ var ViewModel =  function () {
 
     // toggle menu
     self.displaySmallMenu = ko.observable(false);
-    self.displayLargeMenu = ko.observable(true);
+    self.hideLargeMenu = ko.observable(false);
     // toggle list display between events and venues
     self.listEvents = ko.observable(true);
     self.listVenues = ko.observable(false);
+
+    // API Status Messages
+    self.geocoderStatus = ko.observable();
+    self.lastFmEventStatus = ko.observable();
+    self.lastFmArtistStatus = ko.observable();
+    self.fourSquareStatus = ko.observable();
+    self.youtubeStatus = ko.observable();
 
 
     /*** COMPUTED OBSERVABLES ***/
@@ -280,10 +295,10 @@ var ViewModel =  function () {
         self.displaySmallMenu(true);
     };
     self.toggleLargeMenu = function() {
-        if (self.displayLargeMenu()) {
-            self.displayLargeMenu(false);
+        if (self.hideLargeMenu()) {
+            self.hideLargeMenu(false);
         } else {
-            self.displayLargeMenu(true);
+            self.hideLargeMenu(true);
         }
     };
     self.toggleExtraInfo = function() {
@@ -355,23 +370,28 @@ var ViewModel =  function () {
     // Update mapCenter with new latLng when currentAddress changes
     var geocoder = new google.maps.Geocoder();
     self.getMapGeocode = ko.computed(function() {
+        var geocodeTimeoutError = setTimeout(function() {
+            self.geocoderStatus('Location coordinates could not be loaded.');
+        }, 8000);
         geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
+            self.geocoderStatus('Setting map location...');
             if (status == google.maps.GeocoderStatus.OK) {
-                    var latitude = results[0]['geometry']['location']['G'];
-                    var longitude = results[0]['geometry']['location']['K'];
-                    var mapCenter = {
-                        latitude: latitude,
-                        longitude: longitude
-                    };
-                    //console.log(results);
-                    if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
-                        self.mapCenter(mapCenter);
-                    } else {
-                        // TODO: remove this else statement (or just the console.log?)
-                        console.log('init');
-                    }
+                clearTimeout(geocodeTimeoutError);
+                self.geocoderStatus(null);
+                var latitude = results[0]['geometry']['location']['G'];
+                var longitude = results[0]['geometry']['location']['K'];
+                var mapCenter = {
+                    latitude: latitude,
+                    longitude: longitude
+                };
+                if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
+                    self.mapCenter(mapCenter);
+                } else {
+                    // TODO: remove this else statement (or just the console.log?)
+                    console.log('init');
+                }
             } else {
-                alert('Geocoder error because: ' + status);
+                self.geocoderStatus('Geocoder error because: ' + status);
             }
         })
     });
@@ -419,21 +439,29 @@ var ViewModel =  function () {
                 'long=' + longitude + '&' +
                 'limit=20&' +               // TODO: fine tune OR make editable or self correcting
                 'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json'
+                '&format=json';
             var requestSettings = {
                 success: function(data, status, jqXHR) {
                     self.mapMarkers().forEach(function (marker) {
                         marker.setMap(null);
                     });
-                    parseLastFmEvents(data.events.event);
-                    self.lastFmEvents(data.events.event);
+                    if (data.events) {
+                        self.lastFmEventStatus(null);
+                        parseLastFmEvents(data.events.event);
+                        self.lastFmEvents(data.events.event);
+                    } else {
+                        self.lastFmEventStatus(data.message);
+                    }
+
                 },
                 error: function() {
-                    // TODO: display user friendlier message (in list view?)
-                    alert('lastfm error', status);
-                }
+                    self.lastFmEventStatus('Last FM event data could not be loaded. Please try again.')
+                },
+                timeout: 11000
             };
-            $.ajax(requestURL,requestSettings)
+            self.lastFmEvents.removeAll();
+            self.lastFmEventStatus('Loading Last FM Events...');
+            $.ajax(requestURL,requestSettings);
         }
     });
 
@@ -447,13 +475,15 @@ var ViewModel =  function () {
                 '&format=json'
             var requestSettings = {
                 success: function(data, status, jqXHR) {
-                    console.log(data);
+                    self.lastFmArtistStatus(null);
                     self.currentArtistInfo(ko.mapping.fromJS(data.artist));
                 },
                 error: function() {
-                    alert('ERROR', data, status, jqXHR);
-                }
+                    self.lastFmArtistStatus('Last FM artist data could not be loaded.')
+                },
+                timeout: 8000
             };
+            self.lastFmArtistStatus('Loading Last FM artist data...');
             $.ajax(requestURL, requestSettings);
         }
     });
@@ -468,17 +498,19 @@ var ViewModel =  function () {
                 '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI'
             var requestSettings = {
                 success: function(data, status, jqXHR) {
-                    console.log(data.items);
                     for (var i = 0; i < data.items.length; i ++) {
                         data.items[i].url = 'https://www.youtube.com/watch?v=' +
                             data.items[i].id.videoId;
                     }
+                    self.youtubeStatus(null);
                     self.currentArtistYoutube(data.items);
                 },
                 error: function() {
-                    alert('ERROR', data, status, jqXHR);
-                }
+                    self.youtubeStatus('Youtube search results could not be loaded.');
+                },
+                timeout: 8000
             };
+            self.youtubeStatus('Loading Youtube search results...');
             $.ajax(requestURL, requestSettings);
         }
     });
@@ -493,7 +525,11 @@ var ViewModel =  function () {
             success: function(data, status, jqXHR) {
                 console.log(data);
                 self.currentVenueFourSquare(data.response.venue);
-            }
+            },
+            error: function(data, status, jqXHR) {
+                alert('4 square error', status);
+            },
+            timeout: 8000
         }
         $.ajax(requestURL, requestSettings);
     }
@@ -513,17 +549,21 @@ var ViewModel =  function () {
                 'intent=match';
             var requestSettings = {
                 success: function(data, status, jqXHR) {
-                    console.log(data);
+                    //console.log(data);
                      if (data.response.venues.length > 0) {
                         getFourSquareById(data.response.venues[0].id);
+                        self.fourSquareStatus(null);
                      } else {
                         self.currentVenueFourSquare(null);
+                        self.fourSquareStatus('Four Square data for venue could not be found.');
                      }
                 },
                 error: function() {
-                    alert('FOUR SQUARE API ERROR', status);
-                }
+                    self.fourSquareStatus('Four Square data for venue could not be loaded.');
+                },
+                timeout: 8000
             };
+            self.fourSquareStatus('Loading Four Square data for venue...');
             $.ajax(requestURL, requestSettings);
         }
     });
