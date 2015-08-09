@@ -1,3 +1,5 @@
+//"use strict";
+
 // Google map
 var map;
 
@@ -141,8 +143,8 @@ var ViewModel =  function () {
 
     // toggle extra-info display
     self.showExtraInfo = ko.computed(function() {
-        if ( (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo())
-            && self.extraInfoBoolean() ) {
+        if ( (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo()) &&
+            self.extraInfoBoolean() ) {
             return true;
         } else {
             return false;
@@ -159,14 +161,14 @@ var ViewModel =  function () {
         }
         //console.log('new');
         return -1;
-    }
+    };
 
     // Build venues array from last.fm data
     self.buildVenues = ko.computed(function() {
         var events = self.lastFmEvents();
         var venues = [];
         for (var i = 0; i < events.length; i++) {
-            var venueIndex = self.newVenue(events[i].venue.id, venues)
+            var venueIndex = self.newVenue(events[i].venue.id, venues);
             var venue = events[i].venue;
             if (venueIndex === -1) {
                 //console.log("it's new");
@@ -231,14 +233,14 @@ var ViewModel =  function () {
     function doesStringContain(targetString, searchTerm) {
         targetString = targetString.toLowerCase();
         return targetString.indexOf(searchTerm) > -1;
-    };
+    }
     function doesListContain(targetList, searchTerm) {
         for (var i = 0; i < targetList.length; i++) {
             if (doesStringContain(targetList[i], searchTerm)) {
                 return true;
             }
         }
-    };
+    }
 
     // Search last.fm data
     self.searchLastFmEvents = ko.computed(function() {
@@ -258,7 +260,7 @@ var ViewModel =  function () {
             }
             self.filteredEvents(eventResults);
         } else {
-            self.filteredEvents(self.lastFmEvents())
+            self.filteredEvents(self.lastFmEvents());
         }
     });
 
@@ -316,17 +318,17 @@ var ViewModel =  function () {
     self.showEvents = function() {
         self.listEvents(true);
         self.listVenues(false);
-    }
+    };
 
     self.showVenues = function() {
         self.listEvents(false);
         self.listVenues(true);
-    }
+    };
 
     self.selectEvent = function(lastFmEvent) {
         self.selectMarker(lastFmEvent.venueIndex);
         self.currentEvent(ko.mapping.fromJS(lastFmEvent));
-        self.showEventInfo(true)
+        self.showEventInfo(true);
         self.showVenueInfo(false);
         self.showArtistInfo(false);
     };
@@ -393,7 +395,7 @@ var ViewModel =  function () {
             } else {
                 self.geocoderStatus('Geocoder error because: ' + status);
             }
-        })
+        });
     });
 
     /* Last.fm */
@@ -401,7 +403,7 @@ var ViewModel =  function () {
     // clean up lastFm data
     function parseLastFmEvents(data) {
         //console.log(data);
-        var emptyArray = []
+        var emptyArray = [];
         for (var i = 0; i < data.length; i++) {
             if (typeof data[i].artists.artist === 'string') {
                 emptyArray.push(data[i].artists.artist);
@@ -424,9 +426,9 @@ var ViewModel =  function () {
                 date: data[i].startDate.substring(5,11),
                 year: data[i].startDate.substring(12,16),
                 time: data[i].startDate.substring(17,22)
-            }
+            };
         }
-    };
+    }
 
     // Get Last.fm data when mapCenter updates
     // TODO: add error handling in case of no results and/or failure
@@ -455,7 +457,7 @@ var ViewModel =  function () {
 
                 },
                 error: function() {
-                    self.lastFmEventStatus('Last FM event data could not be loaded. Please try again.')
+                    self.lastFmEventStatus('Last FM event data could not be loaded. Please try again.');
                 },
                 timeout: 11000
             };
@@ -472,14 +474,14 @@ var ViewModel =  function () {
             var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
                 'artist=' + self.currentArtistSearch() + '&' +
                 'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json'
+                '&format=json';
             var requestSettings = {
                 success: function(data, status, jqXHR) {
                     self.lastFmArtistStatus(null);
                     self.currentArtistInfo(ko.mapping.fromJS(data.artist));
                 },
                 error: function() {
-                    self.lastFmArtistStatus('Last FM artist data could not be loaded.')
+                    self.lastFmArtistStatus('Last FM artist data could not be loaded.');
                 },
                 timeout: 8000
             };
@@ -495,7 +497,7 @@ var ViewModel =  function () {
         if (self.currentArtistSearch()) {
             var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
                 'q=' + self.currentArtistSearch() +
-                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI'
+                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI';
             var requestSettings = {
                 success: function(data, status, jqXHR) {
                     for (var i = 0; i < data.items.length; i ++) {
@@ -530,7 +532,7 @@ var ViewModel =  function () {
                 alert('4 square error', status);
             },
             timeout: 8000
-        }
+        };
         $.ajax(requestURL, requestSettings);
     }
 
