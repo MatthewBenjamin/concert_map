@@ -47,19 +47,42 @@ var infoWindowView = function(){
     return html;
 };
 
+/*
+function removeOldEvents () {
+    var oldEvents = localStorage.lastFmEvents;
+    var currentDate = new Date();
+
+    for (var i = 0; i < oldEvents.length; i++) {
+        // if (oldEvents[i]. insert date object name here  > ? <  currentDate) {
+                //remove old event
+        }
+    }
+}
+*/
+
+function init () {
+    if (localStorage.lastLocation) {
+        self.defaultLocation =localStorage.lastLocation;
+    } else {
+        self.currentAddress('Austin, TX');
+        self.mapCenter({ latitude: 30.267153, longitude: -97.74306079999997 });
+    }
+/*
+        if (localStorage.lastFmEvents) {
+            //removeOldEvents();
+        }
+*/
+}
 var ViewModel =  function () {
     var self = this;
 
     /*** VARIABLES/OBSERVABLES ***/
 
-    // TODO: set default location (or currentAddress and/or mapCenter?) with init from localStorage or a default value
-    var defaultLocation = 'Austin, TX';
-
     /* Data observables */
 
     // map location
-    self.currentAddress = ko.observable(defaultLocation);
-    self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
+    self.currentAddress = ko.observable();
+    self.mapCenter = ko.observable();
 
     // Last.fm event API results
     self.lastFmEvents = ko.observableArray();
