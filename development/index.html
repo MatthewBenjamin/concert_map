@@ -25,6 +25,9 @@
         <!-- EVENT SEARCH -->
         <input class="mobile-menu event-search search-box" data-bind="textInput: searchInput, css: { small: displaySmallMenu(), 'large-search': hideLargeMenu() }" placeholder="search concerts">
 
+        <!-- LOCATION SEARCH -->
+        <input class="location-search mobile-menu search-box" data-bind="value: currentAddress, css: { small: displaySmallMenu(), 'large-location': hideLargeMenu() }">
+
         <!-- INFO LIST TOGGLE -->
         <div class="list-toggle mobile-menu" data-bind="css: { small: displaySmallMenu(), 'large-toggle': hideLargeMenu() }">
             <button class="list-button clickable" data-bind="css: { pressed: listEvents() }, click: function () { showEvents(); }">EVENTS</button>
@@ -76,8 +79,7 @@
             </ul>
         </div>
 
-        <!-- LOCATION SEARCH -->
-        <input class="location-search mobile-menu search-box" data-bind="value: currentAddress, css: { small: displaySmallMenu(), 'large-location': hideLargeMenu() }">
+
 
         <!-- EXTRA INFO DISPLAY -->
         <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
