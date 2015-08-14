@@ -47,32 +47,7 @@ var infoWindowView = function(){
     return html;
 };
 
-/*
-function removeOldEvents () {
-    var oldEvents = localStorage.lastFmEvents;
-    var currentDate = new Date();
 
-    for (var i = 0; i < oldEvents.length; i++) {
-        // if (oldEvents[i]. insert date object name here  > ? <  currentDate) {
-                //remove old event
-        }
-    }
-}
-*/
-
-function init () {
-    if (localStorage.lastLocation) {
-        self.defaultLocation =localStorage.lastLocation;
-    } else {
-        self.currentAddress('Austin, TX');
-        self.mapCenter({ latitude: 30.267153, longitude: -97.74306079999997 });
-    }
-/*
-        if (localStorage.lastFmEvents) {
-            //removeOldEvents();
-        }
-*/
-}
 var ViewModel =  function () {
     var self = this;
 
@@ -128,6 +103,22 @@ var ViewModel =  function () {
     self.fourSquareStatus = ko.observable();
     self.youtubeStatus = ko.observable();
 
+    // initialize location
+    (function() {
+        // use last location
+        if (localStorage.lastAddress &&
+            localStorage.latitude &&
+            localStorage.longitude) {
+            var latitude = Number(localStorage.latitude);
+            var longitude = Number(localStorage.longitude);
+            self.currentAddress(localStorage.lastAddress);
+            self.mapCenter({ latitude: latitude, longitude: longitude });
+        } else {
+            // program default
+            self.currentAddress('Austin, TX');
+            self.mapCenter({ latitude: 30.267153, longitude: -97.74306079999997 });
+        }
+    })();
 
     /*** COMPUTED OBSERVABLES ***/
 
@@ -364,7 +355,15 @@ var ViewModel =  function () {
 
     /* Google Map */
 
-    // Update mapCenter with new latLng when currentAddress changes
+    // Update mapCenter with new latLng when currentAddress changes & save in localStorage
+    function storeLocation(address, latitude, longitude) {
+        if (localStorage) {
+            localStorage.setItem('lastAddress', address);
+            localStorage.setItem('latitude', latitude);
+            localStorage.setItem('longitude', longitude);
+        }
+    }
+
     var geocoder = new google.maps.Geocoder();
     self.getMapGeocode = ko.computed(function() {
         var geocodeTimeoutError = setTimeout(function() {
@@ -383,6 +382,7 @@ var ViewModel =  function () {
                 };
                 if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
                     self.mapCenter(mapCenter);
+                    storeLocation(self.currentAddress(), latitude, longitude);
                 } else {
                     //console.log('init');
                 }
