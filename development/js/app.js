@@ -69,7 +69,7 @@ var ViewModel =  function () {
     self.filteredEvents = ko.observableArray();
 
     // TODO: make venue list searchable (BUT don't base map markers on filtered venues)
-    //self.filteredVenues = ko.observableArray();
+    self.filteredVenues = ko.observableArray();
 
     // display detailed info for an event, venue, or artist
     self.currentEvent = ko.observable();
@@ -142,7 +142,7 @@ var ViewModel =  function () {
     });
 
     // check if venue is already in self.lastFmVenues
-    self.newVenue = function(venueId, venues) {
+    function newVenue(venueId, venues) {
         for (var i = 0; i < venues.length; i++) {
             if (venueId === venues[i].id) {
                 //console.log('id match');
@@ -151,31 +151,34 @@ var ViewModel =  function () {
         }
         //console.log('new');
         return -1;
-    };
+    }
 
     // Build venues array from last.fm data
-    self.buildVenues = ko.computed(function() {
-        var events = self.lastFmEvents();
+    function buildVenues (events) {
         var venues = [];
         for (var i = 0; i < events.length; i++) {
-            var venueIndex = self.newVenue(events[i].venue.id, venues);
+            var venueIndex = newVenue(events[i].venue.id, venues);
             var venue = events[i].venue;
             if (venueIndex === -1) {
-                //console.log("it's new");
+                // venue not yet in list
                 venue.concerts = [];
                 venue.concerts.push(events[i]);
                 venues.push(venue);
                 events[i].venueIndex = venues.indexOf(venue);
             } else {
-                //console.log('not new');
-                //events[i].venueIndex = i;
+                // venue already in list
                 events[i].venueIndex = venueIndex;
                 venues[venueIndex].concerts.push(events[i]);
             }
 
         }
         //console.log(venues);
-        self.lastFmVenues(venues);
+        return venues;
+    }
+
+    self.buildAllVenues = ko.computed(function() {
+        var events = self.lastFmEvents();
+        self.lastFmVenues(buildVenues(events));
     });
 
     // Create google map markers from lastFmVenues
@@ -237,6 +240,7 @@ var ViewModel =  function () {
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
+            var venueResult;
             for (var i = 0; i < self.lastFmEvents().length; i++) {
                 var currentEvent = self.lastFmEvents()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
@@ -245,12 +249,17 @@ var ViewModel =  function () {
                     doesStringContain(currentEvent.description, searchTerm) ||
                     doesListContain(currentEvent.artists.artist, searchTerm) ||
                     doesListContain(currentEvent.tags.tag, searchTerm)) {
+
                         eventResults.push(currentEvent);
+                        venueResults = buildVenues(eventResults);
+
                 }
             }
             self.filteredEvents(eventResults);
+            self.filteredVenues(venueResults);
         } else {
             self.filteredEvents(self.lastFmEvents());
+            self.filteredVenues(self.lastFmVenues());
         }
     });
 
@@ -321,6 +330,17 @@ var ViewModel =  function () {
         self.showEventInfo(true);
         self.showVenueInfo(false);
         self.showArtistInfo(false);
+    };
+
+    self.selectFilteredVenue = function(filteredVenue) {
+        //console.log(filteredVenue.id);
+        for (var i = 0; i < self.lastFmVenues().length; i++) {
+            console.log(i);
+            if (filteredVenue.id === self.lastFmVenues()[i].id) {
+                selectVenue(self.lastFmVenues()[i]);
+                break
+            }
+        }
     };
 
     self.selectVenue = function(venue) {
