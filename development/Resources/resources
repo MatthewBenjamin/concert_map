@@ -1,0 +1,25 @@
+APIs to use?
+
+Meetup.com - display events and/or groups?
+			- http://www.meetup.com/meetup_api/
+			- http://www.meetup.com/meetup_api/docs/2/open_events/
+			- https://secure.meetup.com/meetup_api/console/?path=/2/open_events
+
+Facebook API - display events hosted by public FB pages (i.e. Thunderhorse's events)
+
+doindie.co.kr - concerts
+
+
+TODO:
+
+Use Knockout MVVC!
+	draw map on screen
+	get long/lat from google map
+	send long/lat in API request to meetup
+	interate through and parse meetup's json reponse, display as markers on google map and make a list view
+
+
+Resources:
+
+http://stackoverflow.com/questions/17067196/google-maps-api-full-screen
+http://testasoftware.com/steve/blog/knockout-binding-handler-for-google-maps/

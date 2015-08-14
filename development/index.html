@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link href="css/style.css" rel="stylesheet">
+        <title>Concert Map</title>
+
+        <script src="http://maps.google.com/maps/api/js?sensor=false&.js"></script>
+
+
+    </head>
+
+    <body>
+        <!-- GOOGLE MAP -->
+        <div class="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: function(){closeSmallMenu()}"></div>
+
+        <!-- MENU TOGGLE -->
+        <a class="menu-toggle clickable" data-bind="click: function() { openSmallMenu(); toggleLargeMenu() }">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
+          </svg>
+        </a>
+
+        <!-- EVENT SEARCH -->
+        <input class="mobile-menu event-search search-box" data-bind="textInput: searchInput, css: { small: displaySmallMenu(), 'large-search': hideLargeMenu() }" placeholder="search concerts">
+
+        <!-- INFO LIST TOGGLE -->
+        <div class="list-toggle mobile-menu" data-bind="css: { small: displaySmallMenu(), 'large-toggle': hideLargeMenu() }">
+            <button class="list-button clickable" data-bind="css: { pressed: listEvents() }, click: function () { showEvents(); }">EVENTS</button>
+            <button class="list-button clickable" data-bind="css: { pressed: listVenues() }, click: function () { showVenues(); }">VENUES</button>
+            <button class="info-button clickable" data-bind="css: { pressed: extraInfoBoolean() }, click: toggleExtraInfo">SHOW INFO POP-UP</button>
+        </div>
+
+        <!-- EVENT LIST -->
+        <div class="mobile-menu list-container" data-bind="css: { small: displaySmallMenu(), 'large-list': hideLargeMenu() }, visible: listEvents()">
+            <p class="map-error"></p>
+            <p data-bind="visible: !filteredEvents().length && !lastFmStatus">no results</p>
+            <p data-bind="text: lastFmStatus"></p>
+            <p data-bind="text: geocoderStatus"></p>
+            <ul class="list" data-bind="foreach: filteredEvents, click: function(){ closeSmallMenu() }">
+                <li class="clickable list-item" data-bind="click: selectEvent">
+                    <hr>
+                    <h4 data-bind="text: title"></h4>
+                    <p class="pale-text">
+                        <span data-bind="text: timeInfo.day"></span>
+                        <span data-bind="text: timeInfo.date"></span>
+                    </p>
+                    <ul class="tags" data-bind="foreach: tags.tag">
+                        <li class="tags-item" data-bind="text: $data"></li>
+                    </ul>
+                    <p class="italic" data-bind="text: venue.name"></p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- VENUE LIST -->
+        <div id="venue-list" class="mobile-menu list-container" data-bind="css: { small: displaySmallMenu(), 'large-list': hideLargeMenu() }, visible: listVenues()">
+            <p data-bind="text: lastFmStatus"></p>
+            <p data-bind="text: geocoderStatus"></p>
+            <ul class="list" data-bind="foreach: lastFmVenues, click: function() { closeSmallMenu() }">
+                <li class="clickable list-item" data-bind="click: selectVenue">
+                    <hr>
+                    <h4 data-bind="text: name"></h4>
+                    <p class="pale-text">
+                        <span data-bind="text: location.street"></span>
+                        , 
+                        <span data-bind="text: location.city"></span>
+                    </p>
+                    <p class="italic">
+                        <span data-bind="text: concerts.length"></span>
+                        <span data-bind="if: concerts.length > 1"> events</span>
+                        <span data-bind="if: concerts.length == 1"> event</span>
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- LOCATION SEARCH -->
+        <input class="location-search mobile-menu search-box" data-bind="value: currentAddress, css: { small: displaySmallMenu(), 'large-location': hideLargeMenu() }">
+
+        <!-- EXTRA INFO DISPLAY -->
+        <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
+            <a class="close-button clickable" data-bind="click: function() { closeExtraInfo(); }">
+                <img class="svg-button" src="images/close.svg" alt="CLOSE">
+            </a>
+
+            <!-- EVENT INFO -->
+            <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
+                <div>
+                    <h3 data-bind="text: title"></h3>
+                    <p class="pale-text" data-bind="text: startDate"></p>
+                </div>
+                <h4>Artists</h4>
+                <hr>
+                <ul data-bind="foreach: artists.artist">
+                    <li>
+                        <a class="clickable" data-bind="text: $data, click: function() { selectArtist($data); }"></a>
+                    </li>
+                    <br>
+                </ul>
+                <div data-bind="if: tags.tag().length > 0">
+                    <h4>Tags:</h4>
+                        <ul class="tags" data-bind="foreach: tags.tag">
+                            <li class="clickable tags-item" data-bind="text: $data, click: searchInput"></li>
+                        </ul>
+                </div>
+                <p>
+                    <span class="bold">Venue</span>
+                    <a class="clickable italic" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
+                </p>
+                <a data-bind="attr: { href: url }">Last FM Event Page</a>
+                <br>
+                <p><a data-bind="if: website, attr: { href: website }">Offical Site</a></p>
+                <p data-bind="if: description">Description: <span data-bind="html: description"></span></p>
+            </div>
+
+            <!-- VENUE INFO -->
+            <div class="extra-info-content" data-bind="visible: showVenueInfo(), with: currentVenue">
+                <p data-bind="text: fourSquareStatus"></p>
+                <h3 data-bind="text: name"></h3>
+                <p class="pale-text">
+                    <span data-bind="text: location.street"></span>
+                    <span data-bind="text: location.city"></span>
+                    <span data-bind="text: location.postalcode"></span>
+                </p>
+                <p class="pale-text" data-bind="text: phonenumber"></p>
+                <div data-bind="with: currentVenueFourSquare">
+                    <ul class="tags" data-bind="foreach: categories">
+                        <li class="tags-item" data-bind="text: shortName"></li>
+                    </ul>
+                    <div data-bind="if: $data.rating">
+                        <p>
+                            <span class="pale-text">Four Square Rating </span>
+                            <span class="italic" data-bind="text: $data.rating"></span>
+                        </p>
+                    </div>
+                    <a data-bind="attr: { href: canonicalUrl }">Visit <span data-bind="text: name"></span>'s Four Square Page</a>
+                </div>
+                <p>
+                    <a data-bind="attr: { href: url }">Visit <span data-bind="text: name"></span>'s Last FM Page</a>
+                </p>
+                <p data-bind="if: website"><a data-bind="attr: { href: website }">Visit <span data-bind="text: name"></span>'s Offical Website</a></p>
+                <h4>Upcoming Events</h4>
+                <ul data-bind="foreach: concerts">
+                    <li>
+                        <a class="clickable" data-bind="text: title, click: self.selectEvent"></a>
+                    </li>
+                    <br>
+                </ul>
+
+                <div data-bind="with: currentVenueFourSquare">
+                    <div data-bind="if: $data.description">
+                        <h4>Description from Four Square</h4>
+                        <p data-bind="text: $data.description"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ARTIST INFO -->
+            <div class="extra-info-content" data-bind="visible: showArtistInfo()">
+                <p data-bind="text: lastFmArtistStatus"></p>
+                <h3 data-bind="text: currentArtist()"></h3>
+                <div data-bind="with: currentArtistInfo">
+                    <div data-bind="if: tags.tag">
+                        <h4>Tags</h4>
+                        <ul class="tags" data-bind="foreach: tags.tag">
+                            <li class="tags-item clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
+                        </ul>
+                    </div>
+                    <p><a data-bind="attr : { href: url }">Last FM Page</a></p>
+                    <div data-bind="if: bio.summary">
+                        <h4>Bio</h4>
+                        <p data-bind="html: bio.summary"></p>
+                    </div>
+                </div>
+                <h4>Youtube Search Results for "<span data-bind="text: currentArtist()"></span>"</h4>
+                <p data-bind="text: youtubeStatus"></p>
+                <ul data-bind="foreach: currentArtistYoutube">
+                    <li class="youtube-link">
+                        <a data-bind="text: snippet.title, attr : { href: url }"></a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <script src="js/libraries/jquery-2.1.3.min.js"></script>
+        <script src="js/libraries/knockout-3.3.0.js"></script>
+        <script src="js/libraries/knockout.mapping-latest.js"></script>
+        <script src="js/app.js" inline></script>
+
+    </body>
+</html>
