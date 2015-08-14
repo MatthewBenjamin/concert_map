@@ -1,12 +1,19 @@
 /* Global / All Screen Sizes */
-
 body {
     font-family: Georgia, Serif;
     overflow: hidden;
 }
 
+ul {
+    list-style: none;
+    overflow: auto;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
 /* Google Map */
-#map-canvas {
+.map-canvas {
     height: 100%;
     width: 100%;
     position: absolute;
@@ -14,8 +21,12 @@ body {
     left: 0;
 }
 
-/* TODO: change all classes to just be .pale-text */
-.date, .address, .phone-number, .pale-text {
+/* Text Styles */
+h4 {
+    margin-top: 0;
+}
+
+.pale-text {
     color: #525252;
 }
 
@@ -27,77 +38,31 @@ body {
     font-weight: bold;
 }
 
-/* TODO: make a class for this? where to put/organize this? */
-ul {
-    list-style: none;
-    overflow: auto;
-    height: 100%;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding: 0;
-}
-
-.event-list ul {
-    margin-top: -16px;
-}
-/*
-li {
-    margin-top: -16px;
-}
-*/
-
-.list-item {
-    padding-left: 15px;
-    margin-top: -16px;
-}
-
-.tags {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.tags li {
-    padding: 2px;
-    border: thin solid black;
-    margin: 2px;
-}
-
-.youtube-link {
-    margin-bottom: 20px;
-}
-
+/* Clickable items */
 .clickable:hover {
     cursor: pointer;
     background-color: rgba(162, 222, 208, .3);
 }
 
-/* Map Marker Info Windows */
+/* Info Windows */
 .window-header {
-    margin-bottom: 5px;
-    margin-top: 10px;
+    margin: 10px auto 5px auto;
 }
 
+/* TODO: remove this? */
 .window-list {
-    padding: 0;
-    padding-top: 1px;
-    margin: 0;
-    margin-top: 10px;
 }
 
+/* TODO: remove this? */
 .window-list-element {
-    padding-left: 0;
-    margin-top: 10px;
 }
 
+/* TODO: remove this? */
 .window-event-name {
-    margin-bottom: 10px;
-    margin-top: 5px;
 }
 
 .window-event-date {
-    margin-top: 0;
-    margin-bottom: 10px;
-    margin-left:5px;
+    margin: 10px 5px;
 }
 
 .infoConcertTitle {
@@ -105,7 +70,7 @@ li {
 }
 
 /* Hamburger menu button */
-#menu-toggle {
+.menu-toggle {
     position: absolute;
     z-index: 100;
     display: block;
@@ -120,7 +85,7 @@ svg {
     width: 42px;
 }
 
-/* event/location search, lists, & button toggle */
+/* menu & lists / list-items */
 .mobile-menu {
     z-index: 100;
     position: absolute;
@@ -129,46 +94,31 @@ svg {
     transition: transform 0.3s ease;
 }
 
-
-/* TODO: make a class for ULs with this styling? */
-/* Event/Venue List */
-/*
-.mobile-menu ul {
-    list-style: none;
-    overflow: auto;
-    height: 100%;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding: 0;
+.list {
+    margin-top: -8px;
 }
-*/
+
+.list-item {
+    padding-left: 15px;
+    margin-top: -16px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tags-item {
+    padding: 2px;
+    border: thin solid black;
+    margin: 2px;
+}
 
 /* Event and location search */
-.search-box {
-    margin-top: 10px;
-    margin-right: auto;
-    margin-left: auto;
-    display: block;
-    width: calc(100% - 10px);
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding: 0;
-}
-
-/* TODO: does height belong here or in diff media query? (for event and location search) */
-#event-search {
-    position: absolute;
-    height: 31px;
-}
-
-#location-search {
-    position: absolute;
-    height: 31px;
-}
 
 
 /* Extra -info display */
-#extra-info {
+.extra-info {
     position: absolute;
     background-color: white;
     color: black;
@@ -181,12 +131,12 @@ svg {
     z-index: 100;
 }
 
-#extra-info.open {
+.extra-info.open {
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
 }
 
-#close-button {
+.close-button {
     display: block;
     width: 42px;
     right: 0;
@@ -196,11 +146,10 @@ svg {
 .extra-info-content {
     padding: 10px 30px;
 }
-/*
-.event-info ul {
-    margin: 5px;
+
+.youtube-link {
+    margin-bottom: 20px;
 }
-*/
 
 /* Toggle Buttons (list and extra-info) */
 
@@ -220,7 +169,7 @@ button {
     width: 50%;
 }
 
-#info-button {
+.info-button {
     width: 100%;
 }
 
@@ -228,7 +177,7 @@ button {
 /* SMALL SCREENS */
 @media screen and (max-width: 599px) {
     /* Hamburger menu button */
-    #menu-toggle {
+    .menu-toggle {
         top: 40px;
         left: 5px;
     }
@@ -251,19 +200,18 @@ button {
 
     /* Event and location search */
     .search-box {
+        width: 255px;
         font-size: larger;
         text-align: center;
-        height: 26px;
+        height: 40px;
     }
 
-    #event-search {
+    .event-search {
         top: 0;
-        height: 40px;
     }
 
-    #location-search {
+    .location-search {
         bottom: 0;
-        height: 40px;
     }
 
 
@@ -280,7 +228,7 @@ button {
 
 
     /* Extra -info display */
-    #extra-info {
+    .extra-info {
         top: 0;
         left: 0;
         height: 100%;
@@ -291,7 +239,7 @@ button {
 
 
     /* Toggle Buttons (list and extra-info) */
-    #list-toggle {
+    .list-toggle {
         top: 40px;
         height: 80px;
         display: flex;
@@ -303,17 +251,14 @@ button {
 
 @media screen and (min-width: 600px) {
     /* Hamburger menu button */
-    /* TODO: rename this class in html and here to conform to style guidelines (i.e. "big-open") */
-    #menu-toggle {
+    .menu-toggle {
         right: 110px;
         top: -2px;
     }
 
 
     /* event/location search, lists, & button toggle */
-
-    /* TODO: this still displays when shouldn't be */
-    #list-toggle {
+    .list-toggle {
         top: 40px;
         right: 15px;
         height: 80px;
@@ -326,8 +271,8 @@ button {
 
     .mobile-menu {
         background-color: rgba(255,255,255,0.6);
-        -webkit-transform: translate(0px, 0);
-        transform: translate(0px, 0);
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
     }
 
     .mobile-menu.large-search {
@@ -350,24 +295,28 @@ button {
         transform: translate(-300px, 81px);
     }
     /* Event and location search */
-    #event-search {
+    .search-box {
+        padding: 5px;
+        font-size: medium;
+        background-color: white;
+    }
+
+    .search-box:focus {
+        border: solid medium orange;
+    }
+
+    .event-search {
         top: 10px;
         left: 75px;
-        width: 50%;
+        width: 45%;
         max-width: 500px;
     }
 
-    #location-search {
+    .location-search {
         bottom: 50px;
         left: 50px;
         width: 250px;
     }
-
-    #location-search input {
-        width: 230px;
-
-    }
-
 
     /* List */
     .list-container {
@@ -381,7 +330,7 @@ button {
 
 
     /* Extra -info display */
-    #extra-info {
+    .extra-info {
         -webkit-transform: translate(0, -550px);
         transform: translate(0, -550px);
         top: 45px;
@@ -390,22 +339,3 @@ button {
         height: 500px;
     }
 }
-
-/*
-@media screen and (min-width: 1100px) {
-    #list-toggle, .list{
-        right: calc(100% / 10);
-    }
-    .mobile-menu.large-list {
-        -webkit-transform: translate(calc(100%);
-        transform: translate(calc(100%);
-    }
-}
-*/
-/* LARGE SCREENS */
-    /* Hamburger menu button */
-    /* event/location search, lists, & button toggle */
-    /* Event and location search */
-    /* List */
-    /* Extra -info display */
-    /* Toggle Buttons (list and extra-info) */

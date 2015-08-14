@@ -1,5 +1,3 @@
-//"use strict";
-
 // Google map
 var map;
 
@@ -7,7 +5,7 @@ var map;
 setTimeout(function() {
     if (!map) {
         // TODO: replace this with message in help overlay
-        $('body').append('Google Map could not be loaded');
+        $('.map-error').append('Google Map could not be loaded');
     }
 }, 8000);
 
@@ -25,39 +23,13 @@ ko.bindingHandlers.googlemap = {
         var value = valueAccessor();
         var latitude = value.mapCenter.latitude;
         var longitude = value.mapCenter.longitude;
-        console.log(latitude, longitude);
+        //console.log(latitude, longitude);
         map.setCenter( { lat: latitude, lng: longitude } );
     }
 };
 
 // Grab HTML for infoWindow
 var infoWindowView = function(){
-    /*
-    var venueName = '<a href=' + venueObject.website + '>' + venueObject.name + '</a>';
-
-    //data bind doesn't work here
-    //var venueName = '<p data-bind="text: venueObject.name, click: showVenueInfo(true)"></p>';
-
-    // include this in venue more info window?
-    //var venueAddress = venueObject.location.street;
-    var htmlContent = venueName;
-
-    var concertContainer = '<hr><div class="concertWindow">#data#</div>';
-    var concertTitle = '<p class="infoConcertTitle">#title#</p>';
-    var concertDate = '<p class="infoConcertDate">#date#</p>';
-
-    var concerts = venueObject.concerts;
-
-    for (var i = 0; i < concerts.length; i++) {
-        var title = concertTitle.replace('#title#', concerts[i].title);
-        var date = concertDate.replace('#date#', concerts[i].startDate.substring(0, 11));
-        var titleDate = title + date;
-        var concertInfo = concertContainer.replace('#data#', titleDate);
-        htmlContent = htmlContent + concertInfo;
-    }
-    */
-    //var html = $('#info-window').clone()[0];
-    //console.log(html);
     var html = '<div class="info-window" data-bind="with: currentVenue">' +
                     '<h2 class="window-header clickable" data-bind="text: name, click: selectVenue;"></h2>' +
                     '<ul class="window-list" data-bind="foreach: concerts">' +
@@ -80,10 +52,12 @@ var ViewModel =  function () {
 
     /*** VARIABLES/OBSERVABLES ***/
 
+    // TODO: set default location (or currentAddress and/or mapCenter?) with init from localStorage or a default value
+    var defaultLocation = 'Austin, TX';
+
     /* Data observables */
 
     // map location
-    var defaultLocation = 'Austin, TX';
     self.currentAddress = ko.observable(defaultLocation);
     self.mapCenter = ko.observable( { latitude: 30.267153, longitude: -97.74306079999997 } );
 
@@ -95,6 +69,8 @@ var ViewModel =  function () {
     // search last fm data
     self.searchInput = ko.observable();
     self.filteredEvents = ko.observableArray();
+
+    // TODO: make venue list searchable (BUT don't base map markers on filtered venues)
     //self.filteredVenues = ko.observableArray();
 
     // display detailed info for an event, venue, or artist
@@ -124,7 +100,7 @@ var ViewModel =  function () {
 
     // API Status Messages
     self.geocoderStatus = ko.observable();
-    self.lastFmEventStatus = ko.observable();
+    self.lastFmStatus = ko.observable();
     self.lastFmArtistStatus = ko.observable();
     self.fourSquareStatus = ko.observable();
     self.youtubeStatus = ko.observable();
@@ -335,9 +311,8 @@ var ViewModel =  function () {
 
     self.selectVenue = function(venue) {
         // can't pass venue object from currentEvent extra-info
-        var venue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
-        self.selectMarker(lastFmVenues.indexOf(venue));
-        //self.currentVenue(venue);
+        var currentVenue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
+        self.selectMarker(lastFmVenues.indexOf(currentVenue));
         self.showVenueInfo(true);
         self.showEventInfo(false);
         self.showArtistInfo(false);
@@ -355,11 +330,8 @@ var ViewModel =  function () {
         self.showVenueInfo(false);
         self.showArtistInfo(false);
     };
-    // Activates a map marker's click event when an event for that venue is clicked in the list view
+    // Activate a map marker's click event when an event for that venue is clicked in the list view
     self.selectMarker = function(venueIndex) {
-        //self.selectEvent(lastFmEvent);
-        //var eventIndex = lastFmEvent.venueIndex;
-        //self.currentVenue(self.lastFmVenues()[eventIndex]);
         google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
         map.panTo(self.mapMarkers()[venueIndex].position);
     };
@@ -389,8 +361,7 @@ var ViewModel =  function () {
                 if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
                     self.mapCenter(mapCenter);
                 } else {
-                    // TODO: remove this else statement (or just the console.log?)
-                    console.log('init');
+                    //console.log('init');
                 }
             } else {
                 self.geocoderStatus('Geocoder error because: ' + status);
@@ -431,7 +402,6 @@ var ViewModel =  function () {
     }
 
     // Get Last.fm data when mapCenter updates
-    // TODO: add error handling in case of no results and/or failure
     self.getLastFmEvents = ko.computed(function() {
         if (self.mapCenter().latitude && self.mapCenter().longitude) {
             var latitude = self.mapCenter().latitude;
@@ -439,7 +409,8 @@ var ViewModel =  function () {
             var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
                 'lat=' + latitude + '&' +
                 'long=' + longitude + '&' +
-                'limit=20&' +               // TODO: fine tune OR make editable or self correcting
+                // TODO: make editable or self correcting
+                'limit=100&' +
                 'api_key=d824cbbb7759624aa8b3621a627b70b8' +
                 '&format=json';
             var requestSettings = {
@@ -448,21 +419,21 @@ var ViewModel =  function () {
                         marker.setMap(null);
                     });
                     if (data.events) {
-                        self.lastFmEventStatus(null);
+                        self.lastFmStatus(null);
                         parseLastFmEvents(data.events.event);
                         self.lastFmEvents(data.events.event);
                     } else {
-                        self.lastFmEventStatus(data.message);
+                        self.lastFmStatus(data.message);
                     }
 
                 },
                 error: function() {
-                    self.lastFmEventStatus('Last FM event data could not be loaded. Please try again.');
+                    self.lastFmStatus('Last FM data could not be loaded. Please try again.');
                 },
                 timeout: 11000
             };
             self.lastFmEvents.removeAll();
-            self.lastFmEventStatus('Loading Last FM Events...');
+            self.lastFmStatus('Loading Last FM Data...');
             $.ajax(requestURL,requestSettings);
         }
     });
@@ -470,7 +441,6 @@ var ViewModel =  function () {
     // Get last.fm artist info to display in extra-info
     self.getArtistInfo = ko.computed(function() {
         if (self.currentArtistSearch()) {
-            //var artist = self.currentArtist().replace(/\s+/g, '+');
             var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
                 'artist=' + self.currentArtistSearch() + '&' +
                 'api_key=d824cbbb7759624aa8b3621a627b70b8' +
@@ -529,7 +499,7 @@ var ViewModel =  function () {
                 self.currentVenueFourSquare(data.response.venue);
             },
             error: function(data, status, jqXHR) {
-                alert('4 square error', status);
+                self.fourSquareStatus('Four Square data for venue could not be found.');
             },
             timeout: 8000
         };
