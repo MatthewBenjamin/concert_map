@@ -26,6 +26,8 @@ In the event information display, clicking on:
 In the venue information display, clicking on:
     -An upcoming event: will display information for that event
 
+In the artist information dispaly, clicking on:
+    -A tag: will enter that tag as a search term (see below)
 
 Searching for events:
 
