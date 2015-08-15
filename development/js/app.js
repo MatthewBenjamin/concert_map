@@ -204,13 +204,14 @@ var ViewModel =  function () {
             });
 
             google.maps.event.addListener(marker, 'mouseup', function() {
-                //console.log(this.venueIndex);
-                infoWindow.setContent(this.content);
-                self.currentVenue(self.lastFmVenues()[this.venueIndex]);
-                infoWindow.open(map, this);
-                // TODO: fine tune centering location with mobile side menu
-                //map.setCenter(latLng);
-                //map.panBy(300,0);
+                var m = this;
+                infoWindow.setContent(m.content);
+                self.currentVenue(self.lastFmVenues()[m.venueIndex]);
+                infoWindow.open(map, m);
+                m.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function() {
+                    m.setAnimation(google.maps.Animation.null);
+                }, 700);
             });
 
             markers.push(marker);
