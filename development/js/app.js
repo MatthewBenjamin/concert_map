@@ -353,7 +353,7 @@ var ViewModel =  function () {
         self.showVenueInfo(false);
         self.showArtistInfo(false);
     };
-    // Activate a map marker's click event when an event for that venue is clicked in the list view
+    // Activate a map marker's click event
     self.selectMarker = function(venueIndex) {
         google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
         map.panTo(self.mapMarkers()[venueIndex].position);

@@ -6,8 +6,7 @@ body {
 
 ul {
     list-style: none;
-    overflow: auto;
-    height: calc(100% - 10px);
+    height: 100%;
     margin: 0 auto;
     padding: 0;
 }
@@ -94,6 +93,9 @@ svg {
     transition: transform 0.3s ease;
 }
 
+.list-container {
+    overflow: auto;
+}
 .list {
     margin-top: -8px;
 }
