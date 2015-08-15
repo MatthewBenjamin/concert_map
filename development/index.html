@@ -41,6 +41,7 @@
             <p data-bind="visible: !filteredEvents().length && !lastFmStatus">no results</p>
             <p data-bind="text: lastFmStatus"></p>
             <p data-bind="text: geocoderStatus"></p>
+            <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
             <ul class="list" data-bind="foreach: filteredEvents, click: function(){ closeSmallMenu() }">
                 <li class="clickable list-item" data-bind="click: selectEvent">
                     <hr>
@@ -61,6 +62,7 @@
         <div id="venue-list" class="mobile-menu list-container" data-bind="css: { small: displaySmallMenu(), 'large-list': hideLargeMenu() }, visible: listVenues()">
             <p data-bind="text: lastFmStatus"></p>
             <p data-bind="text: geocoderStatus"></p>
+            <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
             <ul class="list" data-bind="foreach: filteredVenues, click: function() { closeSmallMenu() }">
                 <li class="clickable list-item" data-bind="click: selectFilteredVenue">
                     <hr>
