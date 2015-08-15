@@ -235,7 +235,7 @@ var ViewModel =  function () {
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
-            var venueResult;
+            var venueResults;
             for (var i = 0; i < self.lastFmEvents().length; i++) {
                 var currentEvent = self.lastFmEvents()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
@@ -267,10 +267,10 @@ var ViewModel =  function () {
         for (var i = 0; i < venues.length; i++) {
             var searchedFor;
             for (var j = 0; j < venues[i].concerts.length; j++) {
-                searchedFor = searchedFor || self.filteredEvents().indexOf(venues[i].concerts[j]) > -1;
+                searchedFor = searchedFor || searchedEvents.indexOf(venues[i].concerts[j]) > -1;
             }
 
-            if (self.filteredEvents() == self.lastFmEvents()) {
+            if (searchedEvents === allEvents) {
                 self.mapMarkers()[i].setIcon('images/red.png');
             } else if (searchedFor) {
                 self.mapMarkers()[i].setIcon('images/blue.png');
@@ -327,17 +327,15 @@ var ViewModel =  function () {
         self.showArtistInfo(false);
     };
 
-    //TODO: similar to findVenue
     self.selectFilteredVenue = function(filteredVenue) {
-        //console.log(filteredVenue.id);
         var unfilteredIndex = findVenue(filteredVenue.id, self.lastFmVenues());
-        selectVenue(self.lastFmVenues()[unfilteredIndex]);
+        self.selectVenue(self.lastFmVenues()[unfilteredIndex]);
     };
 
     self.selectVenue = function(venue) {
         // can't pass venue object from currentEvent extra-info
-        var currentVenue = venue || self.lastFmVenues()[currentEvent().venueIndex()];
-        self.selectMarker(lastFmVenues.indexOf(currentVenue));
+        var currentVenue = venue || self.lastFmVenues()[self.currentEvent().venueIndex()];
+        self.selectMarker(self.lastFmVenues.indexOf(currentVenue));
         self.showVenueInfo(true);
         self.showEventInfo(false);
         self.showArtistInfo(false);
