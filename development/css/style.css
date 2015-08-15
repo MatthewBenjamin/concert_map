@@ -247,7 +247,7 @@ button {
     }
 }
 
-/* MEDIUM SCREENS */
+/* MEDIUM & LARGE SCREENS */
 
 @media screen and (min-width: 600px) {
     /* Hamburger menu button */

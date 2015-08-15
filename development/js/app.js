@@ -4,7 +4,6 @@ var map;
 // Google Map Error Handling
 setTimeout(function() {
     if (!map) {
-        // TODO: replace this with message in help overlay
         $('.map-error').append('Google Map could not be loaded');
     }
 }, 8000);
@@ -43,7 +42,6 @@ var infoWindowView = function(){
                         '</li>' +
                 '</div>';
     html = $.parseHTML(html)[0];
-    //console.log(html);
     return html;
 };
 
@@ -67,8 +65,6 @@ var ViewModel =  function () {
     // search last fm data
     self.searchInput = ko.observable();
     self.filteredEvents = ko.observableArray();
-
-    // TODO: make venue list searchable (BUT don't base map markers on filtered venues)
     self.filteredVenues = ko.observableArray();
 
     // display detailed info for an event, venue, or artist
@@ -453,7 +449,7 @@ var ViewModel =  function () {
             var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
                 'lat=' + latitude + '&' +
                 'long=' + longitude + '&' +
-                // TODO: make editable or self correcting
+                // TODO: make editable
                 'limit=100&' +
                 'api_key=d824cbbb7759624aa8b3621a627b70b8' +
                 '&format=json';
