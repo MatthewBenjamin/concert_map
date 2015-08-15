@@ -138,14 +138,12 @@ var ViewModel =  function () {
     });
 
     // check if venue is already in self.lastFmVenues
-    function newVenue(venueId, venues) {
+    function findVenue(venueId, venues) {
         for (var i = 0; i < venues.length; i++) {
             if (venueId === venues[i].id) {
-                //console.log('id match');
                 return i;
             }
         }
-        //console.log('new');
         return -1;
     }
 
@@ -153,7 +151,7 @@ var ViewModel =  function () {
     function buildVenues (events) {
         var venues = [];
         for (var i = 0; i < events.length; i++) {
-            var venueIndex = newVenue(events[i].venue.id, venues);
+            var venueIndex = findVenue(events[i].venue.id, venues);
             var venue = events[i].venue;
             if (venueIndex === -1) {
                 // venue not yet in list
@@ -329,15 +327,11 @@ var ViewModel =  function () {
         self.showArtistInfo(false);
     };
 
+    //TODO: similar to findVenue
     self.selectFilteredVenue = function(filteredVenue) {
         //console.log(filteredVenue.id);
-        for (var i = 0; i < self.lastFmVenues().length; i++) {
-            console.log(i);
-            if (filteredVenue.id === self.lastFmVenues()[i].id) {
-                selectVenue(self.lastFmVenues()[i]);
-                break
-            }
-        }
+        var unfilteredIndex = findVenue(filteredVenue.id, self.lastFmVenues());
+        selectVenue(self.lastFmVenues()[unfilteredIndex]);
     };
 
     self.selectVenue = function(venue) {
