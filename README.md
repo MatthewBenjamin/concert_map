@@ -1,37 +1,56 @@
-This map displays event data retrieved from Last.fm for a given area/city.
-It will display the next 100 events.
+#Concert Map
+
+This project renders the next 100 upcoming concert events on a full page Google Map for your chosen location.
+Concert data is retrieved from the Last.fm API.
+Furthermore, you can access additional information about venues & artists through the application. See below for details.
 
 To run it, simply open 'build/index.html' in a modern web browser.
 
-How to use the application:
+##How to use the application:
 
 Each map marker represents a venue that is hosting at least one event.
-A list also displays all events being held in the area.
-This list can be toggled to display the area's venues instead.
+There is also a list view. This can be toggled to display either events or venues.
 
-Clicking on a map marker or a venue in the list view will display a list of the events happening at that venue.
-Clicking on an event in the list view will highlight the venue's map marker.
+Clicking on an event or venue in the list view, or the map marker itself, will open its associated map marker.
+Opening a map marker displays a list of events happening at that venue.
 
-Furthermore, clicking on an event or venue in the list view, or on an event or venue in a map marker's info window, will
-open an additional information display (this can be toggled on or off).
+###Additional Information Display
+Additional information about an event or venue can be accessed by clicking on that item in either the list view or map marker info window.
+Optionally, the additional information display can be toggled on or off.
 
-The additional information display can show information about the selected event, venue, or an artist that is performing
-at a given event.
+You can access information about: the selected event, venue, or an artist.
+
+####Event Info
 
 In the event information display, clicking on:
-    -An artist's name: will display information about the artist.
-    -A tag: will enter that tag as a search term (see below)
-    -A venue: will display information about the venue
+
+######An artist's name
+    Displays information about the artist.
+
+######A tag
+    Will enter that tag as a search term (see below).
+
+######A venue
+    Displays information about the venue.
+
+####Venue Info
 
 In the venue information display, clicking on:
-    -An upcoming event: will display information for that event
 
-In the artist information dispaly, clicking on:
-    -A tag: will enter that tag as a search term (see below)
+######An upcoming event
+    Displays information for that event.
 
-Searching for events:
+####Artist Info
 
-Entering a search term will filtered events and venue's for the following properties:
+In the artist information display, clicking on:
+
+######A tag
+    will enter that tag as a search term (see below)
+
+###Searching for events:
+
+Entering a search term will filter events and venue's for the following properties:
+
     -Venue's name
     -Venue's address
     -Event title
