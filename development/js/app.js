@@ -22,7 +22,7 @@ ko.bindingHandlers.googlemap = {
         var value = valueAccessor();
         var latitude = value.mapCenter.latitude;
         var longitude = value.mapCenter.longitude;
-        //console.log(latitude, longitude);
+        console.log(value);
         map.setCenter( { lat: latitude, lng: longitude } );
     }
 };
@@ -383,8 +383,8 @@ var ViewModel =  function () {
             if (status == google.maps.GeocoderStatus.OK) {
                 clearTimeout(geocodeTimeoutError);
                 self.geocoderStatus(null);
-                var latitude = results[0]['geometry']['location']['G'];
-                var longitude = results[0]['geometry']['location']['K'];
+                var latitude = results[0]['geometry']['location']['lat']();
+                var longitude = results[0]['geometry']['location']['lng']();
                 var mapCenter = {
                     latitude: latitude,
                     longitude: longitude
