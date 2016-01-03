@@ -46,13 +46,14 @@
                     <hr>
                     <h4 data-bind="text: title"></h4>
                     <p class="pale-text">
-                        <span data-bind="text: timeInfo.day"></span>
-                        <span data-bind="text: timeInfo.date"></span>
+                        <span data-bind="text: start_time"></span>
                     </p>
+                    <!-- TODO: possibly implement by adding genre info for artist (from last.fm or other)
                     <ul class="tags" data-bind="foreach: tags.tag">
                         <li class="tags-item" data-bind="text: $data"></li>
                     </ul>
-                    <p class="italic" data-bind="text: venue.name"></p>
+                    -->
+                    <p class="italic" data-bind="text: venue_name"></p>
                 </li>
             </ul>
         </div>

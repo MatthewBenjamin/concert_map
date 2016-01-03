@@ -36,8 +36,8 @@ var infoWindowView = function(){
                             '<hr>' +
                             '<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
                             '<p class="window-event-date date">' +
-                                '<span data-bind="text: timeInfo.day"></span>, ' +
-                                '<span data-bind="text: timeInfo.date"></span>' +
+                                '<span data-bind="text: start_time"></span>, ' +
+                                //'<span data-bind="text: timeInfo.date"></span>' +
                             '</p>' +
                         '</li>' +
                 '</div>';
@@ -150,14 +150,19 @@ var ViewModel =  function () {
     // Build venues array from last.fm data
     function buildVenues (events) {
         var venues = [];
+        var venueIndex;
+        var venue;
         for (var i = 0; i < events.length; i++) {
-            var venueIndex = findVenue(events[i].venue_id, venues);
-            var venue = {
+            // TODO: do I need to reset venueIndex and venue at some point?
+            venueIndex = findVenue(events[i].venue_id, venues);
+            venue = {
                 address: events[i].venue_address,
                 display: events[i].venue_display,
                 id: events[i].venue_id,
                 name: events[i].venue_name,
-                url: events[i].venue_url
+                url: events[i].venue_url,
+                latitude: events[i].latitude,
+                longitude: events[i].longitude
             }; // TODO: update for new API?
             // TODO: move to inside IF for efficiency? also put var statements outside of loop
 
@@ -193,8 +198,8 @@ var ViewModel =  function () {
 
         for (var i = 0; i < venues.length; i++){
             var latLng = new google.maps.LatLng(
-                            venues[i].location['geo:point']['geo:lat'],
-                            venues[i].location['geo:point']['geo:long']);
+                            venues[i].latitude,
+                            venues[i].longitude);
 
             var marker = new google.maps.Marker({
                 position: latLng,
@@ -441,6 +446,34 @@ var ViewModel =  function () {
         }
     }
 
+    function parseTimeString(timestamp) {
+        //console.log(timestamp);
+        var dateObj = new Date(timestamp);
+        //console.log(dateObj.getDay)
+        timeInfo = {
+            day: dateObj.getDay(), // TODO: get day STRING
+            date: dateObj.getDate(),
+            month: dateObj.getMonth(), // TODO: get month STRING
+            year: dateObj.getFullYear(),
+            time: dateObj.toLocaleTimeString()
+        };
+        return timeInfo;
+    }
+
+    function parseEvents(events) {
+        var startTimeInfo;
+        for(var i = 0; i < events.length; i++) {
+            startTimeInfo = parseTimeString(events[i].start_time);
+            events[i].startTimeInfo = startTimeInfo;
+            //console.log(events[i]);
+            //events[i].startTimeInfo = parseTimeString(events[i].start_time);
+            //if (events[i].stop_time) {
+            //    events[i].stopTimeInfo = parseTimeString(events[i].stop_time);
+
+            //}
+        }
+    }
+
     // Get Last.fm data when mapCenter updates
     self.getLastFmEvents = ko.computed(function() {
         if (self.mapCenter().latitude && self.mapCenter().longitude) {
@@ -450,8 +483,8 @@ var ViewModel =  function () {
             var requestURL = 'http://api.eventful.com/json/events/search?' +
                 'category=music&' +
                 'app_key=pnjPdTpBzzf9hgFx&' +
-                'location=' + latitude + ',' + longitude + '&' + // TODO: base on geocode
-                'within=10';
+                'location=' + latitude + ',' + longitude;// + '&' + // TODO: base on geocode
+                //'within=10';
                 //'sort_order=date' // TODO: need this?--> 'page_size=100&page_number=1'
                 //console.log(requestURL);
 
@@ -465,7 +498,7 @@ var ViewModel =  function () {
                     console.log(data);
                     if (data.events) {
                         self.lastFmStatus(null);
-                        //parseLastFmEvents(data.events);
+                        parseEvents(data.events.event);
                         self.musicEvents(data.events.event);
                     } else {
                         //self.lastFmStatus(data.message);
@@ -554,8 +587,8 @@ var ViewModel =  function () {
     // Lookup 4square venue ID, then get detailed info
     self.findFourSquareVenue = ko.computed(function() {
         if (self.currentVenue()) {
-            var lat = self.currentVenue().location['geo:point']['geo:lat'];
-            var lon = self.currentVenue().location['geo:point']['geo:long'];
+            var lat = self.currentVenue().latitude;
+            var lon = self.currentVenue().longitude;
             //console.log(typeof lat,lon);
             var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
                 'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
