@@ -60,7 +60,7 @@ var ViewModel =  function () {
     // event API results
     self.musicEvents = ko.observableArray();
     // List of venue objects with associated concerts
-    self.lastFmVenues = ko.observableArray();
+    self.eventVenues = ko.observableArray();
 
     // search last fm data
     self.searchInput = ko.observable();
@@ -137,7 +137,7 @@ var ViewModel =  function () {
         }
     });
 
-    // check if venue is already in self.lastFmVenues
+    // check if venue is already in self.eventVenues
     function findVenue(venueId, venues) {
         for (var i = 0; i < venues.length; i++) {
             if (venueId === venues[i].id) {
@@ -151,8 +151,16 @@ var ViewModel =  function () {
     function buildVenues (events) {
         var venues = [];
         for (var i = 0; i < events.length; i++) {
-            var venueIndex = findVenue(events[i].venue.id, venues);
-            var venue = events[i].venue;
+            var venueIndex = findVenue(events[i].venue_id, venues);
+            var venue = {
+                address: events[i].venue_address,
+                display: events[i].venue_display,
+                id: events[i].venue_id,
+                name: events[i].venue_name,
+                url: events[i].venue_url
+            }; // TODO: update for new API?
+            // TODO: move to inside IF for efficiency? also put var statements outside of loop
+
             if (venueIndex === -1) {
                 // venue not yet in list
                 venue.concerts = [];
@@ -172,15 +180,15 @@ var ViewModel =  function () {
 
     self.buildAllVenues = ko.computed(function() {
         var events = self.musicEvents();
-        self.lastFmVenues(buildVenues(events));
+        self.eventVenues(buildVenues(events));
     });
 
-    // Create google map markers from lastFmVenues
+    // Create google map markers from eventVenues
     self.mapMarkers = ko.computed(function() {
         var markers = [];
         var infoWindow = new google.maps.InfoWindow();
 
-        var venues = self.lastFmVenues();
+        var venues = self.eventVenues();
         console.log(venues);
 
         for (var i = 0; i < venues.length; i++){
@@ -200,7 +208,7 @@ var ViewModel =  function () {
             google.maps.event.addListener(marker, 'mouseup', function() {
                 var m = this;
                 infoWindow.setContent(m.content);
-                self.currentVenue(self.lastFmVenues()[m.venueIndex]);
+                self.currentVenue(self.eventVenues()[m.venueIndex]);
                 infoWindow.open(map, m);
                 m.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(function() {
@@ -254,13 +262,13 @@ var ViewModel =  function () {
             self.filteredVenues(venueResults);
         } else {
             self.filteredEvents(self.musicEvents());
-            self.filteredVenues(self.lastFmVenues());
+            self.filteredVenues(self.eventVenues());
         }
     });
 
     // change marker icon based on search results
     self.mapMarkersSearch = ko.computed(function() {
-        var venues = self.lastFmVenues();
+        var venues = self.eventVenues();
         var searchedEvents = self.filteredEvents();
         var allEvents = self.musicEvents();
 
@@ -328,14 +336,14 @@ var ViewModel =  function () {
     };
 
     self.selectFilteredVenue = function(filteredVenue) {
-        var unfilteredIndex = findVenue(filteredVenue.id, self.lastFmVenues());
-        self.selectVenue(self.lastFmVenues()[unfilteredIndex]);
+        var unfilteredIndex = findVenue(filteredVenue.id, self.eventVenues());
+        self.selectVenue(self.eventVenues()[unfilteredIndex]);
     };
 
     self.selectVenue = function(venue) {
         // can't pass venue object from currentEvent extra-info
-        var currentVenue = venue || self.lastFmVenues()[self.currentEvent().venueIndex()];
-        self.selectMarker(self.lastFmVenues.indexOf(currentVenue));
+        var currentVenue = venue || self.eventVenues()[self.currentEvent().venueIndex()];
+        self.selectMarker(self.eventVenues.indexOf(currentVenue));
         self.showVenueInfo(true);
         self.showEventInfo(false);
         self.showArtistInfo(false);
@@ -405,7 +413,7 @@ var ViewModel =  function () {
 
     // clean up lastFm data
     function parseLastFmEvents(data) {
-        //console.log(data);
+        console.log(data);
         var emptyArray = [];
         for (var i = 0; i < data.length; i++) {
             if (typeof data[i].artists.artist === 'string') {
@@ -457,10 +465,10 @@ var ViewModel =  function () {
                     console.log(data);
                     if (data.events) {
                         self.lastFmStatus(null);
-                        parseLastFmEvents(data.events.event);
+                        //parseLastFmEvents(data.events);
                         self.musicEvents(data.events.event);
                     } else {
-                        self.lastFmStatus(data.message);
+                        //self.lastFmStatus(data.message);
                     }
 
                 },
