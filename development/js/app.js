@@ -433,39 +433,40 @@ var ViewModel =  function () {
         }
     }
 
-    // Get Last.fm data when mapCenter updates
+    // Get concert data when mapCenter updates
     self.getConcerts = ko.computed(function() {
         if (self.mapCenter().latitude && self.mapCenter().longitude) {
             var latitude = self.mapCenter().latitude;
             var longitude = self.mapCenter().longitude;
-            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=geo.getevents&' +
-                'lat=' + latitude + '&' +
-                'long=' + longitude + '&' +
-                // TODO: make editable
-                'limit=100&' +
-                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json';
+            var requestURL = 'http://api.bandsintown.com/events/search.json?' +
+                'app_id=google-map-mashup&' +
+                'location=' + latitude + ',' + longitude + '&' +
+                'per_page=100&' +
+                'format=json';
             var requestSettings = {
+                dataType: "jsonp",
+                crossDomain: "true",
                 success: function(data, status, jqXHR) {
+                    //clears old markers
                     self.mapMarkers().forEach(function (marker) {
                         marker.setMap(null);
                     });
-                    if (data.events) {
+                    if (data) {
                         self.lastFmStatus(null);
-                        parseConcerts(data.events.event);
-                        self.concerts(data.events.event);
+                        //parseConcerts(data.events.event);
+                        self.concerts(data);
                     } else {
-                        self.lastFmStatus(data.message);
+                        //self.lastFmStatus(data.message);
                     }
 
                 },
                 error: function() {
-                    self.lastFmStatus('Last FM data could not be loaded. Please try again.');
+                    self.lastFmStatus('Concert data could not be loaded. Please try again.');
                 },
                 timeout: 11000
             };
             self.concerts.removeAll();
-            self.lastFmStatus('Loading Last FM Data...');
+            self.lastFmStatus('Loading Concert Data...');
             $.ajax(requestURL,requestSettings);
         }
     });
