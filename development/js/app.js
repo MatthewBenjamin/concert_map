@@ -22,7 +22,7 @@ ko.bindingHandlers.googlemap = {
         var value = valueAccessor();
         var latitude = value.mapCenter.latitude;
         var longitude = value.mapCenter.longitude;
-        console.log(value);
+        //console.log(value);
         map.setCenter( { lat: latitude, lng: longitude } );
     }
 };
@@ -34,10 +34,13 @@ var infoWindowView = function(){
                     '<ul class="window-list" data-bind="foreach: concerts">' +
                         '<li class="window-list-element clickable" data-bind="click: selectEvent">' +
                             '<hr>' +
-                            '<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
+                            //'<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
+                            '<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>' +
                             '<p class="window-event-date date">' +
-                                '<span data-bind="text: timeInfo.day"></span>, ' +
-                                '<span data-bind="text: timeInfo.date"></span>' +
+                                // TODO: make new timeinfo
+                                '<span data-bind="text: datetime"></span>, ' +
+                                //'<span data-bind="text: timeInfo.day"></span>, ' +
+                                //'<span data-bind="text: timeInfo.date"></span>' +
                             '</p>' +
                         '</li>' +
                 '</div>';
@@ -233,6 +236,7 @@ var ViewModel =  function () {
     // Search last.fm data
     self.searchConcerts = ko.computed(function() {
         if (self.searchInput()) {
+            /*
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
             var venueResults;
@@ -240,6 +244,7 @@ var ViewModel =  function () {
                 var currentEvent = self.concerts()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
                     doesStringContain(currentEvent.venue.location.street, searchTerm) ||
+                    // TODO: no events title
                     doesStringContain(currentEvent.title, searchTerm) ||
                     doesStringContain(currentEvent.description, searchTerm) ||
                     doesListContain(currentEvent.artists.artist, searchTerm) ||
@@ -250,8 +255,10 @@ var ViewModel =  function () {
 
                 }
             }
-            self.filteredEvents(eventResults);
-            self.filteredVenues(venueResults);
+            */
+            console.log('search function not yet updated for bandsintown API');
+            //self.filteredEvents(eventResults);
+            //self.filteredVenues(venueResults);
         } else {
             self.filteredEvents(self.concerts());
             self.filteredVenues(self.concertVenues());
@@ -528,7 +535,7 @@ var ViewModel =  function () {
         id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
         var requestSettings = {
             success: function(data, status, jqXHR) {
-                console.log(data);
+                //console.log(data);
                 self.currentVenueFourSquare(data.response.venue);
             },
             error: function(data, status, jqXHR) {

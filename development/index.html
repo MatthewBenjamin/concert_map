@@ -44,14 +44,18 @@
             <ul class="list" data-bind="foreach: filteredEvents, click: function(){ closeSmallMenu() }">
                 <li class="clickable list-item" data-bind="click: selectEvent">
                     <hr>
-                    <h4 data-bind="text: title"></h4>
+                        <h4 data-bind="text: artists[0].name"></h4>
+                    <!-- <h4 data-bind="text: title"></h4> TODO: fix -->
                     <p class="pale-text">
+                        <span data-bind="text: datetime"></span>
+                    <!-- TODO: make new timeinfo
                         <span data-bind="text: timeInfo.day"></span>
-                        <span data-bind="text: timeInfo.date"></span>
+                        <span data-bind="text: timeInfo.date"></span> -->
                     </p>
+                    <!-- TODO: new tags or eliminate?
                     <ul class="tags" data-bind="foreach: tags.tag">
                         <li class="tags-item" data-bind="text: $data"></li>
-                    </ul>
+                    </ul> -->
                     <p class="italic" data-bind="text: venue.name"></p>
                 </li>
             </ul>
@@ -82,13 +86,13 @@
 
 
 
-        <!-- EXTRA INFO DISPLAY -->
+        <!-- EXTRA INFO DISPLAY
         <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
             <a class="close-button clickable" data-bind="click: function() { closeExtraInfo(); }">
                 <img class="svg-button" src="images/close.svg" alt="CLOSE">
             </a>
 
-            <!-- EVENT INFO -->
+            <!-- EVENT INFO
             <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
                     <h3 data-bind="text: title"></h3>
@@ -118,7 +122,7 @@
                 <p data-bind="if: description">Description: <span data-bind="html: description"></span></p>
             </div>
 
-            <!-- VENUE INFO -->
+            <!-- VENUE INFO
             <div class="extra-info-content" data-bind="visible: showVenueInfo(), with: currentVenue">
                 <p data-bind="text: fourSquareStatus"></p>
                 <h3 data-bind="text: name"></h3>
@@ -160,7 +164,7 @@
                 </div>
             </div>
 
-            <!-- ARTIST INFO -->
+            <!-- ARTIST INFO
             <div class="extra-info-content" data-bind="visible: showArtistInfo()">
                 <p data-bind="text: lastFmArtistStatus"></p>
                 <h3 data-bind="text: currentArtist()"></h3>
@@ -184,7 +188,7 @@
                         <a data-bind="text: snippet.title, attr : { href: url }"></a>
                     </li>
                 </ul>
-            </div>
+            </div> -->
 
         </div>
 
