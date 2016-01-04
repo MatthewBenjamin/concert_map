@@ -148,7 +148,7 @@ var ViewModel =  function () {
     }
 
     // Build venues array from last.fm data
-    function buildVenues (events) {
+    function buildVenues(events) {
         var venues = [];
         for (var i = 0; i < events.length; i++) {
             var venueIndex = findVenue(events[i].venue.id, venues);
@@ -181,12 +181,12 @@ var ViewModel =  function () {
         var infoWindow = new google.maps.InfoWindow();
 
         var venues = self.concertVenues();
-        console.log(venues);
+        //console.log(venues);
 
         for (var i = 0; i < venues.length; i++){
             var latLng = new google.maps.LatLng(
-                            venues[i].location['geo:point']['geo:lat'],
-                            venues[i].location['geo:point']['geo:long']);
+                            venues[i].latitude,
+                            venues[i].longitude);
 
             var marker = new google.maps.Marker({
                 position: latLng,
@@ -542,8 +542,8 @@ var ViewModel =  function () {
     // Lookup 4square venue ID, then get detailed info
     self.findFourSquareVenue = ko.computed(function() {
         if (self.currentVenue()) {
-            var lat = self.currentVenue().location['geo:point']['geo:lat'];
-            var lon = self.currentVenue().location['geo:point']['geo:long'];
+            var lat = self.currentVenue().latitude;
+            var lon = self.currentVenue().longitude;
             //console.log(typeof lat,lon);
             var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
                 'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
