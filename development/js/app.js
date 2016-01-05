@@ -38,9 +38,9 @@ var infoWindowView = function(){
                             '<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>' +
                             '<p class="window-event-date date">' +
                                 // TODO: make new timeinfo
-                                '<span data-bind="text: datetime"></span>, ' +
-                                //'<span data-bind="text: timeInfo.day"></span>, ' +
-                                //'<span data-bind="text: timeInfo.date"></span>' +
+                                //'<span data-bind="text: datetime"></span>, ' +
+                                '<span data-bind="text: timeInfo.day"></span>, ' +
+                                '<span data-bind="text: timeInfo.date"></span>' +
                             '</p>' +
                         '</li>' +
                 '</div>';
