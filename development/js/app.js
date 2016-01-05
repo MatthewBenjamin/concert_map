@@ -413,14 +413,12 @@ var ViewModel =  function () {
     // clean up concert data
     function parseConcerts(data) {
         //console.log(data);
+        var time;
+        var timeString;
         var emptyArray = [];
         for (var i = 0; i < data.length; i++) {
-            if (typeof data[i].artists.artist === 'string') {
-                emptyArray.push(data[i].artists.artist);
-                data[i].artists.artist = emptyArray;
-                emptyArray = [];
-            }
             // TODO: add for loop to store additional artist info (name here, later youtube/last.fm) as object in artist array
+            /* TODO: incorporate last.fm artist data tags, etc.
             if (!data[i].tags) {
                 data[i].tags = {
                     tag: []
@@ -430,12 +428,14 @@ var ViewModel =  function () {
                 emptyArray.push(data[i].tags.tag);
                 data[i].tags.tag = emptyArray;
                 emptyArray = [];
-            }
+            } */
+            time = new Date(Date.parse(data[i].datetime));
+            timeString = time.toDateString();
             data[i].timeInfo = {
-                day: data[i].startDate.substring(0,3),
-                date: data[i].startDate.substring(5,11),
-                year: data[i].startDate.substring(12,16),
-                time: data[i].startDate.substring(17,22)
+                day: timeString.substring(0,3),
+                date: timeString.substring(4,10),
+                year: time.getFullYear(),
+                time: time.toUTCString().substring(17,22)
             };
         }
     }
@@ -460,7 +460,7 @@ var ViewModel =  function () {
                     });
                     if (data) {
                         self.lastFmStatus(null);
-                        //parseConcerts(data.events.event);
+                        parseConcerts(data);
                         self.concerts(data);
                     } else {
                         //self.lastFmStatus(data.message);
