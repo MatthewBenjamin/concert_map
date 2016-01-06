@@ -484,6 +484,7 @@ var ViewModel =  function () {
         var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
             'api_key=d824cbbb7759624aa8b3621a627b70b8' +
             '&format=json&';
+        var requestSettings;
         var artistSearch;
         for (var i = 0; i < self.concerts().length; i++) {
             for (var j = 0; j < self.concerts()[i].artists.length; j++) {
@@ -495,26 +496,24 @@ var ViewModel =  function () {
 
                 // self.lastFmArtistStatus('Loading Last FM artist data...'); TODO: remove this?
                 (function(i,j) {
-                    var requestSettings = {
+                    requestSettings = {
                         success: function(data, status, jqXHR) {
                             //self.currentArtistInfo(ko.mapping.fromJS(data.artist)); TODO: need this for data binding?
                             // TODO: clear out when changing map location
                             if (!data.error) {
-                                self.concerts()[this.concertIndex].artists[this.artistIndex].lastfm = data;
+                                self.concerts()[i].artists[j].lastfm = data;
                             }
                         },
-                        // TODO: is context param best practice?
-                        context: {concertIndex: i, artistIndex: j},
                         error: function(data, status, jqXHR) {
-                            //console.log(status);
+                            console.log(status,i,j);
                         },
-                        timeout: 15000
+                        timeout: 11000
                     };
                     $.ajax(requestURL + artistSearch, requestSettings);
                 })(i,j);
             }
             if (i == self.concerts().length - 1) {
-                console.log('artist search completed');
+                console.log('artist search completed(sort of...)');
             }
         }
     });
