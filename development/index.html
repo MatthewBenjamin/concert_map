@@ -83,40 +83,40 @@
 
 
 
-        <!-- EXTRA INFO DISPLAY
+        <!-- EXTRA INFO DISPLAY -->
         <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
             <a class="close-button clickable" data-bind="click: function() { closeExtraInfo(); }">
                 <img class="svg-button" src="images/close.svg" alt="CLOSE">
             </a>
 
-            <!-- EVENT INFO
+            <!-- EVENT INFO -->
             <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
+                    <!-- TODO: add title & date
                     <h3 data-bind="text: title"></h3>
-                    <p class="pale-text" data-bind="text: startDate"></p>
+                    <p class="pale-text" data-bind="text: startDate"></p> -->
                 </div>
                 <h4>Artists</h4>
                 <hr>
-                <ul data-bind="foreach: artists.artist">
+                <ul data-bind="foreach: artists">
                     <li>
-                        <a class="clickable" data-bind="text: $data, click: function() { selectArtist($data); }"></a>
+                        <a class="clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
+                        <div data-bind="if: $data.lastfm">
+                                <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
+                                    <li class="clickable tags-item" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
+                                </ul>
+                        </div>
                     </li>
                     <br>
                 </ul>
-                <div data-bind="if: tags.tag().length > 0">
-                    <h4>Tags:</h4>
-                        <ul class="tags" data-bind="foreach: tags.tag">
-                            <li class="clickable tags-item" data-bind="text: $data, click: searchInput"></li>
-                        </ul>
-                </div>
                 <p>
                     <span class="bold">Venue</span>
                     <a class="clickable italic" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
                 </p>
-                <a data-bind="attr: { href: url }">Last FM Event Page</a>
+                <a data-bind="attr: { href: url }">Bands in Town Event Page</a>
                 <br>
-                <p><a data-bind="if: website, attr: { href: website }">Offical Site</a></p>
-                <p data-bind="if: description">Description: <span data-bind="html: description"></span></p>
+                <!-- TODO: parse ticket_status to boolean
+                <p><a data-bind="if: ticket_status == "available", attr: { href: tickets }">Get Tickets</a></p> -->
             </div>
 
             <!-- VENUE INFO

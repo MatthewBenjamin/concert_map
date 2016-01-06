@@ -499,7 +499,6 @@ var ViewModel =  function () {
                     requestSettings = {
                         success: function(data, status, jqXHR) {
                             //self.currentArtistInfo(ko.mapping.fromJS(data.artist)); TODO: need this for data binding?
-                            // TODO: clear out when changing map location
                             if (!data.error) {
                                 self.concerts()[i].artists[j].lastfm = data;
                             }
