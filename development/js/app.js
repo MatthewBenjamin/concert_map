@@ -478,25 +478,44 @@ var ViewModel =  function () {
         }
     });
 
-    // Get last.fm artist info to display in extra-info
+    // Get last.fm artist info
     self.getArtistInfo = ko.computed(function() {
-        if (self.currentArtistSearch()) {
-            var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
-                'artist=' + self.currentArtistSearch() + '&' +
-                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json';
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    self.lastFmArtistStatus(null);
-                    self.currentArtistInfo(ko.mapping.fromJS(data.artist));
-                },
-                error: function() {
-                    self.lastFmArtistStatus('Last FM artist data could not be loaded.');
-                },
-                timeout: 8000
-            };
-            self.lastFmArtistStatus('Loading Last FM artist data...');
-            $.ajax(requestURL, requestSettings);
+        console.log('Searching for Artist Info...'); // TODO: add this to user display with . . .
+        var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
+            'api_key=d824cbbb7759624aa8b3621a627b70b8' +
+            '&format=json&';
+        var artistSearch;
+        for (var i = 0; i < self.concerts().length; i++) {
+            for (var j = 0; j < self.concerts()[i].artists.length; j++) {
+                if (self.concerts()[i].artists[j].mbid) {
+                    artistSearch = 'mbid=' + self.concerts()[i].artists[j].mbid;
+                } else {
+                    artistSearch = 'artist=' + self.concerts()[i].artists[j].name;
+                }
+
+                // self.lastFmArtistStatus('Loading Last FM artist data...'); TODO: remove this?
+                (function(i,j) {
+                    var requestSettings = {
+                        success: function(data, status, jqXHR) {
+                            //self.currentArtistInfo(ko.mapping.fromJS(data.artist)); TODO: need this for data binding?
+                            // TODO: clear out when changing map location
+                            if (!data.error) {
+                                self.concerts()[this.concertIndex].artists[this.artistIndex].lastfm = data;
+                            }
+                        },
+                        // TODO: is context param best practice?
+                        context: {concertIndex: i, artistIndex: j},
+                        error: function(data, status, jqXHR) {
+                            //console.log(status);
+                        },
+                        timeout: 15000
+                    };
+                    $.ajax(requestURL + artistSearch, requestSettings);
+                })(i,j);
+            }
+            if (i == self.concerts().length - 1) {
+                console.log('artist search completed');
+            }
         }
     });
 
