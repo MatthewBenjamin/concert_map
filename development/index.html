@@ -93,8 +93,15 @@
             <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
                     <!-- TODO: add title & date
-                    <h3 data-bind="text: title"></h3>
-                    <p class="pale-text" data-bind="text: startDate"></p> -->
+                    <h3 data-bind="text: title"></h3> -->
+                    <p class="pale-text">
+                        <span data-bind="text: timeInfo.time"></span>
+                        <br>
+                        <span data-bind="text: timeInfo.day"></span>
+                        <span data-bind="text: timeInfo.date"></span>
+                        <br>
+                        <span data-bind="text: timeInfo.year"></span>
+                    </p>
                 </div>
                 <h4>Artists</h4>
                 <hr>
