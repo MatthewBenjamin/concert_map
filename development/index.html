@@ -44,8 +44,10 @@
             <ul class="list" data-bind="foreach: filteredEvents, click: function(){ closeSmallMenu() }">
                 <li class="clickable list-item" data-bind="click: selectEvent">
                     <hr>
-                        <h4 data-bind="text: artists[0].name"></h4>
-                    <!-- <h4 data-bind="text: title"></h4> TODO: fix, 'A & x more acts' -->
+                        <p>
+                            <span class="bold" data-bind="text: artists[0].name"></span>
+                            <span class="italic" data-bind="text: subtitle"></span>
+                        </p>
                         <span data-bind="text: timeInfo.day"></span>
                         <span data-bind="text: timeInfo.date"></span>
                     </p>
@@ -92,8 +94,11 @@
             <!-- EVENT INFO -->
             <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
-                    <!-- TODO: add title & date
-                    <h3 data-bind="text: title"></h3> -->
+                    <!-- TODO: add title & date -->
+                    <p>
+                        <span class="bold larger" data-bind="text: artists()[0].name"></span>
+                        <span class="italic" data-bind="text: subtitle"></span>
+                    </p>
                     <p class="pale-text">
                         <span data-bind="text: timeInfo.time"></span>
                         <br>

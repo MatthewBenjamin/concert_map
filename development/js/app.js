@@ -35,7 +35,11 @@ var infoWindowView = function(){
                         '<li class="window-list-element clickable" data-bind="click: selectEvent">' +
                             '<hr>' +
                             //'<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
-                            '<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>' +
+                            //'<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>' +
+                            '<p>' +
+                                '<span class="bold" data-bind="text: artists[0].name"></span> ' +
+                                '<span class="italic" data-bind="text: subtitle"></span>' +
+                            '</p>' +
                             '<p class="window-event-date date">' +
                                 // TODO: make new timeinfo
                                 //'<span data-bind="text: datetime"></span>, ' +
@@ -415,7 +419,8 @@ var ViewModel =  function () {
         //console.log(data);
         var time;
         var timeString;
-        var emptyArray = [];
+        var artistCount;
+        //var emptyArray = [];
         for (var i = 0; i < data.length; i++) {
             // TODO: add for loop to store additional artist info (name here, later youtube/last.fm) as object in artist array
             /* TODO: incorporate last.fm artist data tags, etc.
@@ -429,6 +434,16 @@ var ViewModel =  function () {
                 data[i].tags.tag = emptyArray;
                 emptyArray = [];
             } */
+            artistCount = data[i].artists.length;
+            if (artistCount > 1) {
+                artistCount -= 1;
+                data[i].subtitle = "& " + artistCount + " more act";
+                if (artistCount > 1) {
+                    data[i].subtitle += "s";
+                }
+            } else {
+                data[i].subtitle = null;
+            }
             time = new Date(Date.parse(data[i].datetime));
             timeString = time.toDateString();
             data[i].timeInfo = {
@@ -504,7 +519,7 @@ var ViewModel =  function () {
                             }
                         },
                         error: function(data, status, jqXHR) {
-                            console.log(status,i,j);
+                            //console.log(status,i,j);
                         },
                         timeout: 11000
                     };
