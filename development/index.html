@@ -174,31 +174,25 @@
                 </ul>
             </div>
 
-            <!-- ARTIST INFO
-            <div class="extra-info-content" data-bind="visible: showArtistInfo()">
-                <p data-bind="text: lastFmArtistStatus"></p>
-                <h3 data-bind="text: currentArtist()"></h3>
-                <div data-bind="with: currentArtistInfo">
-                    <div data-bind="if: tags.tag">
-                        <h4>Tags</h4>
-                        <ul class="tags" data-bind="foreach: tags.tag">
-                            <li class="tags-item clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
-                        </ul>
-                    </div>
-                    <p><a data-bind="attr : { href: url }">Last FM Page</a></p>
-                    <div data-bind="if: bio.summary">
-                        <h4>Bio</h4>
-                        <p data-bind="html: bio.summary"></p>
-                    </div>
+            <!-- ARTIST INFO -->
+            <div class="extra-info-content" data-bind="visible: showArtistInfo(), with: currentArtist">
+                <h3 data-bind="text: name"></h3>
+                <div data-bind="if: $data.lastfm">
+                    <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
+                        <li class="tags-item clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
+                    </ul>
+                    <h4>Bio</h4>
+                    <p data-bind="html: lastfm.artist.bio.summary"></p>
                 </div>
-                <h4>Youtube Search Results for "<span data-bind="text: currentArtist()"></span>"</h4>
+                <p><a data-bind="attr : { href: url }"><span data-bind="text: name"></span>'s Bands in Town Page</a></p>
+                <h4>Youtube Search Results for "<span data-bind="text: name"></span>"</h4>
                 <p data-bind="text: youtubeStatus"></p>
                 <ul data-bind="foreach: currentArtistYoutube">
                     <li class="youtube-link">
                         <a data-bind="text: snippet.title, attr : { href: url }"></a>
                     </li>
                 </ul>
-            </div> -->
+            </div>
 
         </div>
 

@@ -129,7 +129,7 @@ var ViewModel =  function () {
     self.currentArtistSearch = ko.computed(function() {
         var artist;
         if (self.currentArtist()) {
-            artist = self.currentArtist().replace(/\s+/g, '+');
+            artist = self.currentArtist().name().replace(/\s+/g, '+');
         }
         return artist;
     });
