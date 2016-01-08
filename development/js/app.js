@@ -77,7 +77,7 @@ var ViewModel =  function () {
     // display detailed info for an event, venue, or artist
     self.currentEvent = ko.observable();
     self.currentVenue = ko.observable();
-    self.currentVenueFourSquare = ko.observable();
+    //self.currentVenueFourSquare = ko.observable();
     self.currentArtist = ko.observable();
     // last.fm artist data
     self.currentArtistInfo = ko.observable();
@@ -103,7 +103,7 @@ var ViewModel =  function () {
     self.geocoderStatus = ko.observable();
     self.lastFmStatus = ko.observable();
     self.lastFmArtistStatus = ko.observable();
-    self.fourSquareStatus = ko.observable();
+    //self.fourSquareStatus = ko.observable();
     self.youtubeStatus = ko.observable();
 
     // initialize location
@@ -560,7 +560,7 @@ var ViewModel =  function () {
     });
 
     /* 4 Square */
-
+/*
     // Get detailed venue info based on 4square ID
     function getFourSquareById(id) {
         var requestURL = 'https://api.foursquare.com/v2/venues/' +
@@ -578,6 +578,7 @@ var ViewModel =  function () {
         $.ajax(requestURL, requestSettings);
     }
 
+
     // Lookup 4square venue ID, then get detailed info
     self.findFourSquareVenue = ko.computed(function() {
         if (self.currentVenue()) {
@@ -587,13 +588,14 @@ var ViewModel =  function () {
             var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
                 'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
                 'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
-                'v=20130815&' +
+                'v=20160105&' +
+                'm=foursquare&' +
                 'll=' + lat + ',' + lon + '&' +
                 'query=' + self.currentVenue().name + '&' +
                 'intent=match';
             var requestSettings = {
                 success: function(data, status, jqXHR) {
-                    //console.log(data);
+                    console.log(data);
                      if (data.response.venues.length > 0) {
                         getFourSquareById(data.response.venues[0].id);
                         self.fourSquareStatus(null);
@@ -602,7 +604,8 @@ var ViewModel =  function () {
                         self.fourSquareStatus('Four Square data for venue could not be found.');
                      }
                 },
-                error: function() {
+                error: function(data, status, jqXHR) {
+                    //console.log(data, status);
                     self.fourSquareStatus('Four Square data for venue could not be loaded.');
                 },
                 timeout: 8000
@@ -611,7 +614,7 @@ var ViewModel =  function () {
             $.ajax(requestURL, requestSettings);
         }
     });
-
+*/
 };
 
 ko.applyBindings(ViewModel);

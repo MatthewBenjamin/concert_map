@@ -94,7 +94,6 @@
             <!-- EVENT INFO -->
             <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
-                    <!-- TODO: add title & date -->
                     <p>
                         <span class="bold larger" data-bind="text: artists()[0].name"></span>
                         <span class="italic" data-bind="text: subtitle"></span>
@@ -131,16 +130,15 @@
                 <p><a data-bind="if: ticket_status == "available", attr: { href: tickets }">Get Tickets</a></p> -->
             </div>
 
-            <!-- VENUE INFO
+            <!-- VENUE INFO -->
             <div class="extra-info-content" data-bind="visible: showVenueInfo(), with: currentVenue">
-                <p data-bind="text: fourSquareStatus"></p>
+                <!--<p data-bind="text: fourSquareStatus"></p> -->
                 <h3 data-bind="text: name"></h3>
                 <p class="pale-text">
-                    <span data-bind="text: location.street"></span>
-                    <span data-bind="text: location.city"></span>
-                    <span data-bind="text: location.postalcode"></span>
+                    <span data-bind="text: city"></span>,
+                    <span data-bind="text: region"></span>
                 </p>
-                <p class="pale-text" data-bind="text: phonenumber"></p>
+                <!-- TODO: 4square data
                 <div data-bind="with: currentVenueFourSquare">
                     <ul class="tags" data-bind="foreach: categories">
                         <li class="tags-item" data-bind="text: shortName"></li>
@@ -152,25 +150,28 @@
                         </p>
                     </div>
                     <a data-bind="attr: { href: canonicalUrl }">Visit <span data-bind="text: name"></span>'s Four Square Page</a>
-                </div>
-                <p>
-                    <a data-bind="attr: { href: url }">Visit <span data-bind="text: name"></span>'s Last FM Page</a>
-                </p>
+                </div> -->
+                <!-- TODO: replace with official website if supplied by 4square
                 <p data-bind="if: website"><a data-bind="attr: { href: website }">Visit <span data-bind="text: name"></span>'s Offical Website</a></p>
-                <h4>Upcoming Events</h4>
-                <ul data-bind="foreach: concerts">
-                    <li>
-                        <a class="clickable" data-bind="text: title, click: self.selectEvent"></a>
-                    </li>
-                    <br>
-                </ul>
 
+                TODO: 4square
                 <div data-bind="with: currentVenueFourSquare">
                     <div data-bind="if: $data.description">
                         <h4>Description from Four Square</h4>
                         <p data-bind="text: $data.description"></p>
                     </div>
                 </div>
+                -->
+                <p>
+                    <a data-bind="attr: { href: url }">Visit <span data-bind="text: name"></span>'s Bands in Town Page</a>
+                </p>
+                <h4>Upcoming Events</h4>
+                <ul data-bind="foreach: concerts">
+                    <li>
+                        <a class="clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
+                    </li>
+                    <br>
+                </ul>
             </div>
 
             <!-- ARTIST INFO
