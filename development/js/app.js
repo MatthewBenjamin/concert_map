@@ -229,40 +229,45 @@ var ViewModel =  function () {
         targetString = targetString.toLowerCase();
         return targetString.indexOf(searchTerm) > -1;
     }
-    function doesListContain(targetList, searchTerm) {
+    function doesObjectListContain(targetList, searchTerm, property) {
         for (var i = 0; i < targetList.length; i++) {
-            if (doesStringContain(targetList[i], searchTerm)) {
+            if (doesStringContain(targetList[i][property], searchTerm)) {
                 return true;
             }
         }
     }
-
+    function searchArtists(artistsList, searchTerm) {
+        if (doesObjectListContain(artistsList, searchTerm, 'name')) {
+            return true;
+        } else {
+            for (var i = 0; i < artistsList.length; i++) {
+                if (artistsList[i].lastfm) {
+                    if (doesStringContain(artistsList[i].lastfm.artist.bio.content,searchTerm) ||
+                        doesObjectListContain(artistsList[i].lastfm.artist.tags.tag, searchTerm, 'name')) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
     // Search last.fm data
     self.searchConcerts = ko.computed(function() {
         if (self.searchInput()) {
-            /*
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
             var venueResults;
             for (var i = 0; i < self.concerts().length; i++) {
                 var currentEvent = self.concerts()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
-                    doesStringContain(currentEvent.venue.location.street, searchTerm) ||
-                    // TODO: no events title
-                    doesStringContain(currentEvent.title, searchTerm) ||
-                    doesStringContain(currentEvent.description, searchTerm) ||
-                    doesListContain(currentEvent.artists.artist, searchTerm) ||
-                    doesListContain(currentEvent.tags.tag, searchTerm)) {
+                    doesStringContain(currentEvent.venue.city, searchTerm) ||
+                    searchArtists(currentEvent.artists, searchTerm)) {
 
                         eventResults.push(currentEvent);
                         venueResults = buildVenues(eventResults);
-
                 }
             }
-            */
-            console.log('search function not yet updated for bandsintown API');
-            //self.filteredEvents(eventResults);
-            //self.filteredVenues(venueResults);
+            self.filteredEvents(eventResults);
+            self.filteredVenues(venueResults);
         } else {
             self.filteredEvents(self.concerts());
             self.filteredVenues(self.concertVenues());
