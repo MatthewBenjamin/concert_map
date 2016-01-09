@@ -127,7 +127,7 @@
                 <a data-bind="attr: { href: url }">Bands in Town Event Page</a>
                 <br>
                 <!-- TODO: parse ticket_status to boolean -->
-                <p><a data-bind="attr: { href: ticket_url }">Get Tickets</a></p>
+                <p data-bind="if: tickets_available"><a data-bind="attr: { href: ticket_url }">Get Tickets</a></p>
             </div>
 
             <!-- VENUE INFO -->
@@ -169,6 +169,7 @@
                 <ul data-bind="foreach: concerts">
                     <li>
                         <a class="clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
+                        <span class="italic" data-bind="text: subtitle"></span>
                     </li>
                     <br>
                 </ul>

@@ -439,6 +439,12 @@ var ViewModel =  function () {
                 data[i].tags.tag = emptyArray;
                 emptyArray = [];
             } */
+            if (data[i].ticket_status === "available") {
+                data[i].tickets_available = true;
+                console.log(data[i].tickets_available)
+            } else {
+                data[i].tickets_available = false;
+            }
             artistCount = data[i].artists.length;
             if (artistCount > 1) {
                 artistCount -= 1;
