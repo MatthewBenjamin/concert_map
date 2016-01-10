@@ -24,6 +24,7 @@ ko.bindingHandlers.googlemap = {
         var longitude = value.mapCenter.longitude;
         //console.log(value);
         map.setCenter( { lat: latitude, lng: longitude } );
+        map.fitBounds(value.mapBounds);
     }
 };
 
@@ -223,6 +224,19 @@ var ViewModel =  function () {
         }
         //console.log($('.infoVenueWindow'));
         return markers;
+    });
+
+    // Set map bounds based on markers
+    self.mapBounds = ko.observable();
+    self.findMapBounds = ko.computed(function() {
+        var markers = self.mapMarkers();
+        // TODO: optimize? (makes new object every time...)
+        var bounds = new google.maps.LatLngBounds();
+        for(i=0; i<markers.length; i++) {
+            bounds.extend(markers[i].getPosition());
+        }
+
+        self.mapBounds(bounds);
     });
 
     // Search Functions

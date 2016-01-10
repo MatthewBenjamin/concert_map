@@ -12,7 +12,7 @@
 
     <body>
         <!-- GOOGLE MAP -->
-        <div class="map-canvas" data-bind="googlemap: { mapCenter: mapCenter() }, click: function(){closeSmallMenu()}"></div>
+        <div class="map-canvas" data-bind="googlemap: { mapCenter: mapCenter(), mapBounds: mapBounds() }, click: function(){closeSmallMenu()}"></div>
 
         <!-- MENU TOGGLE -->
         <a class="menu-toggle clickable" data-bind="click: function() { openSmallMenu(); toggleLargeMenu() }">
