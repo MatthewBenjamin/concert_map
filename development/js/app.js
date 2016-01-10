@@ -222,7 +222,6 @@ var ViewModel =  function () {
             ko.applyBindings(self, marker.content);
 
         }
-        //console.log($('.infoVenueWindow'));
         return markers;
     });
 
@@ -232,7 +231,7 @@ var ViewModel =  function () {
         var markers = self.mapMarkers();
         // TODO: optimize? (makes new object every time...)
         var bounds = new google.maps.LatLngBounds();
-        for(i=0; i<markers.length; i++) {
+        for(var i = 0; i < markers.length; i++) {
             bounds.extend(markers[i].getPosition());
         }
 
@@ -423,7 +422,7 @@ var ViewModel =  function () {
                     latitude: latitude,
                     longitude: longitude
                 };
-                if (latitude != self.mapCenter().latitude && longitude != self.mapCenter().longitude) {
+                if (mapCenter != self.mapCenter()) {
                     self.mapCenter(mapCenter);
                     storeLocation(self.currentAddress(), latitude, longitude);
                 } else {
@@ -515,7 +514,6 @@ var ViewModel =  function () {
                 },
                 timeout: 11000
             };
-            self.concerts.removeAll();
             self.lastFmStatus('Loading Concert Data...');
             $.ajax(requestURL,requestSettings);
         }
