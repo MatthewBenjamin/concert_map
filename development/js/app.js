@@ -157,9 +157,11 @@ var ViewModel =  function () {
     // Build venues array from last.fm data
     function buildVenues(events) {
         var venues = [];
+        var venueIndex;
+        var venue;
         for (var i = 0; i < events.length; i++) {
-            var venueIndex = findVenue(events[i].venue.id, venues);
-            var venue = events[i].venue;
+            venueIndex = findVenue(events[i].venue.id, venues);
+            venue = events[i].venue;
             if (venueIndex === -1) {
                 // venue not yet in list
                 venue.concerts = [];
@@ -256,19 +258,21 @@ var ViewModel =  function () {
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
             var venueResults;
+            var currentEvent;
             for (var i = 0; i < self.concerts().length; i++) {
-                var currentEvent = self.concerts()[i];
+                currentEvent = self.concerts()[i];
                 if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
                     doesStringContain(currentEvent.venue.city, searchTerm) ||
                     searchArtists(currentEvent.artists, searchTerm)) {
 
                         eventResults.push(currentEvent);
-                        venueResults = buildVenues(eventResults);
                 }
             }
+            venueResults = buildVenues(eventResults);
             self.filteredEvents(eventResults);
             self.filteredVenues(venueResults);
         } else {
+            buildVenues(self.concerts());
             self.filteredEvents(self.concerts());
             self.filteredVenues(self.concertVenues());
         }
@@ -441,7 +445,6 @@ var ViewModel =  function () {
             } */
             if (data[i].ticket_status === "available") {
                 data[i].tickets_available = true;
-                console.log(data[i].tickets_available)
             } else {
                 data[i].tickets_available = false;
             }
