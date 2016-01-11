@@ -102,7 +102,9 @@ var ViewModel =  function () {
 
     // API Status Messages
     self.geocoderStatus = ko.observable();
-    self.lastFmStatus = ko.observable();
+    // TODO: update name
+    self.concertsStatus = ko.observable();
+    // TODO: update
     self.lastFmArtistStatus = ko.observable();
     //self.fourSquareStatus = ko.observable();
     self.youtubeStatus = ko.observable();
@@ -501,20 +503,20 @@ var ViewModel =  function () {
                         marker.setMap(null);
                     });
                     if (data) {
-                        self.lastFmStatus(null);
+                        self.concertsStatus(null);
                         parseConcerts(data);
                         self.concerts(data);
                     } else {
-                        //self.lastFmStatus(data.message);
+                        //self.concertsStatus(data.message);
                     }
 
                 },
                 error: function() {
-                    self.lastFmStatus('Concert data could not be loaded. Please try again.');
+                    self.concertsStatus('Concert data could not be loaded. Please try again.');
                 },
                 timeout: 11000
             };
-            self.lastFmStatus('Loading Concert Data...');
+            self.concertsStatus('Loading Concert Data...');
             $.ajax(requestURL,requestSettings);
         }
     });
@@ -527,6 +529,9 @@ var ViewModel =  function () {
             '&format=json&';
         var requestSettings;
         var artistSearch;
+        // TODO: implement in observable?
+        //var artistInfoCount = 0;
+        //var completedCount = 0;
         for (var i = 0; i < self.concerts().length; i++) {
             for (var j = 0; j < self.concerts()[i].artists.length; j++) {
                 if (self.concerts()[i].artists[j].mbid) {
@@ -534,7 +539,7 @@ var ViewModel =  function () {
                 } else {
                     artistSearch = 'artist=' + self.concerts()[i].artists[j].name;
                 }
-
+                //artistInfoCount += 1;
                 // self.lastFmArtistStatus('Loading Last FM artist data...'); TODO: remove this?
                 (function(i,j) {
                     requestSettings = {
@@ -546,7 +551,15 @@ var ViewModel =  function () {
                         },
                         error: function(data, status, jqXHR) {
                             //console.log(status,i,j);
-                        },
+                        },/*
+                        complete: function() {
+                            //console.log(artistInfoCount);
+                            completedCount += 1;
+                            console.log(artistInfoCount, completedCount);
+                            if (artistInfoCount = 0) {
+                                console.log('artist info search done!');
+                            }
+                        },*/
                         timeout: 11000
                     };
                     $.ajax(requestURL + artistSearch, requestSettings);
@@ -556,6 +569,7 @@ var ViewModel =  function () {
                 console.log('artist search completed(sort of...)');
             }
         }
+        //console.log(artistInfoCount);
     });
 
     /* Youtube */
