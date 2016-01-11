@@ -112,11 +112,15 @@
                 <ul data-bind="foreach: artists">
                     <li>
                         <a class="clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
-                        <div data-bind="if: $data.lastfm">
+                        <div data-bind="if: lastfm.artist">
                                 <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
                                     <li class="clickable tags-item" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
                                 </ul>
+                                <!-- TODO: combine with below or change message? -->
+                                <span class="italic" data-bind="if: !lastfm.artist.tags.tag().length">no genre info</span>
                         </div>
+                        <!-- TODO: combine with above? -->
+                        <span class="italic" data-bind="if: $data.lastfm.error">no additional info</span>
                     </li>
                     <br>
                 </ul>
@@ -126,7 +130,6 @@
                 </p>
                 <a data-bind="attr: { href: url }">Bands in Town Event Page</a>
                 <br>
-                <!-- TODO: parse ticket_status to boolean -->
                 <p data-bind="if: tickets_available"><a data-bind="attr: { href: ticket_url }">Get Tickets</a></p>
             </div>
 
@@ -178,7 +181,8 @@
             <!-- ARTIST INFO -->
             <div class="extra-info-content" data-bind="visible: showArtistInfo(), with: currentArtist">
                 <h3 data-bind="text: name"></h3>
-                <div data-bind="if: $data.lastfm">
+                <p data-bind="text: lastfm.error"></p>
+                <div data-bind="if: lastfm.artist">
                     <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
                         <li class="tags-item clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
                     </ul>

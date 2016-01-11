@@ -102,7 +102,6 @@ var ViewModel =  function () {
 
     // API Status Messages
     self.geocoderStatus = ko.observable();
-    // TODO: update name
     self.concertsStatus = ko.observable();
     // TODO: update
     self.lastFmArtistStatus = ko.observable();
@@ -258,7 +257,7 @@ var ViewModel =  function () {
             return true;
         } else {
             for (var i = 0; i < artistsList.length; i++) {
-                if (artistsList[i].lastfm) {
+                if (artistsList[i].lastfm.artist) {
                     if (doesStringContain(artistsList[i].lastfm.artist.bio.content,searchTerm) ||
                         doesObjectListContain(artistsList[i].lastfm.artist.tags.tag, searchTerm, 'name')) {
                         return true;
@@ -529,9 +528,6 @@ var ViewModel =  function () {
             '&format=json&';
         var requestSettings;
         var artistSearch;
-        // TODO: implement in observable?
-        //var artistInfoCount = 0;
-        //var completedCount = 0;
         for (var i = 0; i < self.concerts().length; i++) {
             for (var j = 0; j < self.concerts()[i].artists.length; j++) {
                 if (self.concerts()[i].artists[j].mbid) {
@@ -539,29 +535,25 @@ var ViewModel =  function () {
                 } else {
                     artistSearch = 'artist=' + self.concerts()[i].artists[j].name;
                 }
-                //artistInfoCount += 1;
-                // self.lastFmArtistStatus('Loading Last FM artist data...'); TODO: remove this?
+
                 (function(i,j) {
                     requestSettings = {
                         success: function(data, status, jqXHR) {
-                            //self.currentArtistInfo(ko.mapping.fromJS(data.artist)); TODO: need this for data binding?
                             if (!data.error) {
                                 self.concerts()[i].artists[j].lastfm = data;
+                                self.concerts()[i].artists[j].lastfm.error = null;
+                            } else {
+                                // TODO: store error message in a variable (DRY!)
+                                self.concerts()[i].artists[j].lastfm.error = "Sorry, but additional information about this artist from Last.fm could not be loaded."
                             }
                         },
                         error: function(data, status, jqXHR) {
-                            //console.log(status,i,j);
-                        },/*
-                        complete: function() {
-                            //console.log(artistInfoCount);
-                            completedCount += 1;
-                            console.log(artistInfoCount, completedCount);
-                            if (artistInfoCount = 0) {
-                                console.log('artist info search done!');
-                            }
-                        },*/
+                            // TODO: store error message in a variable (DRY!)
+                            self.concerts()[i].artists[j].lastfm.error = "Sorry, but additional information about this artist from Last.fm could not be loaded."
+                        },
                         timeout: 11000
                     };
+                    self.concerts()[i].artists[j].lastfm = {};
                     $.ajax(requestURL + artistSearch, requestSettings);
                 })(i,j);
             }
@@ -569,7 +561,6 @@ var ViewModel =  function () {
                 console.log('artist search completed(sort of...)');
             }
         }
-        //console.log(artistInfoCount);
     });
 
     /* Youtube */
