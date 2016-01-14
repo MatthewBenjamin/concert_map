@@ -714,8 +714,8 @@ var ViewModel =  function () {
             self.currentVenueFourSquare(null);
             if (!venue.detailedInfo) {
                 findFourSquareVenue(venue)
-            } else if (venue.detailedInfo.foursquare) {
-                self.currentVenueFourSquare(venue.detailedInfo.foursquare);
+            } else if (venue.detailedInfo.fourSquare) {
+                self.currentVenueFourSquare(venue.detailedInfo.fourSquare);
             } else if (venue.detailedInfo.googlePlaces) {
                 self.currentVenuePlaces(venue.detailedInfo.googlePlaces);
             } else {
