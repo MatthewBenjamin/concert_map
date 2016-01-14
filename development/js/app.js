@@ -104,7 +104,7 @@ var ViewModel =  function () {
     // API Status Messages
     self.geocoderStatus = ko.observable();
     self.concertsStatus = ko.observable();
-    //self.lastFmStatus = ko.observable(); TODO: do I need this?
+    //self.lastFmStatus = ko.observable(); TODO: do I need this? maybe for when waiting for AJAX
     self.venueInfoStatus = ko.observable();
     self.youtubeStatus = ko.observable();
 
@@ -126,15 +126,6 @@ var ViewModel =  function () {
     })();
 
     /*** COMPUTED OBSERVABLES ***/
-
-    // remove spaces from artist name
-    self.currentArtistSearch = ko.computed(function() {
-        var artist;
-        if (self.currentArtist()) {
-            artist = self.currentArtist().name().replace(/\s+/g, '+');
-        }
-        return artist;
-    });
 
     // toggle extra-info display
     self.showExtraInfo = ko.computed(function() {
@@ -547,6 +538,7 @@ var ViewModel =  function () {
                                 self.concerts()[i].artists[j].lastfm = data;
                                 self.concerts()[i].artists[j].lastfm.error = null;
                             } else {
+                                //console.log(data, status);
                                 self.concerts()[i].artists[j].lastfm.error = errorMessage;
                             }
                         },
@@ -567,29 +559,49 @@ var ViewModel =  function () {
 
     /* Youtube */
 
+    // remove spaces from artist name
+    searchableName = function(artistName) {
+        artistName = artistName.replace(/\s+/g, '+');
+        return artistName;
+    }
     // get Youtube search results for currentArtist, display in extra-info
+    function getArtistVideos (artistName) {
+        var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
+            'q=' + artistName +
+            '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI';
+        var requestSettings = {
+            success: function(data, status, jqXHR) {
+                var results = data.items;
+                for (var i = 0; i < results.length; i ++) {
+                    results[i].url = 'https://www.youtube.com/watch?v=' +
+                        results[i].id.videoId;
+                }
+                self.youtubeStatus(null);
+                self.currentArtistYoutube(results);
+                self.currentArtist().youTube = results;
+            },
+            error: function() {
+                self.youtubeStatus('Youtube search results could not be loaded.');
+            },
+            timeout: 8000
+        };
+        self.youtubeStatus('Loading Youtube search results...');
+        $.ajax(requestURL, requestSettings);
+    }
+
     self.getArtistVideos = ko.computed(function() {
-        if (self.currentArtistSearch()) {
-            var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
-                'q=' + self.currentArtistSearch() +
-                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI';
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    for (var i = 0; i < data.items.length; i ++) {
-                        data.items[i].url = 'https://www.youtube.com/watch?v=' +
-                            data.items[i].id.videoId;
-                    }
+        var artist = self.currentArtist();
+        //console.log(artist);
+            if (artist) {
+                if (artist.youTube) {
                     self.youtubeStatus(null);
-                    self.currentArtistYoutube(data.items);
-                },
-                error: function() {
-                    self.youtubeStatus('Youtube search results could not be loaded.');
-                },
-                timeout: 8000
-            };
-            self.youtubeStatus('Loading Youtube search results...');
-            $.ajax(requestURL, requestSettings);
-        }
+                    self.currentArtistYoutube(artist.youTube);
+                } else {
+                    self.currentArtistYoutube(null);
+                    var artistName = searchableName(artist.name());
+                    getArtistVideos(artistName);
+                }
+            }
     });
 
     /* Venue APIs */
