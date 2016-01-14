@@ -78,7 +78,6 @@ var ViewModel =  function () {
     // display detailed info for an event, venue, or artist
     self.currentEvent = ko.observable();
     self.currentVenue = ko.observable();
-    //self.currentVenueFourSquare = ko.observable();
     self.currentArtist = ko.observable();
     // last.fm artist data
     self.currentArtistInfo = ko.observable();
@@ -105,7 +104,6 @@ var ViewModel =  function () {
     self.concertsStatus = ko.observable();
     // TODO: update
     self.lastFmArtistStatus = ko.observable();
-    //self.fourSquareStatus = ko.observable();
     self.youtubeStatus = ko.observable();
 
     // initialize location
@@ -590,19 +588,49 @@ var ViewModel =  function () {
         }
     });
 
-    /* 4 Square */
-/*
+    /* Venue APIs */
+
+    // Google Places (if 4 square isn't found)
+    function placesRequest(venueIndex) {
+        //console.log('make place request', venueIndex);
+        venueName = self.currentVenue().name;
+        latitude = self.currentVenue().latitude;
+        longitude = self.currentVenue().longitude;
+        //console.log(venueName, latitude, longitude, i);
+        var placesService = new google.maps.places.PlacesService(map);
+        var latLng = new google.maps.LatLng(latitude,longitude);
+        var request = {
+            location: latLng,
+            query: venueName,
+            radius: '1'
+        };
+        //console.log(request, i);
+        placesService.textSearch(request, function(results, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                self.concertVenues()[venueIndex].googlePlaces = results[0];
+            } else {
+                console.log(status, results);
+            }
+            //self.concertVenues()[i].googlePlaces = results[0];
+            //console.log(results, status, i);
+        });
+    }
+
     // Get detailed venue info based on 4square ID
-    function getFourSquareById(id) {
+    function getFourSquareById(id, venueIndex) {
         var requestURL = 'https://api.foursquare.com/v2/venues/' +
-        id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20150702';
+        id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20160105';
         var requestSettings = {
             success: function(data, status, jqXHR) {
-                //console.log(data);
-                self.currentVenueFourSquare(data.response.venue);
+                //console.log(data.response.venue);
+                if (data.response.venue) {
+                    self.concertVenues()[venueIndex].fourSquare = data.response.venue;
+                } else {
+                    // this shouldn't ever happened TODO: delete if statement?
+                }
             },
             error: function(data, status, jqXHR) {
-                self.fourSquareStatus('Four Square data for venue could not be found.');
+                //TODO: display error
             },
             timeout: 8000
         };
@@ -612,40 +640,43 @@ var ViewModel =  function () {
 
     // Lookup 4square venue ID, then get detailed info
     self.findFourSquareVenue = ko.computed(function() {
-        if (self.currentVenue()) {
-            var lat = self.currentVenue().latitude;
-            var lon = self.currentVenue().longitude;
-            //console.log(typeof lat,lon);
-            var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
-                'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
-                'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
-                'v=20160105&' +
-                'm=foursquare&' +
-                'll=' + lat + ',' + lon + '&' +
-                'query=' + self.currentVenue().name + '&' +
-                'intent=match';
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    console.log(data);
-                     if (data.response.venues.length > 0) {
-                        getFourSquareById(data.response.venues[0].id);
-                        self.fourSquareStatus(null);
-                     } else {
-                        self.currentVenueFourSquare(null);
-                        self.fourSquareStatus('Four Square data for venue could not be found.');
-                     }
-                },
-                error: function(data, status, jqXHR) {
-                    //console.log(data, status);
-                    self.fourSquareStatus('Four Square data for venue could not be loaded.');
-                },
-                timeout: 8000
-            };
-            self.fourSquareStatus('Loading Four Square data for venue...');
-            $.ajax(requestURL, requestSettings);
+        var venue = self.currentVenue();
+        if (venue) {
+            if (!venue.fourSquare && !venue.googlePlaces) {
+                var venueIndex = venue.concerts[0].venueIndex;
+                var lat = venue.latitude;
+                var lon = venue.longitude;
+                var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
+                    'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
+                    'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
+                    'v=20160105&' +
+                    'm=foursquare&' +
+                    'll=' + lat + ',' + lon + '&' +
+                    'query=' + self.currentVenue().name + '&' +
+                    'intent=match';
+                var requestSettings = {
+                    success: function(data, status, jqXHR) {
+                        //console.log(venueIndex);
+                        //console.log(data, data.meta.code);
+                         if (data.response.venues.length > 0) {
+                            //console.log(data.response.venues[0].name);
+                            getFourSquareById(data.response.venues[0].id, venueIndex);
+                         } else {
+                            placesRequest(venueIndex);
+                         }
+                    },
+                    error: function(data, status, jqXHR) {
+                        //console.log(data, status);
+                        placesRequest(venueIndex);
+                        // TODO: make foursquare error statement
+                    },
+                    timeout: 8000
+                };
+                //self.fourSquareStatus('Loading Four Square data for venue...');
+                $.ajax(requestURL, requestSettings);
+            }
         }
     });
-*/
 };
 
 ko.applyBindings(ViewModel);
