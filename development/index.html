@@ -175,11 +175,12 @@
                         <span class="pale-text">Four Square Rating </span>
                         <span class="italic" data-bind="text: $data.rating"></span>
                     </p>
-                    <a data-bind="attr: { href: canonicalUrl }">Visit <span data-bind="text: name"></span>'s Four Square Page</a>
                     <div data-bind="if: $data.description">
                         <h4>Description from Four Square</h4>
                         <p data-bind="text: $data.description"></p>
                     </div>
+                    <p><a data-bind="attr: { href: canonicalUrl }">Four Square Page</a></p>
+                    <p data-bind="if: $data.url"><a data-bind="attr: { href: url }">Official Site</a></p>
                 </div>
 
                 <!-- TODO: display places data -->
@@ -189,7 +190,7 @@
 
                 <!-- TODO: links section? -->
                 <p>
-                    <a data-bind="attr: { href: url }">Visit <span data-bind="text: name"></span>'s Bands in Town Page</a>
+                    <a data-bind="attr: { href: url }">Bands in Town Page</a>
                 </p>
             </div>
 
