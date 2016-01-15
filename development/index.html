@@ -137,6 +137,23 @@
             <div class="extra-info-content" data-bind="visible: showVenueInfo(), with: currentVenue">
                 <p data-bind="text: venueInfoStatus"></p>
                 <h3 data-bind="text: name"></h3>
+                <!-- ko if: !currentVenueFourSquare() && !currentVenuePlaces() -->
+                <p class="pale-text"> <!-- TODO: replace with 4square or places full address -->
+                    <span data-bind="text: city"></span>,
+                    <span data-bind="text: region"></span>
+                </p>
+                <!-- /ko -->
+                <p class="pale-text" data-bind="with: currentVenueFourSquare">
+                    <span data-bind="text: location.address"></span>
+                    <br>
+                    <span data-bind="text: location.city"></span>,
+                    <span data-bind="text: location.state"></span>
+                </p>
+                <!-- ko if: !currentVenueFourSquare()-->
+                <p class="pale-text" data-bind="with: currentVenuePlaces">
+                    <span data-bind="text: formatted_address"></span>
+                </p>
+                <!-- /ko -->
                 <h4>Upcoming Events</h4>
                 <ul data-bind="foreach: concerts">
                     <li>
@@ -145,38 +162,30 @@
                     </li>
                     <br>
                 </ul>
-                <p class="pale-text">
-                    <span data-bind="text: city"></span>,
-                    <span data-bind="text: region"></span>
-                </p>
 
-                <!-- TODO: display four square data -->
+                <!-- TODO: fine tune 4square display -->
                 <div data-bind="with: currentVenueFourSquare">
-                    <p data-bind="text: name"></p>
-                    <!-- old data binds, TODO: update
+                    <!-- TODO: style 4square heading text -->
+                    <p>Four Square Info for <span data-bind="text: name"></span></p>
+                    <!-- old data binds, TODO: update -->
                     <ul class="tags" data-bind="foreach: categories">
                         <li class="tags-item" data-bind="text: shortName"></li>
                     </ul>
-                    <div data-bind="if: $data.rating">
-                        <p>
-                            <span class="pale-text">Four Square Rating </span>
-                            <span class="italic" data-bind="text: $data.rating"></span>
-                        </p>
-                    </div>
+                    <p data-bind="if: $data.rating">
+                        <span class="pale-text">Four Square Rating </span>
+                        <span class="italic" data-bind="text: $data.rating"></span>
+                    </p>
                     <a data-bind="attr: { href: canonicalUrl }">Visit <span data-bind="text: name"></span>'s Four Square Page</a>
                     <div data-bind="if: $data.description">
                         <h4>Description from Four Square</h4>
                         <p data-bind="text: $data.description"></p>
-                    </div> -->
+                    </div>
                 </div>
 
                 <!-- TODO: display places data -->
                 <div data-bind="with: currentVenuePlaces">
                     <p data-bind="text: name"></p>
                 </div>
-
-                <!-- TODO: replace with official website if supplied by 4square
-                <p data-bind="if: website"><a data-bind="attr: { href: website }">Visit <span data-bind="text: name"></span>'s Offical Website</a></p> -->
 
                 <!-- TODO: links section? -->
                 <p>
