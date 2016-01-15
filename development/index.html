@@ -138,7 +138,7 @@
                 <p data-bind="text: venueInfoStatus"></p>
                 <h3 data-bind="text: name"></h3>
                 <!-- ko if: !currentVenueFourSquare() && !currentVenuePlaces() -->
-                <p class="pale-text"> <!-- TODO: replace with 4square or places full address -->
+                <p class="pale-text">
                     <span data-bind="text: city"></span>,
                     <span data-bind="text: region"></span>
                 </p>
@@ -148,10 +148,13 @@
                     <br>
                     <span data-bind="text: location.city"></span>,
                     <span data-bind="text: location.state"></span>
+                    <br>
+                    <span data-bind="text: contact.formattedPhone"></span>
                 </p>
                 <!-- ko if: !currentVenueFourSquare()-->
                 <p class="pale-text" data-bind="with: currentVenuePlaces">
                     <span data-bind="text: formatted_address"></span>
+                    <span data-bind="text: formatted_phone_number"></span>
                 </p>
                 <!-- /ko -->
                 <h4>Upcoming Events</h4>
@@ -172,8 +175,9 @@
                         <li class="tags-item" data-bind="text: shortName"></li>
                     </ul>
                     <p data-bind="if: $data.rating">
-                        <span class="pale-text">Four Square Rating </span>
+                        <span class="pale-text">Rating </span>
                         <span class="italic" data-bind="text: $data.rating"></span>
+                        <span>/10</span>
                     </p>
                     <div data-bind="if: $data.description">
                         <h4>Description from Four Square</h4>
@@ -185,7 +189,17 @@
 
                 <!-- TODO: display places data -->
                 <div data-bind="with: currentVenuePlaces">
-                    <p data-bind="text: name"></p>
+                    <p>Google Places info for: <span data-bind="text: name"></span></p>
+                    <ul class="tags" data-bind="foreach: types">
+                        <li class="tags-item" data-bind="text: $data"></li>
+                    </ul>
+                    <p>
+                        <span class="pale-text">Rating </span>
+                        <span class="italic" data-bind="text: rating"></span>
+                        <span>/5</span>
+                    </p>
+                    <p><a data-bind="attr: { href: url }">Google Places Page</a></p>
+                    <p><a data-bind="attr: { href: website }">Official Site</a></p>
                 </div>
 
                 <!-- TODO: links section? -->
