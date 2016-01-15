@@ -616,7 +616,26 @@ var ViewModel =  function () {
     }
     // Google Places (if 4 square isn't found)
     var venueInfoError = 'Sorry, detailed venue information could not be loaded.';
-    function placesRequest(venueIndex) {
+
+    function placesDetails(placeId, venueIndex) {
+        var placesService = new google.maps.places.PlacesService(map);
+        var request = {
+            placeId: placeId
+        };
+        placesService.getDetails(request, function(results, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK &&
+                checkCurrentVenue(venueIndex)) {
+                self.concertVenues()[venueIndex].detailedInfo.googlePlaces = results;
+                self.currentVenuePlaces(results);
+                self.venueInfoStatus(null);
+            } else {
+                console.log(results, status);
+            }
+
+        });
+    }
+
+    function placesSearch(venueIndex) {
         //console.log('make place request', venueIndex);
         venueName = self.currentVenue().name;
         latitude = self.currentVenue().latitude;
@@ -631,11 +650,8 @@ var ViewModel =  function () {
         };
         //console.log(request, i);
         placesService.textSearch(request, function(results, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK &&
-                checkCurrentVenue(venueIndex)) {
-                self.concertVenues()[venueIndex].detailedInfo.googlePlaces = results[0];
-                self.currentVenuePlaces(results[0]);
-                self.venueInfoStatus(null);
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                placesDetails(results[0].place_id, venueIndex);
             } else {
                 self.venueInfoStatus(venueInfoError);
                 console.log(status, results);
@@ -661,7 +677,7 @@ var ViewModel =  function () {
             },
             error: function(data, status, jqXHR) {
                 self.venueInfoStatus(fourSquareError);
-                placesRequest(venueIndex);
+                placesSearch(venueIndex);
             },
             timeout: 8000
         };
@@ -691,14 +707,14 @@ var ViewModel =  function () {
                  } else {
                     // TODO: DRY, see below
                     self.venueInfoStatus(fourSquareError);
-                    placesRequest(venueIndex);
+                    placesSearch(venueIndex);
                  }
             },
             error: function(data, status, jqXHR) {
                 //console.log(data, status);
                 // TODO: DRY, see above
                 self.venueInfoStatus(fourSquareError);
-                placesRequest(venueIndex);
+                placesSearch(venueIndex);
             },
             timeout: 8000
         };
