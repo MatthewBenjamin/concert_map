@@ -52,18 +52,6 @@ h4 {
     margin: 10px auto 5px auto;
 }
 
-/* TODO: remove this? */
-.window-list {
-}
-
-/* TODO: remove this? */
-.window-list-element {
-}
-
-/* TODO: remove this? */
-.window-event-name {
-}
-
 .window-event-date {
     margin: 10px 5px;
 }
@@ -313,9 +301,9 @@ button {
 
     .event-search {
         top: 10px;
-        left: 75px;
-        width: 45%;
-        max-width: 500px;
+        left: 110px;
+        width: 35%;
+        max-width: 400px;
     }
 
     .location-search {
