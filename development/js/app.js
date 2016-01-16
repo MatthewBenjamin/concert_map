@@ -344,6 +344,11 @@ var ViewModel =  function () {
         self.listVenues(true);
     };
 
+    // select event from artist info
+    self.backToEvent = function(mappedConcert) {
+        selectEvent(ko.mapping.toJS(mappedConcert));
+    };
+
     self.selectEvent = function(concert) {
         self.selectMarker(concert.venueIndex);
         self.currentEvent(ko.mapping.fromJS(concert));

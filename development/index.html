@@ -163,7 +163,7 @@
                     <li>
                         <a class="clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
                         <span class="italic" data-bind="text: subtitle"></span>
-                        <br>
+                        -
                         <span class="pale-text" data-bind="text: timeInfo.date"></span>
                     </li>
                     <br>
@@ -222,6 +222,7 @@
 
             <!-- ARTIST INFO -->
             <div class="extra-info-content" data-bind="visible: showArtistInfo(), with: currentArtist">
+                <a class="clickable" data-bind="click: function() {backToEvent(currentEvent())}"><-back to event page</a>
                 <h3 data-bind="text: name"></h3>
                 <p data-bind="text: lastfm.error"></p>
                 <div data-bind="if: lastfm.artist">
