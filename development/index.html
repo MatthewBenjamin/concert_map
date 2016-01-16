@@ -154,6 +154,7 @@
                 <!-- ko if: !currentVenueFourSquare()-->
                 <p class="pale-text" data-bind="with: currentVenuePlaces">
                     <span data-bind="text: formatted_address"></span>
+                    <br>
                     <span data-bind="text: formatted_phone_number"></span>
                 </p>
                 <!-- /ko -->
@@ -162,47 +163,58 @@
                     <li>
                         <a class="clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
                         <span class="italic" data-bind="text: subtitle"></span>
+                        <br>
+                        <span class="pale-text" data-bind="text: timeInfo.date"></span>
                     </li>
                     <br>
                 </ul>
 
-                <!-- TODO: fine tune 4square display -->
                 <div data-bind="with: currentVenueFourSquare">
-                    <!-- TODO: style 4square heading text -->
-                    <p>Four Square Info for <span data-bind="text: name"></span></p>
-                    <!-- old data binds, TODO: update -->
-                    <ul class="tags" data-bind="foreach: categories">
-                        <li class="tags-item" data-bind="text: shortName"></li>
-                    </ul>
+                    <hr>
+                    <p>
+                        <span class="italic">four square info for:</span>
+                        <br>
+                        <span data-bind="text: name"></span>
+                    </p>
                     <p data-bind="if: $data.rating">
                         <span class="pale-text">Rating </span>
                         <span class="italic" data-bind="text: $data.rating"></span>
+                        <!-- rating range -->
                         <span>/10</span>
                     </p>
+                    <ul class="tags" data-bind="foreach: categories">
+                        <li class="tags-item" data-bind="text: shortName"></li>
+                    </ul>
                     <div data-bind="if: $data.description">
-                        <h4>Description from Four Square</h4>
+                        <p class="italic">Description</p>
                         <p data-bind="text: $data.description"></p>
                     </div>
-                    <p><a data-bind="attr: { href: canonicalUrl }">Four Square Page</a></p>
+                    <hr>
                     <p data-bind="if: $data.url"><a data-bind="attr: { href: url }">Official Site</a></p>
+                    <p><a data-bind="attr: { href: canonicalUrl }">Four Square Page</a></p>
                 </div>
 
-                <!-- TODO: display places data -->
                 <div data-bind="with: currentVenuePlaces">
-                    <p>Google Places info for: <span data-bind="text: name"></span></p>
+                    <hr>
+                    <p>
+                        <span class="italic">google places info for:</span>
+                        <br>
+                        <span data-bind="text: name"></span>
+                    </p>
+                    <p data-bind="if: $data.rating">
+                        <span class="pale-text">Rating </span>
+                        <span class="italic" data-bind="text: rating"></span>
+                        <!-- rating range -->
+                        <span>/5</span>
+                    </p>
                     <ul class="tags" data-bind="foreach: types">
                         <li class="tags-item" data-bind="text: $data"></li>
                     </ul>
-                    <p>
-                        <span class="pale-text">Rating </span>
-                        <span class="italic" data-bind="text: rating"></span>
-                        <span>/5</span>
-                    </p>
-                    <p><a data-bind="attr: { href: url }">Google Places Page</a></p>
+                    <hr>
                     <p><a data-bind="attr: { href: website }">Official Site</a></p>
+                    <p><a data-bind="attr: { href: url }">Google Places Page</a></p>
                 </div>
 
-                <!-- TODO: links section? -->
                 <p>
                     <a data-bind="attr: { href: url }">Bands in Town Page</a>
                 </p>
