@@ -110,10 +110,10 @@
                 <hr>
                 <ul data-bind="foreach: artists">
                     <li>
-                        <a class="clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
+                        <a class="highlight clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
                         <div data-bind="if: lastfm.artist">
                                 <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
-                                    <li class="clickable tags-item" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
+                                    <li class="highlight clickable tags-item" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
                                 </ul>
                                 <!-- TODO: combine with below or change message? -->
                                 <span class="italic" data-bind="if: !lastfm.artist.tags.tag().length">no genre info</span>
@@ -125,7 +125,7 @@
                 </ul>
                 <p>
                     <span class="bold">Venue</span>
-                    <a class="clickable italic" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
+                    <a class="highlight clickable italic" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
                 </p>
                 <a data-bind="attr: { href: url }">Bands in Town Event Page</a>
                 <br>
@@ -160,7 +160,7 @@
                 <h4>Upcoming Events</h4>
                 <ul data-bind="foreach: concerts">
                     <li>
-                        <a class="clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
+                        <a class="highlight clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
                         <span class="italic" data-bind="text: subtitle"></span>
                         -
                         <span class="pale-text" data-bind="text: timeInfo.date"></span>
@@ -221,12 +221,12 @@
 
             <!-- ARTIST INFO -->
             <div class="extra-info-content" data-bind="visible: showArtistInfo(), with: currentArtist">
-                <a class="clickable" data-bind="click: function() {backToEvent(currentEvent())}"><-back to event page</a>
+                <a class="highlight clickable" data-bind="click: function() {backToEvent(currentEvent())}"><-back to event page</a>
                 <h3 data-bind="text: name"></h3>
                 <p data-bind="text: lastfm.error"></p>
                 <div data-bind="if: lastfm.artist">
                     <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
-                        <li class="tags-item clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
+                        <li class="tags-item highlight clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
                     </ul>
                     <h4>Bio</h4>
                     <p data-bind="html: lastfm.artist.bio.summary"></p>

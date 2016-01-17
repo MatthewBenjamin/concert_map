@@ -44,7 +44,11 @@ h4 {
 /* Clickable items */
 .clickable:hover {
     cursor: pointer;
-    background-color: rgba(162, 222, 208, .3);
+    background-color: rgba(162, 222, 208, .4);
+}
+
+.highlight {
+    background-color: rgba(6, 69, 173, .5);
 }
 
 /* Info Windows */
