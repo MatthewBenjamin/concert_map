@@ -1,7 +1,7 @@
 var gulp = require('gulp')
     uglify = require('gulp-uglify')
     minifyCSS = require('gulp-minify-css')
-    minifyHTML = require('gulp-minify-html')
+    htmlmin = require('gulp-htmlmin')
     jshint = require('gulp-jshint');
 
 gulp.task('lint', function() {
@@ -22,10 +22,14 @@ gulp.task('styles', function() {
         .pipe(gulp.dest('build/css/'));
 });
 
-gulp.task('html', function () {
-    gulp.src('development/*.html')
-        .pipe(minifyHTML())
-        .pipe(gulp.dest('build/'));
+gulp.task('html', function() {
+    var params = {
+        collapseWhitespace: true,
+        removeComments: true
+    }
+    return gulp.src('development/*.html')
+        .pipe(htmlmin(params))
+        .pipe(gulp.dest('build/'))
 });
 
 gulp.task('watch', function() {
