@@ -240,8 +240,8 @@ button {
     .list-toggle {
         top: 40px;
         height: 80px;
-        display: flex;
-        flex-wrap: wrap;
+        display: block;
+        /*flex-wrap: wrap;*/
     }
 }
 
@@ -263,8 +263,8 @@ button {
         width: calc(100% / 3);
         max-width: 260px;
         min-width: 200px;
-        display: flex;
-        flex-wrap: wrap;
+        display: block;
+        /*flex-wrap: wrap;*/
     }
 
     .mobile-menu {
