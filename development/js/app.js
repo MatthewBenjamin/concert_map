@@ -485,6 +485,7 @@ var ViewModel =  function () {
             var latitude = self.mapCenter().latitude;
             var longitude = self.mapCenter().longitude;
             var requestURL = 'http://api.bandsintown.com/events/search.json?' +
+                'api_version=2.0&' +
                 'app_id=google-map-mashup&' +
                 'location=' + latitude + ',' + longitude + '&' +
                 'per_page=100&' +
