@@ -153,7 +153,9 @@
                 <p class="pale-text" data-bind="with: currentVenuePlaces">
                     <span data-bind="text: formatted_address"></span>
                     <br>
+                    <!-- ko if: currentVenuePlaces().formatted_phone_number -->
                     <span data-bind="text: formatted_phone_number"></span>
+                    <!-- /ko -->
                 </p>
                 <!-- /ko -->
                 <h4>Upcoming Events</h4>
@@ -209,7 +211,9 @@
                         <li class="tags-item" data-bind="text: $data"></li>
                     </ul>
                     <hr>
+                    <!-- ko if: currentVenuePlaces().website -->
                     <p><a data-bind="attr: { href: website }">Official Site</a></p>
+                    <!-- /ko -->
                     <p><a data-bind="attr: { href: url }">Google Places Page</a></p>
                 </div>
 
