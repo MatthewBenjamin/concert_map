@@ -28,31 +28,24 @@ ko.bindingHandlers.googlemap = {
     }
 };
 
+/*** INFO WINDOWS ***/
+var infoWindow = new google.maps.InfoWindow();
+google.maps.event.addListener(infoWindow, 'closeclick', infoWindowClose);
+
 // Grab HTML for infoWindow
 var infoWindowView = function(){
-    var html = '<div class="info-window" data-bind="with: currentVenue">' +
-                    '<h2 class="window-header clickable" data-bind="text: name, click: selectVenue;"></h2>' +
-                    '<ul class="window-list" data-bind="foreach: concerts">' +
-                        '<li class="window-list-element clickable" data-bind="click: selectEvent">' +
-                            '<hr>' +
-                            //'<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
-                            //'<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>' +
-                            '<p>' +
-                                '<span class="bold" data-bind="text: artists[0].name"></span> ' +
-                                '<span class="italic" data-bind="text: subtitle"></span>' +
-                            '</p>' +
-                            '<p class="window-event-date date">' +
-                                // TODO: make new timeinfo
-                                //'<span data-bind="text: datetime"></span>, ' +
-                                '<span data-bind="text: timeInfo.day"></span>, ' +
-                                '<span data-bind="text: timeInfo.date"></span>' +
-                            '</p>' +
-                        '</li>' +
-                '</div>';
-    html = $.parseHTML(html)[0];
+    html = document.getElementById("info-content");
     return html;
 };
 
+// Preserve info window content, see
+// http://stackoverflow.com/questions/31970927/binding-knockoutjs-to-google-maps-infowindow-content
+function infoWindowClose() {
+    var content = infoWindow.getContent();
+    if (content) {
+        document.getElementById("info-window-container").appendChild(content);
+    }
+}
 
 var ViewModel =  function () {
     var self = this;
@@ -180,7 +173,6 @@ var ViewModel =  function () {
     // Create google map markers from concertVenues
     self.mapMarkers = ko.computed(function() {
         var markers = [];
-        var infoWindow = new google.maps.InfoWindow();
 
         var venues = self.concertVenues();
         //console.log(venues);
@@ -193,7 +185,6 @@ var ViewModel =  function () {
             var marker = new google.maps.Marker({
                 position: latLng,
                 title: venues[i].name,
-                content: infoWindowView(),
                 icon: 'images/red.png',
                 map: map,
                 venueIndex: i
@@ -201,7 +192,7 @@ var ViewModel =  function () {
 
             google.maps.event.addListener(marker, 'mouseup', function() {
                 var m = this;
-                infoWindow.setContent(m.content);
+                infoWindow.setContent(infoWindowView());
                 self.currentVenue(self.concertVenues()[m.venueIndex]);
                 infoWindow.open(map, m);
                 m.setAnimation(google.maps.Animation.BOUNCE);
@@ -211,9 +202,8 @@ var ViewModel =  function () {
             });
 
             markers.push(marker);
-            ko.applyBindings(self, marker.content);
-
         }
+
         return markers;
     });
 

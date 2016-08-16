@@ -14,6 +14,33 @@
         <!-- GOOGLE MAP -->
         <div class="map-canvas" data-bind="googlemap: { mapCenter: mapCenter(), mapBounds: mapBounds() }, click: function(){closeSmallMenu()}"></div>
 
+        <!-- INFO WINDOW CONTENT -->
+        <div id="info-window-container" style="display: none;">
+            <div id="info-content" data-bind="if: currentVenue">
+                <div data-bind="with: currentVenue">
+                    <h2 class="window-header clickable" data-bind="text: name, click: selectVenue;"></h2>
+                    <ul class="window-list" data-bind="foreach: concerts">
+                        <li class="window-list-element clickable" data-bind="click: selectEvent">
+                            <hr>
+                            <!--
+                            //'<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
+                            //'<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>-->
+                            <p>
+                                <span class="bold" data-bind="text: artists[0].name"></span> 
+                                <span class="italic" data-bind="text: subtitle"></span>
+                            </p>
+                            <p class="window-event-date date">
+                                <!-- TODO: make new timeinfo
+                                //'<span data-bind="text: datetime"></span>, ' +-->
+                                <span data-bind="text: timeInfo.day"></span>, 
+                                <span data-bind="text: timeInfo.date"></span>
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- MENU TOGGLE -->
         <a class="menu-toggle clickable" data-bind="click: function() { openSmallMenu(); toggleLargeMenu() }">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
