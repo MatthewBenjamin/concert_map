@@ -97,7 +97,6 @@ var ViewModel =  function () {
     // API Status Messages
     self.geocoderStatus = ko.observable();
     self.concertsStatus = ko.observable();
-    //self.lastFmStatus = ko.observable(); TODO: do I need this? maybe for when waiting for AJAX
     self.venueInfoStatus = ko.observable();
     self.youtubeStatus = ko.observable();
 
@@ -236,9 +235,12 @@ var ViewModel =  function () {
     function searchArtists(artistsList, searchTerm) {
         if (doesObjectListContain(artistsList, searchTerm, 'name')) {
             return true;
-        } else {
+        }
+/*
+         else {
             for (var i = 0; i < artistsList.length; i++) {
-                if (artistsList[i].lastfm.artist) {
+                if (artistsList[i].lastfm && artistsList[i].lastfm.artist) {
+                    //console.log(artistsList[i].lastfm.artist.tags.tag);
                     if (doesStringContain(artistsList[i].lastfm.artist.bio.content,searchTerm) ||
                         doesObjectListContain(artistsList[i].lastfm.artist.tags.tag, searchTerm, 'name')) {
                         return true;
@@ -246,6 +248,7 @@ var ViewModel =  function () {
                 }
             }
         }
+*/
     }
     // Search last.fm data
     self.searchConcerts = ko.computed(function() {
@@ -510,6 +513,49 @@ var ViewModel =  function () {
     /* Last.fm */
 
     // Get last.fm artist info
+    var lastFmRequestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
+            'api_key=d824cbbb7759624aa8b3621a627b70b8' +
+            '&format=json&';
+    var lastFmErrorMessage = "Sorry, additional information from Last.fm " +
+        "could not be loaded.";
+    function requestArtistInfo(artist) {
+        var artistSearch;
+        if (artist.mbid()) {
+            artistSearch = 'mbid=' + artist.mbid();
+        } else {
+            artistSearch = 'artist=' + artist.name();
+        }
+        var requestSettings = {
+            success: function(data, status, jqXHR) {
+                if (!data.error) {
+                    artist.lastfm = data;
+                    artist.lastfm.status = null;
+                    self.currentArtist(ko.mapping.fromJS(artist));
+                } else {
+                    artist.lastfm.status = lastFmErrorMessage;
+                    self.currentArtist(ko.mapping.fromJS(artist));
+                }
+            },
+            error: function(data, status, jqXHR) {
+                artist.lastfm.status = lastFmErrorMessage;
+                self.currentArtist(ko.mapping.fromJS(artist));
+            },
+            timeout: 11000
+        };
+        $.ajax(lastFmRequestURL + artistSearch, requestSettings);
+    }
+
+    self.getArtistInfo = ko.computed(function() {
+        var artist = self.currentArtist();
+            if (artist && !artist.lastfm) {
+                artist.lastfm = {};
+                artist.lastfm.status = "Loading detailed artist info..."
+                requestArtistInfo(artist);
+            }
+    });
+
+    // TODO: add option to load all artists' info at once for searching
+    /*
     self.getArtistInfo = ko.computed(function() {
         console.log('Searching for Artist Info...'); // TODO: add this to user display with . . .
         var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
@@ -552,6 +598,7 @@ var ViewModel =  function () {
             }
         }
     });
+    */
 
     /* Youtube */
 
@@ -561,7 +608,7 @@ var ViewModel =  function () {
         return artistName;
     }
     // get Youtube search results for currentArtist, display in extra-info
-    function getArtistVideos (artistName) {
+    function requestArtistVideos (artistName) {
         var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
             'q=' + artistName +
             '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI';
@@ -595,7 +642,7 @@ var ViewModel =  function () {
                 } else {
                     self.currentArtistYoutube(null);
                     var artistName = searchableName(artist.name());
-                    getArtistVideos(artistName);
+                    requestArtistVideos(artistName);
                 }
             }
     });

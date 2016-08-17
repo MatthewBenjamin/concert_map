@@ -137,15 +137,15 @@
                 <ul data-bind="foreach: artists">
                     <li>
                         <a class="highlight clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
-                        <div data-bind="if: lastfm.artist">
+                        <div data-bind="if: $data.lastfm">
+                            <!-- ko if: lastfm.artist -->
                                 <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
                                     <li class="highlight clickable tags-item" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
                                 </ul>
-                                <!-- TODO: combine with below or change message? -->
                                 <span class="italic" data-bind="if: !lastfm.artist.tags.tag().length">no genre info</span>
+                            <!-- /ko -->
+                            <span class="italic" data-bind="if: $data.lastfm.status">no additional info</span>
                         </div>
-                        <!-- TODO: combine with above? -->
-                        <span class="italic" data-bind="if: $data.lastfm.error">no additional info</span>
                     </li>
                     <br>
                 </ul>
@@ -253,7 +253,8 @@
             <div class="extra-info-content" data-bind="visible: showArtistInfo(), with: currentArtist">
                 <a class="highlight clickable" data-bind="click: function() {backToEvent(currentEvent())}">back to event page</a>
                 <h3 data-bind="text: name"></h3>
-                <p data-bind="text: lastfm.error"></p>
+                <!-- ko if: $data.lastfm -->
+                <p data-bind="text: lastfm.status"></p>
                 <div data-bind="if: lastfm.artist">
                     <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
                         <li class="tags-item highlight clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
@@ -261,6 +262,7 @@
                     <h4>Bio</h4>
                     <p data-bind="html: lastfm.artist.bio.summary"></p>
                 </div>
+                <!-- /ko -->
                 <p><a data-bind="attr : { href: url }"><span data-bind="text: name"></span>'s Bands in Town Page</a></p>
                 <h4>Youtube Search Results for "<span data-bind="text: name"></span>"</h4>
                 <p data-bind="text: youtubeStatus"></p>
