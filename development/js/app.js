@@ -235,9 +235,7 @@ var ViewModel =  function () {
     function searchArtists(artistsList, searchTerm) {
         if (doesObjectListContain(artistsList, searchTerm, 'name')) {
             return true;
-        }
-/*
-         else {
+        } else {
             for (var i = 0; i < artistsList.length; i++) {
                 if (artistsList[i].lastfm && artistsList[i].lastfm.artist) {
                     //console.log(artistsList[i].lastfm.artist.tags.tag);
@@ -248,7 +246,6 @@ var ViewModel =  function () {
                 }
             }
         }
-*/
     }
     // Search last.fm data
     self.searchConcerts = ko.computed(function() {
@@ -474,6 +471,7 @@ var ViewModel =  function () {
 
     // Get concert data when mapCenter updates
     self.getConcerts = ko.computed(function() {
+        // TODO add check so initial request on page load only happens once
         if (self.mapCenter().latitude && self.mapCenter().longitude) {
             var latitude = self.mapCenter().latitude;
             var longitude = self.mapCenter().longitude;
@@ -555,50 +553,67 @@ var ViewModel =  function () {
     });
 
     // TODO: add option to load all artists' info at once for searching
-    /*
-    self.getArtistInfo = ko.computed(function() {
-        console.log('Searching for Artist Info...'); // TODO: add this to user display with . . .
-        var requestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
-            'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-            '&format=json&';
-        var requestSettings;
-        var artistSearch;
-        for (var i = 0; i < self.concerts().length; i++) {
-            for (var j = 0; j < self.concerts()[i].artists.length; j++) {
-                if (self.concerts()[i].artists[j].mbid) {
-                    artistSearch = 'mbid=' + self.concerts()[i].artists[j].mbid;
-                } else {
-                    artistSearch = 'artist=' + self.concerts()[i].artists[j].name;
+    self.requestAllArtistInfo = ko.observable(false);
+    self.haveAllArtistInfo = ko.observable(false);
+    self.askForArtistInfo - ko.observable(true);
+    //self.allArtistStatus = ko.observable();
+    self.artistCount = ko.observable(0);
+    self.allArtistStatusUpdate = ko.computed(function() {
+        if (self.artistCount() === 0) {
+            //self.allArtistStatus(null);
+            return null;
+        } else if (self.artistCount() > 0 ) {
+            //self.allArtistStatus("Searching for Artist Info...");
+            return "Searching for Artist Info...";
+        }
+    })
+    self.getAllArtistInfo = ko.computed(function() {
+        if (self.requestAllArtistInfo() && !self.haveAllArtistInfo()) {
+            self.requestAllArtistInfo(false);
+            self.haveAllArtistInfo(true);
+            var requestSettings;
+            var artistSearch;
+            //var artistCount = 0;
+            for (var i = 0; i < self.concerts().length; i++) {
+                for (var j = 0; j < self.concerts()[i].artists.length; j++) {
+                    if (self.concerts()[i].artists[j].mbid) {
+                        artistSearch = 'mbid=' + self.concerts()[i].artists[j].mbid;
+                    } else {
+                        artistSearch = 'artist=' + self.concerts()[i].artists[j].name;
+                    }
+                    self.artistCount(self.artistCount() + 1);
+                    (function(i,j) {
+                        // TODO: move this to OUTSIDE of the loop (or function);
+                        requestSettings = {
+                            success: function(data, status, jqXHR) {
+                                if (!data.error) {
+                                    self.concerts()[i].artists[j].lastfm = data;
+                                    self.concerts()[i].artists[j].lastfm.status = null;
+                                    // TODO: move decrement to 'finished' AJAX param
+                                    self.artistCount(self.artistCount() - 1);
+                                } else {
+                                    //console.log(data, status);
+                                    self.artistCount(self.artistCount() - 1);
+                                    // TODO: use different error msg when not found vs. error?
+                                    self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
+                                }
+                            },
+                            error: function(data, status, jqXHR) {
+                                self.artistCount(self.artistCount() - 1);
+                                console.log('last.fm error');
+                                self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
+                            },
+                            timeout: 11000
+                        };
+                        self.concerts()[i].artists[j].lastfm = {};
+                        $.ajax(lastFmRequestURL + artistSearch, requestSettings);
+                    })(i,j);
                 }
-
-                (function(i,j) {
-                    // TODO: move this to OUTSIDE of the loop (or function);
-                    var errorMessage = "Sorry, but additional information about this artist from Last.fm could not be loaded.";
-                    requestSettings = {
-                        success: function(data, status, jqXHR) {
-                            if (!data.error) {
-                                self.concerts()[i].artists[j].lastfm = data;
-                                self.concerts()[i].artists[j].lastfm.error = null;
-                            } else {
-                                //console.log(data, status);
-                                self.concerts()[i].artists[j].lastfm.error = errorMessage;
-                            }
-                        },
-                        error: function(data, status, jqXHR) {
-                            self.concerts()[i].artists[j].lastfm.error = errorMessage;
-                        },
-                        timeout: 11000
-                    };
-                    self.concerts()[i].artists[j].lastfm = {};
-                    $.ajax(requestURL + artistSearch, requestSettings);
-                })(i,j);
+                //console.log(artistCount());
             }
-            if (i == self.concerts().length - 1) {
-                console.log('artist search completed(sort of...)');
-            }
+            //console.log(artistCount);
         }
     });
-    */
 
     /* Youtube */
 
