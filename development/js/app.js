@@ -1,6 +1,27 @@
 // Google map
 var map;
 
+// initialize location
+var defaultLatlng;
+var defaultAddress;
+
+
+(function init() {
+    // use last location
+    if (localStorage.lastAddress &&
+        localStorage.latitude &&
+        localStorage.longitude) {
+        var latitude = Number(localStorage.latitude);
+        var longitude = Number(localStorage.longitude);
+        defaultAddress = localStorage.lastAddress;
+        defaultLatlng = { latitude: latitude, longitude: longitude };
+    } else {
+        // program default
+        defaultAddress = 'Milwaukee, WI';
+        defaultLatlng = { latitude: 43.07772111168133, longitude: -88.10023715 };
+    }
+})();
+
 // Google Map Error Handling
 setTimeout(function() {
     if (!map) {
@@ -12,19 +33,19 @@ setTimeout(function() {
 ko.bindingHandlers.googlemap = {
     // create map
     init: function (element) {
+        var center = new google.maps.LatLng(defaultLatlng.latitude,defaultLatlng.longitude);
         var mapOptions = {
-            zoom: 13,
+            center: center
         };
         map = new google.maps.Map(element, mapOptions);
+        //console.log("map init");
     },
+
     // update map center when ViewModel.mapCenter value changes
     update: function (element, valueAccessor) {
         var value = valueAccessor();
-        var latitude = value.mapCenter.latitude;
-        var longitude = value.mapCenter.longitude;
-        //console.log(value);
-        map.setCenter( { lat: latitude, lng: longitude } );
         map.fitBounds(value.mapBounds);
+        //console.log("map update");
     }
 };
 
@@ -55,8 +76,8 @@ var ViewModel =  function () {
     /* Data observables */
 
     // map location
-    self.currentAddress = ko.observable();
-    self.mapCenter = ko.observable();
+    self.currentAddress = ko.observable(defaultAddress);
+    self.mapCenter = ko.observable(defaultLatlng);
 
     // Last.fm event API results
     self.concerts = ko.observableArray();
@@ -99,23 +120,6 @@ var ViewModel =  function () {
     self.concertsStatus = ko.observable();
     self.venueInfoStatus = ko.observable();
     self.youtubeStatus = ko.observable();
-
-    // initialize location
-    (function() {
-        // use last location
-        if (localStorage.lastAddress &&
-            localStorage.latitude &&
-            localStorage.longitude) {
-            var latitude = Number(localStorage.latitude);
-            var longitude = Number(localStorage.longitude);
-            self.currentAddress(localStorage.lastAddress);
-            self.mapCenter({ latitude: latitude, longitude: longitude });
-        } else {
-            // program default
-            self.currentAddress('Austin, TX');
-            self.mapCenter({ latitude: 30.267153, longitude: -97.74306079999997 });
-        }
-    })();
 
     /*** COMPUTED OBSERVABLES ***/
 
@@ -249,6 +253,9 @@ var ViewModel =  function () {
     }
     // Search last.fm data
     self.searchConcerts = ko.computed(function() {
+        // TODO Instead of passing results straight to filterEvents & Venues
+        // observables, just pass to filteredEvents, which will automatically use
+        // buildVenues() to built a new list
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
@@ -395,30 +402,35 @@ var ViewModel =  function () {
 
     var geocoder = new google.maps.Geocoder();
     self.getMapGeocode = ko.computed(function() {
-        var geocodeTimeoutError = setTimeout(function() {
-            self.geocoderStatus('Location coordinates could not be loaded.');
-        }, 8000);
-        geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
-            self.geocoderStatus('Setting map location...');
-            if (status == google.maps.GeocoderStatus.OK) {
-                clearTimeout(geocodeTimeoutError);
-                self.geocoderStatus(null);
-                var latitude = results[0]['geometry']['location']['lat']();
-                var longitude = results[0]['geometry']['location']['lng']();
-                var mapCenter = {
-                    latitude: latitude,
-                    longitude: longitude
-                };
-                if (mapCenter != self.mapCenter()) {
-                    self.mapCenter(mapCenter);
-                    storeLocation(self.currentAddress(), latitude, longitude);
+        if (defaultAddress != self.currentAddress()) {
+            var geocodeTimeoutError = setTimeout(function() {
+                self.geocoderStatus('Location coordinates could not be loaded.');
+            }, 8000);
+            geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
+                self.geocoderStatus('Setting map location...');
+                if (status == google.maps.GeocoderStatus.OK) {
+                    clearTimeout(geocodeTimeoutError);
+                    self.geocoderStatus(null);
+                    var latitude = results[0]['geometry']['location']['lat']();
+                    var longitude = results[0]['geometry']['location']['lng']();
+                    var mapCenter = {
+                        latitude: latitude,
+                        longitude: longitude
+                    };
+                    if (mapCenter != self.mapCenter()) {
+                        console.log("map center: ", mapCenter);
+                        console.log("self center: ", self.mapCenter());
+                        self.mapCenter(mapCenter);
+                        storeLocation(self.currentAddress(), latitude, longitude);
+                        defaultLatlng = { latitude: latitude, longitude: longitude };
+                    }
                 } else {
-                    //console.log('init');
+                    self.geocoderStatus('Geocoder error because: ' + status);
                 }
-            } else {
-                self.geocoderStatus('Geocoder error because: ' + status);
-            }
-        });
+            });
+        } else {
+            //console.log('init address');
+        }
     });
 
     /* Bands in Town */
@@ -471,8 +483,12 @@ var ViewModel =  function () {
 
     // Get concert data when mapCenter updates
     self.getConcerts = ko.computed(function() {
-        // TODO add check so initial request on page load only happens once
-        if (self.mapCenter().latitude && self.mapCenter().longitude) {
+        // Prevent Knockout from loading concerts twice on page load
+        if ((self.concerts().length === 0 &&
+             self.mapCenter() === defaultLatlng)||
+            (self.concerts().length > 0 &&
+             self.mapCenter().latitude !== defaultLatlng.latitude &&
+             self.mapCenter().longitude !== defaultLatlng.longitude)) {
             var latitude = self.mapCenter().latitude;
             var longitude = self.mapCenter().longitude;
             var requestURL = 'http://api.bandsintown.com/events/search.json?' +
@@ -504,6 +520,7 @@ var ViewModel =  function () {
                 timeout: 11000
             };
             self.concertsStatus('Loading Concert Data...');
+            //console.log("loading concert data...");
             $.ajax(requestURL,requestSettings);
         }
     });
