@@ -80,12 +80,16 @@ svg {
     width: 42px;
 }
 
+/* Menu boxshadows */
+.mobile-menu, .extra-info, .request-artist-info {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
 /* menu & lists / list-items */
 .mobile-menu {
     z-index: 100;
     position: absolute;
     color: black;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     transition: transform 0.3s ease;
 }
 
@@ -114,14 +118,30 @@ svg {
 
 /* Event and location search */
 
-
+/* TODO: refactor? */
+.request-artist-info {
+    /* this has properties similar to some other classes(e.g. event search box) */
+    max-width: 400px;
+    position: absolute;
+    top: 52px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background: #fff;
+    padding: 10px;
+    border: 2px inset;
+    z-index: 101;
+}
+.request-artist-info button {
+    width: 33%;
+    vertical-align: middle;
+}
 /* Extra -info display */
 .extra-info {
     position: absolute;
     background-color: white;
     color: black;
     display: block;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     border: thin black solid;
     overflow: auto;
     word-wrap: break-word;
@@ -212,6 +232,9 @@ button {
         bottom: 0;
     }
 
+    .request-artist-info {
+        width: calc(100% - 50px);
+    }
 
     /* List */
     .list {

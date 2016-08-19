@@ -533,13 +533,18 @@ var ViewModel =  function () {
             '&format=json&';
     var lastFmErrorMessage = "Sorry, additional information from Last.fm " +
         "could not be loaded.";
-    function requestArtistInfo(artist) {
-        var artistSearch;
-        if (artist.mbid()) {
-            artistSearch = 'mbid=' + artist.mbid();
+
+    function getArtistSearch(artist) {
+        if (artist.mbid) {
+            return 'mbid=' + artist.mbid;
         } else {
-            artistSearch = 'artist=' + artist.name();
+            return 'artist=' + artist.name;
         }
+    }
+
+    function requestArtistInfo(artist) {
+        var artistSearch = getArtistSearch(ko.mapping.toJS(artist));
+        //console.log(artistSearch);
         var requestSettings = {
             success: function(data, status, jqXHR) {
                 if (!data.error) {
@@ -560,6 +565,50 @@ var ViewModel =  function () {
         $.ajax(lastFmRequestURL + artistSearch, requestSettings);
     }
 
+    //self.timeouts = 0;
+    function requestAllArtistInfo() {
+        var requestSettings;
+        var artistSearch;
+        //var artistCount = 0;
+        for (var i = 0; i < self.concerts().length; i++) {
+            for (var j = 0; j < self.concerts()[i].artists.length; j++) {
+                artistSearch = getArtistSearch(self.concerts()[i].artists[j]);
+                self.artistCount(self.artistCount() + 1);
+                (function(i,j) {
+                    requestSettings = {
+                        success: function(data, status, jqXHR) {
+                            if (!data.error) {
+                                self.concerts()[i].artists[j].lastfm = data;
+                                self.concerts()[i].artists[j].lastfm.status = null;
+                            } else {
+                                // TODO: use different error msg when not found vs. error?
+                                //console.log("NOT FOUND")
+                                self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
+                            }
+                        },
+                        error: function(data, status, jqXHR) {
+                            //console.log('last.fm error');
+                            self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
+                        },
+                        complete: function(jqXHR, textStatus) {
+                            //console.log(textStatus);
+                            // TODO: keep track on timeouts/errors and add option to resubmit
+                            // request
+                            console.log(textStatus);
+                            self.artistCount(self.artistCount() - 1);
+                            //if (textStatus === "timeout") {
+                            //    timeouts++;
+                            //}
+                        },
+                        timeout: 11000
+                    };
+                    self.concerts()[i].artists[j].lastfm = {};
+                    $.ajax(lastFmRequestURL + artistSearch, requestSettings);
+                })(i,j);
+            }
+        }
+    }
+
     self.getArtistInfo = ko.computed(function() {
         var artist = self.currentArtist();
             if (artist && !artist.lastfm) {
@@ -570,9 +619,9 @@ var ViewModel =  function () {
     });
 
     // TODO: add option to load all artists' info at once for searching
+    // TODO: refactor
     self.requestAllArtistInfo = ko.observable(false);
-    self.haveAllArtistInfo = ko.observable(false);
-    self.askForArtistInfo - ko.observable(true);
+    //self.haveAllArtistInfo = ko.observable(false);
     //self.allArtistStatus = ko.observable();
     self.artistCount = ko.observable(0);
     self.allArtistStatusUpdate = ko.computed(function() {
@@ -583,52 +632,30 @@ var ViewModel =  function () {
             //self.allArtistStatus("Searching for Artist Info...");
             return "Searching for Artist Info...";
         }
-    })
+    });
+
+    // Ask user to load all artist info
+    self.searchBarFocus = ko.observable(false);
+    self.manualToggle = ko.observable(false);
+    self.anotherToggle = ko.computed(function() {
+        if (self.searchBarFocus()) {
+            self.manualToggle(true);
+        }
+    });
+    self.dontAsk = ko.observable(false);
+    self.askForArtistInfo = ko.computed(function() {
+        if (self.dontAsk()) {
+            return false;
+        } else if (searchBarFocus() || manualToggle()) {
+            return true;
+        }
+    });
+
     self.getAllArtistInfo = ko.computed(function() {
-        if (self.requestAllArtistInfo() && !self.haveAllArtistInfo()) {
+        if (self.requestAllArtistInfo()) {
             self.requestAllArtistInfo(false);
-            self.haveAllArtistInfo(true);
-            var requestSettings;
-            var artistSearch;
-            //var artistCount = 0;
-            for (var i = 0; i < self.concerts().length; i++) {
-                for (var j = 0; j < self.concerts()[i].artists.length; j++) {
-                    if (self.concerts()[i].artists[j].mbid) {
-                        artistSearch = 'mbid=' + self.concerts()[i].artists[j].mbid;
-                    } else {
-                        artistSearch = 'artist=' + self.concerts()[i].artists[j].name;
-                    }
-                    self.artistCount(self.artistCount() + 1);
-                    (function(i,j) {
-                        // TODO: move this to OUTSIDE of the loop (or function);
-                        requestSettings = {
-                            success: function(data, status, jqXHR) {
-                                if (!data.error) {
-                                    self.concerts()[i].artists[j].lastfm = data;
-                                    self.concerts()[i].artists[j].lastfm.status = null;
-                                    // TODO: move decrement to 'finished' AJAX param
-                                    self.artistCount(self.artistCount() - 1);
-                                } else {
-                                    //console.log(data, status);
-                                    self.artistCount(self.artistCount() - 1);
-                                    // TODO: use different error msg when not found vs. error?
-                                    self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
-                                }
-                            },
-                            error: function(data, status, jqXHR) {
-                                self.artistCount(self.artistCount() - 1);
-                                console.log('last.fm error');
-                                self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
-                            },
-                            timeout: 11000
-                        };
-                        self.concerts()[i].artists[j].lastfm = {};
-                        $.ajax(lastFmRequestURL + artistSearch, requestSettings);
-                    })(i,j);
-                }
-                //console.log(artistCount());
-            }
-            //console.log(artistCount);
+            //self.haveAllArtistInfo(true);
+            requestAllArtistInfo();
         }
     });
 
