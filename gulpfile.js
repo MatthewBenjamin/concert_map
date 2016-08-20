@@ -25,7 +25,6 @@ gulp.task('styles', function() {
 gulp.task('html', function() {
     var params = {
         collapseWhitespace: true,
-        removeComments: true
     }
     return gulp.src('development/*.html')
         .pipe(htmlmin(params))
