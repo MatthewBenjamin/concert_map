@@ -251,11 +251,8 @@ var ViewModel =  function () {
             }
         }
     }
-    // Search last.fm data
+    // Search concerts
     self.searchConcerts = ko.computed(function() {
-        // TODO Instead of passing results straight to filterEvents & Venues
-        // observables, just pass to filteredEvents, which will automatically use
-        // buildVenues() to built a new list
         if (self.searchInput()) {
             var searchTerm = self.searchInput().toLowerCase();
             var eventResults = [];
@@ -347,7 +344,9 @@ var ViewModel =  function () {
     };
 
     self.selectEvent = function(concert) {
-        self.selectMarker(concert.venueIndex);
+        var unfilteredIndex = findVenue(concert.venue.id, self.concertVenues());
+        self.selectMarker(unfilteredIndex);
+        // TODO: potential bug w/ filteredEvent/Venues - wrong venue index
         self.currentEvent(ko.mapping.fromJS(concert));
         self.showEventInfo(true);
         self.showVenueInfo(false);
@@ -595,10 +594,10 @@ var ViewModel =  function () {
                             // TODO: keep track on timeouts/errors and add option to resubmit
                             // request
                             console.log(textStatus);
-                            self.artistCount(self.artistCount() - 1);
-                            //if (textStatus === "timeout") {
+                            //if (textStatus === "timeout" || textStatus === "error") {
                             //    timeouts++;
-                            //}
+                            //} else if ()
+                            self.artistCount(self.artistCount() - 1);
                         },
                         timeout: 11000
                     };
@@ -731,6 +730,7 @@ var ViewModel =  function () {
                 self.currentVenuePlaces(results);
                 self.venueInfoStatus(null);
             } else {
+                self.venueInfoStatus(venueInfoStatus);
                 console.log(results, status);
             }
 
@@ -787,7 +787,7 @@ var ViewModel =  function () {
     }
     // Lookup 4square venue ID, then get detailed info
     function findFourSquareVenue (venue) {
-        var venueIndex = venue.concerts[0].venueIndex;
+        var venueIndex = self.concertVenues().indexOf(venue);
         var lat = venue.latitude;
         var lon = venue.longitude;
         var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
@@ -800,11 +800,8 @@ var ViewModel =  function () {
             'intent=match';
         var requestSettings = {
             success: function(data, status, jqXHR) {
-                //console.log(venueIndex);
-                //console.log(data, data.meta.code);
                  if (data.response.venues.length > 0 &&
                     checkCurrentVenue(venueIndex)) {
-                    //console.log(data.response.venues[0].name);
                     getFourSquareById(data.response.venues[0].id, venueIndex);
                  } else {
                     // TODO: DRY, see below
@@ -813,7 +810,6 @@ var ViewModel =  function () {
                  }
             },
             error: function(data, status, jqXHR) {
-                //console.log(data, status);
                 // TODO: DRY, see above
                 self.venueInfoStatus(fourSquareError);
                 placesSearch(venueIndex);
@@ -837,7 +833,8 @@ var ViewModel =  function () {
             } else if (venue.detailedInfo.googlePlaces) {
                 self.currentVenuePlaces(venue.detailedInfo.googlePlaces);
             } else {
-                // TODO: this ignores timeouts and other cases where data actually exists
+                // TODO: this ignores previous failed attemps (e.g. timeouts
+                // and other cases where data actually exists)
                 self.venueInfoStatus(venueInfoError);
             }
         }
