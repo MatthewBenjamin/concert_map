@@ -1,4 +1,5 @@
 node_modules/
 package.json~
+gulpfile.js~
 development/Resources/resources~
 build/Resources/resources~
