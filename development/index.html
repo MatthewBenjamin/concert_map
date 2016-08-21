@@ -52,16 +52,20 @@
         <input class="mobile-menu event-search search-box" data-bind="hasFocus: searchBarFocus, textInput: searchInput, css: { small: displaySmallMenu(), 'large-search': hideLargeMenu() }" placeholder="search concerts">
 
         <!-- ASK IF USER WANTS LAST.FM ARTIST INFO -->
-        <!-- TODO: CSS/Layout for Large and Small screens, styling -->
-        <div class="request-artist-info" data-bind="visible: askForArtistInfo">
-            <h4>Want better search results?</h4>
-            <p>If you choose to request info about each artist from Last.fm, you'll be able to search events by detailed info about the artists, such as genre.</p>
-            <p>Right now you can only search events by artists' names and venues' names and addresses.</p>
-            <p> Note: Last.fm info usually loads quickly, but may be slow depending on Last.fm's servers</p>
-            <div>
-                <button class="clickable" data-bind="click: function() { requestAllArtistInfo(true); dontAsk(true);}">Yes</button><button class="clickable" data-bind="click: function() { manualToggle(false); }">No</button><button class="clickable" data-bind="click: function() { dontAsk(true); }">Don't Ask Again</button>
+        <!-- ko if: askForArtistInfo() -->
+        <!-- ko template: { name: 'request-info' } --><!-- /ko -->
+        <script type="text/html" id="request-info">
+            <div class="request-artist-info">
+                <h4>Want better search results?</h4>
+                <p>If you choose to request info about each artist from Last.fm, you'll be able to search events by detailed info about the artists, such as genre.</p>
+                <p>Right now you can only search events by artists' names and venues' names and addresses.</p>
+                <p> Note: Last.fm info usually loads quickly, but may be slow depending on Last.fm's servers</p>
+                <div>
+                    <button class="clickable" data-bind="click: function() { requestAllArtistInfo(true); dontAsk(true);}">Yes</button><button class="clickable" data-bind="click: function() { manualToggle(false); }">No</button><button class="clickable" data-bind="click: function() { dontAsk(true); }">Don't Ask Again</button>
+                </div>
             </div>
-        </div>
+        </script>
+        <!-- /ko -->
 
         <!-- LOCATION SEARCH -->
         <input class="location-search mobile-menu search-box" data-bind="value: currentAddress, css: { small: displaySmallMenu(), 'large-location': hideLargeMenu() }">
