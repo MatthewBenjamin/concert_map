@@ -55,7 +55,7 @@ google.maps.event.addListener(infoWindow, 'closeclick', infoWindowClose);
 
 // Grab HTML for infoWindow
 var infoWindowView = function(){
-    html = document.getElementById("info-content");
+    html = document.getElementsByClassName("info-content")[0];
     return html;
 };
 
@@ -64,7 +64,7 @@ var infoWindowView = function(){
 function infoWindowClose() {
     var content = infoWindow.getContent();
     if (content) {
-        document.getElementById("info-window-container").appendChild(content);
+        document.getElementsByClassName("info-window-container")[0].appendChild(content);
     }
 }
 
@@ -109,8 +109,7 @@ var ViewModel =  function () {
     self.showArtistInfo = ko.observable(false);
 
     // toggle menu
-    self.displaySmallMenu = ko.observable(false);
-    self.hideLargeMenu = ko.observable(false);
+    self.showMenu = ko.observable(true);
     // toggle list display between events and venues
     self.listEvents = ko.observable(true);
     self.listVenues = ko.observable(false);
@@ -302,18 +301,11 @@ var ViewModel =  function () {
     });
 
     /*** UI FUNCTIONS ***/
-
-    self.closeSmallMenu = function() {
-        self.displaySmallMenu(false);
-    };
-    self.openSmallMenu = function() {
-        self.displaySmallMenu(true);
-    };
-    self.toggleLargeMenu = function() {
-        if (self.hideLargeMenu()) {
-            self.hideLargeMenu(false);
+    self.toggleMenu = function() {
+        if (self.showMenu()) {
+            self.showMenu(false);
         } else {
-            self.hideLargeMenu(true);
+            self.showMenu(true);
         }
     };
     self.toggleExtraInfo = function() {
@@ -716,6 +708,7 @@ var ViewModel =  function () {
         }
     }
     // Google Places (if 4 square isn't found)
+    // TODO: This error msg is getting set when 4square isn't found (but then Places loads...)
     var venueInfoError = 'Sorry, detailed venue information could not be loaded.';
 
     function placesDetails(placeId, venueIndex) {

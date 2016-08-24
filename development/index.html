@@ -12,23 +12,21 @@
 
     <body>
         <!-- GOOGLE MAP -->
-        <div class="map-canvas" data-bind="googlemap: { mapBounds: mapBounds() }, click: function(){closeSmallMenu()}"></div>
+        <div class="map-canvas" data-bind="googlemap: { mapBounds: mapBounds() }"></div>
 
         <!-- INFO WINDOW CONTENT -->
-        <div id="info-window-container" style="display: none;">
-            <div id="info-content" data-bind="if: currentVenue">
+        <div class="info-window-container" style="display: none;">
+            <div class="info-content" data-bind="if: currentVenue">
                 <div data-bind="with: currentVenue">
                     <h2 class="window-header clickable" data-bind="text: name, click: selectVenue;"></h2>
-                    <ul class="window-list" data-bind="foreach: concerts">
-                        <li class="window-list-element clickable" data-bind="click: selectEvent">
+                    <ul data-bind="foreach: concerts">
+                        <li class="clickable" data-bind="click: selectEvent">
                             <hr>
-                            <!--
-                            //'<h4 class="window-event-name" data-bind="text: title">blah</h4>' +
-                            //'<h4 class="window-event-name" data-bind="text: artists[0].name">blah</h4>-->
-                            <p>
-                                <span class="bold" data-bind="text: artists[0].name"></span> 
-                                <span class="italic" data-bind="text: subtitle"></span>
-                            </p>
+                            <h4>
+                                <span data-bind="text: artists[0].name"></span> 
+                                <span class="subtitle" data-bind="text: subtitle"></span>
+                            </h4>
+
                             <p class="window-event-date date">
                                 <!-- TODO: make new timeinfo
                                 //'<span data-bind="text: datetime"></span>, ' +-->
@@ -42,14 +40,14 @@
         </div>
 
         <!-- MENU TOGGLE -->
-        <a class="menu-toggle clickable" data-bind="click: function() { openSmallMenu(); toggleLargeMenu() }">
+        <a class="menu-toggle clickable" data-bind="click: function() { toggleMenu() }, css: { open: showMenu() }">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
           </svg>
         </a>
 
         <!-- EVENT SEARCH -->
-        <input class="mobile-menu event-search search-box" data-bind="hasFocus: searchBarFocus, textInput: searchInput, css: { small: displaySmallMenu(), 'large-search': hideLargeMenu() }" placeholder="search concerts">
+        <input class="menu-interface event-search search-box" data-bind="hasFocus: searchBarFocus, textInput: searchInput, css: { open: showMenu() }" placeholder="search concerts">
 
         <!-- ASK IF USER WANTS LAST.FM ARTIST INFO -->
         <!-- ko if: askForArtistInfo() -->
@@ -68,48 +66,42 @@
         <!-- /ko -->
 
         <!-- LOCATION SEARCH -->
-        <input class="location-search mobile-menu search-box" data-bind="value: currentAddress, css: { small: displaySmallMenu(), 'large-location': hideLargeMenu() }">
+        <input class="location-search menu-interface search-box" data-bind="value: currentAddress, css: { open: showMenu() }">
 
         <!-- INFO LIST TOGGLE -->
-        <div class="list-toggle mobile-menu" data-bind="css: { small: displaySmallMenu(), 'large-toggle': hideLargeMenu() }">
+        <div class="list-toggle menu-interface" data-bind="css: { open: showMenu() }">
             <button class="list-button clickable" data-bind="css: { pressed: listEvents() }, click: function () { showEvents(); }">EVENTS</button><button class="list-button clickable" data-bind="css: { pressed: listVenues() }, click: function () { showVenues(); }">VENUES</button>
             <button class="info-button clickable" data-bind="css: { pressed: extraInfoBoolean() }, click: toggleExtraInfo">SHOW INFO POP-UP</button>
         </div>
 
-        <!-- EVENT LIST -->
-        <div class="mobile-menu list-container" data-bind="css: { small: displaySmallMenu(), 'large-list': hideLargeMenu() }, visible: listEvents()">
+        <div class="menu-interface list-container" data-bind="css: { open: showMenu() }, click: function() { toggleMenu() }">
+            <!-- TODO: redundancies with having both an event & venue list
+                        (e.g. error msgs aren't DRY, etc.) -->
             <p class="map-error"></p>
             <p data-bind="visible: !filteredEvents().length && !concertsStatus">no results</p>
             <p data-bind="text: concertsStatus"></p>
             <p data-bind="text: geocoderStatus"></p>
             <p data-bind="text: allArtistStatusUpdate"></p>
             <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
-            <ul class="list" data-bind="foreach: filteredEvents, click: function(){ closeSmallMenu() }">
-                <li class="clickable list-item" data-bind="click: selectEvent">
+
+            <!-- EVENT LIST -->
+            <ul data-bind="visible: listEvents(), foreach: filteredEvents">
+                <li class="clickable" data-bind="click: selectEvent">
                     <hr>
-                        <p>
-                            <span class="bold" data-bind="text: artists[0].name"></span>
-                            <span class="italic" data-bind="text: subtitle"></span>
-                        </p>
+                        <h4>
+                            <span data-bind="text: artists[0].name"></span>
+                            <span class="subtitle" data-bind="text: subtitle"></span>
+                        </h4>
                         <span data-bind="text: timeInfo.day"></span>
                         <span data-bind="text: timeInfo.date"></span>
                     </p>
-                    <!-- TODO: new tags (loop through artists)
-                    <ul class="tags" data-bind="foreach: tags.tag">
-                        <li class="tags-item" data-bind="text: $data"></li>
-                    </ul> -->
                     <p class="italic" data-bind="text: venue.name"></p>
                 </li>
             </ul>
-        </div>
 
-        <!-- VENUE LIST -->
-        <div id="venue-list" class="mobile-menu list-container" data-bind="css: { small: displaySmallMenu(), 'large-list': hideLargeMenu() }, visible: listVenues()">
-            <p data-bind="text: concertsStatus"></p>
-            <p data-bind="text: geocoderStatus"></p>
-            <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
-            <ul class="list" data-bind="foreach: filteredVenues, click: function() { closeSmallMenu() }">
-                <li class="clickable list-item" data-bind="click: selectFilteredVenue">
+            <!-- VENUE LIST -->
+            <ul data-bind="visible: listVenues(), foreach: filteredVenues">
+                <li class="clickable" data-bind="click: selectFilteredVenue">
                     <hr>
                     <h4 data-bind="text: name"></h4>
                     <p class="pale-text">
@@ -128,18 +120,16 @@
 
 
         <!-- EXTRA INFO DISPLAY -->
-        <div class="extra-info" data-bind="css: { 'open': showExtraInfo() }">
-            <a class="close-button clickable" data-bind="click: function() { closeExtraInfo(); }">
-                <img class="svg-button" src="images/close.svg" alt="CLOSE">
-            </a>
+        <div class="extra-info" data-bind="css: { open: showExtraInfo() }">
+            <a class="close-button clickable" data-bind="click: function() { closeExtraInfo(); }">&#10006</a>
 
             <!-- EVENT INFO -->
-            <div class="extra-info-content" data-bind="visible: showEventInfo(), with: currentEvent">
+            <div data-bind="visible: showEventInfo(), with: currentEvent">
                 <div>
-                    <p>
-                        <span class="bold larger" data-bind="text: artists()[0].name"></span>
-                        <span class="italic" data-bind="text: subtitle"></span>
-                    </p>
+                    <h4>
+                        <span data-bind="text: artists()[0].name"></span>
+                        <span class="subtitle" data-bind="text: subtitle"></span>
+                    </h4>
                     <p class="pale-text">
                         <span data-bind="text: timeInfo.time"></span>
                         <br>
@@ -157,7 +147,7 @@
                         <div data-bind="if: $data.lastfm">
                             <!-- ko if: lastfm.artist -->
                                 <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
-                                    <li class="highlight clickable tags-item" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
+                                    <li class="highlight clickable" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
                                 </ul>
                                 <span class="italic" data-bind="if: !lastfm.artist.tags.tag().length">no genre info</span>
                             <!-- /ko -->
@@ -166,17 +156,17 @@
                     </li>
                     <br>
                 </ul>
-                <p>
-                    <span class="bold">Venue</span>
-                    <a class="highlight clickable italic" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
-                </p>
+                <h4>
+                    <span>Venue</span>
+                    <a class="highlight clickable subtitle" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
+                </h4>
                 <a data-bind="attr: { href: url }">Bands in Town Event Page</a>
                 <br>
                 <p data-bind="if: tickets_available"><a data-bind="attr: { href: ticket_url }">Get Tickets</a></p>
             </div>
 
             <!-- VENUE INFO -->
-            <div class="extra-info-content" data-bind="visible: showVenueInfo(), with: currentVenue">
+            <div data-bind="visible: showVenueInfo(), with: currentVenue">
                 <p data-bind="text: venueInfoStatus"></p>
                 <h3 data-bind="text: name"></h3>
                 <!-- ko if: !currentVenueFourSquare() && !currentVenuePlaces() -->
@@ -206,7 +196,7 @@
                 <ul data-bind="foreach: concerts">
                     <li>
                         <a class="highlight clickable" data-bind="text: artists[0].name, click: self.selectEvent"></a>
-                        <span class="italic" data-bind="text: subtitle"></span>
+                        <span class="subtitle" data-bind="text: subtitle"></span>
                         -
                         <span class="pale-text" data-bind="text: timeInfo.date"></span>
                     </li>
@@ -227,7 +217,7 @@
                         <span>/10</span>
                     </p>
                     <ul class="tags" data-bind="foreach: categories">
-                        <li class="tags-item" data-bind="text: shortName"></li>
+                        <li data-bind="text: shortName"></li>
                     </ul>
                     <div data-bind="if: $data.description">
                         <p class="italic">Description</p>
@@ -252,7 +242,7 @@
                         <span>/5</span>
                     </p>
                     <ul class="tags" data-bind="foreach: types">
-                        <li class="tags-item" data-bind="text: $data"></li>
+                        <li data-bind="text: $data"></li>
                     </ul>
                     <hr>
                     <!-- ko if: currentVenuePlaces().website -->
@@ -267,14 +257,14 @@
             </div>
 
             <!-- ARTIST INFO -->
-            <div class="extra-info-content" data-bind="visible: showArtistInfo(), with: currentArtist">
+            <div data-bind="visible: showArtistInfo(), with: currentArtist">
                 <a class="highlight clickable" data-bind="click: function() {backToEvent(currentEvent())}">back to event page</a>
                 <h3 data-bind="text: name"></h3>
                 <!-- ko if: $data.lastfm -->
                 <p data-bind="text: lastfm.status"></p>
                 <div data-bind="if: lastfm.artist">
                     <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
-                        <li class="tags-item highlight clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
+                        <li class="highlight clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
                     </ul>
                     <h4>Bio</h4>
                     <p data-bind="html: lastfm.artist.bio.summary"></p>
@@ -289,12 +279,11 @@
                     </li>
                 </ul>
             </div>
-
         </div>
 
-        <script src="js/libraries/jquery-2.1.3.min.js"></script>
-        <script src="js/libraries/knockout-3.3.0.js"></script>
-        <script src="js/libraries/knockout.mapping-latest.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
         <script src="js/app.js" inline></script>
 
     </body>
