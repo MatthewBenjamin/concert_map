@@ -4,6 +4,7 @@
 requirejs.config({
     baseUrl: 'js/libraries',
     paths: {
+        // TODO: what about global jQuery/$ ? check requireJS docs: http://requirejs.org/docs/jquery.html
         jquery: [
             'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min',
             'jquery-2.1.3.min'
@@ -16,6 +17,7 @@ requirejs.config({
             'https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min',
             'knockout.mapping-latest'
         ],
+        bandsInTown: '../bands-in-town',
         app: '../app'
     },
     shim: {

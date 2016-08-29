@@ -1,0 +1,13 @@
+<ul data-bind="visible: listEvents(), foreach: filteredEvents">
+    <li class="clickable" data-bind="click: selectEvent">
+        <hr>
+            <h4>
+                <span data-bind="text: artists[0].name"></span>
+                <span class="subtitle" data-bind="text: subtitle"></span>
+            </h4>
+            <span data-bind="text: timeInfo.day"></span>
+            <span data-bind="text: timeInfo.date"></span>
+        </p>
+        <p class="italic" data-bind="text: venue.name"></p>
+    </li>
+</ul>

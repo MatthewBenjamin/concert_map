@@ -84,7 +84,7 @@
             <p data-bind="text: allArtistStatusUpdate"></p>
             <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
 
-            <!-- EVENT LIST -->
+            <!-- EVENT LIST --><!--
             <ul data-bind="visible: listEvents(), foreach: filteredEvents">
                 <li class="clickable" data-bind="click: selectEvent">
                     <hr>
@@ -97,8 +97,13 @@
                     </p>
                     <p class="italic" data-bind="text: venue.name"></p>
                 </li>
-            </ul>
-
+            </ul>-->
+            <concerts-view-model params="
+                mapCenter: mapCenter,
+                concerts: concerts,
+                concertsStatus: concertsStatus
+            ">
+            </concerts-view-model>
             <!-- VENUE LIST -->
             <ul data-bind="visible: listVenues(), foreach: filteredVenues">
                 <li class="clickable" data-bind="click: selectFilteredVenue">

@@ -1,6 +1,5 @@
 define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
     ko.mapping = komapping;
-
     // Google map
     var map;
 
@@ -70,6 +69,10 @@ define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
             document.getElementsByClassName("info-window-container")[0].appendChild(content);
         }
     }
+
+    ko.components.register('concerts-view-model',
+        { require: '../kocomponents/concerts-view-model'}
+    );
 
     var ViewModel =  function () {
         var self = this;
@@ -176,7 +179,16 @@ define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
         });
 
         // Create google map markers from concertVenues
+        // TODO: have separate ko.computed-creation function from simple observable array
         self.mapMarkers = ko.computed(function() {
+            // TODO: move this?
+            // clear old markers
+            if (self.mapMarkers) {
+                console.log('hi markers', self.mapMarkers());
+                self.mapMarkers().forEach(function (marker) {
+                    marker.setMap(null);
+                });
+            }
             var markers = [];
 
             var venues = self.concertVenues();
@@ -424,98 +436,6 @@ define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
                 });
             } else {
                 //console.log('init address');
-            }
-        });
-
-        /* Bands in Town */
-
-        // clean up concert data
-        function parseConcerts(data) {
-            //console.log(data);
-            var time;
-            var timeString;
-            var artistCount;
-            //var emptyArray = [];
-            for (var i = 0; i < data.length; i++) {
-                // TODO: add for loop to store additional artist info (name here, later youtube/last.fm) as object in artist array
-                /* TODO: incorporate last.fm artist data tags, etc.
-                if (!data[i].tags) {
-                    data[i].tags = {
-                        tag: []
-                    };
-                }
-                if (typeof data[i].tags.tag === 'string') {
-                    emptyArray.push(data[i].tags.tag);
-                    data[i].tags.tag = emptyArray;
-                    emptyArray = [];
-                } */
-                if (data[i].ticket_status === "available") {
-                    data[i].tickets_available = true;
-                } else {
-                    data[i].tickets_available = false;
-                }
-                artistCount = data[i].artists.length;
-                if (artistCount > 1) {
-                    artistCount -= 1;
-                    data[i].subtitle = "& " + artistCount + " more act";
-                    if (artistCount > 1) {
-                        data[i].subtitle += "s";
-                    }
-                } else {
-                    data[i].subtitle = null;
-                }
-                time = new Date(Date.parse(data[i].datetime));
-                timeString = time.toDateString();
-                data[i].timeInfo = {
-                    day: timeString.substring(0,3),
-                    date: timeString.substring(4,10),
-                    year: time.getFullYear(),
-                    time: time.toUTCString().substring(17,22)
-                };
-            }
-        }
-
-        // Get concert data when mapCenter updates
-        self.getConcerts = ko.computed(function() {
-            // Prevent Knockout from loading concerts twice on page load
-            if ((self.concerts().length === 0 &&
-                 self.mapCenter() === defaultLatlng)||
-                (self.concerts().length > 0 &&
-                 self.mapCenter().latitude !== defaultLatlng.latitude &&
-                 self.mapCenter().longitude !== defaultLatlng.longitude)) {
-                var latitude = self.mapCenter().latitude;
-                var longitude = self.mapCenter().longitude;
-                var requestURL = 'http://api.bandsintown.com/events/search.json?' +
-                    'api_version=2.0&' +
-                    'app_id=google-map-mashup&' +
-                    'location=' + latitude + ',' + longitude + '&' +
-                    'per_page=100&' +
-                    'format=json';
-                var requestSettings = {
-                    dataType: "jsonp",
-                    crossDomain: "true",
-                    success: function(data, status, jqXHR) {
-                        //clears old markers
-                        self.mapMarkers().forEach(function (marker) {
-                            marker.setMap(null);
-                        });
-                        if (data) {
-                            self.concertsStatus(null);
-                            parseConcerts(data);
-                            self.concerts(data);
-                        } else {
-                            //self.concertsStatus(data.message);
-                        }
-
-                    },
-                    error: function() {
-                        self.concertsStatus('Concert data could not be loaded. Please try again.');
-                    },
-                    timeout: 11000
-                };
-                self.concertsStatus('Loading Concert Data...');
-                //console.log("loading concert data...");
-                $.ajax(requestURL,requestSettings);
             }
         });
 
