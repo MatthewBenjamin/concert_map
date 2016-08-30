@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
+define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, utils) {
     ko.mapping = komapping;
     // Google map
     var map;
@@ -74,6 +74,10 @@ define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
         { require: '../kocomponents/concerts-view-model'}
     );
 
+    ko.components.register('venues-view-model',
+        { require: '../kocomponents/venues-view-model'}
+    );
+
     var ViewModel =  function () {
         var self = this;
 
@@ -136,46 +140,6 @@ define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
             } else {
                 return false;
             }
-        });
-
-        // check if venue is already in self.concertVenues
-        function findVenue(venueId, venues) {
-            for (var i = 0; i < venues.length; i++) {
-                if (venueId === venues[i].id) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        // Build venues array from last.fm data
-        function buildVenues(events) {
-            var venues = [];
-            var venueIndex;
-            var venue;
-            for (var i = 0; i < events.length; i++) {
-                venueIndex = findVenue(events[i].venue.id, venues);
-                venue = events[i].venue;
-                if (venueIndex === -1) {
-                    // venue not yet in list
-                    venue.concerts = [];
-                    venue.concerts.push(events[i]);
-                    venues.push(venue);
-                    events[i].venueIndex = venues.indexOf(venue);
-                } else {
-                    // venue already in list
-                    events[i].venueIndex = venueIndex;
-                    venues[venueIndex].concerts.push(events[i]);
-                }
-
-            }
-            //console.log(venues);
-            return venues;
-        }
-
-        self.buildAllVenues = ko.computed(function() {
-            var events = self.concerts();
-            self.concertVenues(buildVenues(events));
         });
 
         // Create google map markers from concertVenues
@@ -281,11 +245,14 @@ define(['jquery', 'knockout', 'komapping'], function($, ko, komapping) {
                             eventResults.push(currentEvent);
                     }
                 }
-                venueResults = buildVenues(eventResults);
+                // TODO: building venues from eventResults causes venueIndex in
+                // filteredEvents to only match w/ filteredVenues, but needs to
+                // match w/ concertVenues
+                venueResults = utils.buildVenues(eventResults);
                 self.filteredEvents(eventResults);
                 self.filteredVenues(venueResults);
             } else {
-                buildVenues(self.concerts());
+                utils.buildVenues(self.concerts());
                 self.filteredEvents(self.concerts());
                 self.filteredVenues(self.concertVenues());
             }

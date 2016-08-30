@@ -17,7 +17,8 @@ requirejs.config({
             'https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min',
             'knockout.mapping-latest'
         ],
-        bandsInTown: '../bands-in-town',
+        utils: '../utils',
+        bandsInTown: '../apis/bands-in-town',
         app: '../app'
     },
     shim: {
