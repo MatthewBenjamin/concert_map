@@ -1,0 +1,15 @@
+<ul data-bind="visible: listVenues(), foreach: filteredVenues">
+    <li class="clickable" data-bind="click: selectFilteredVenue">
+        <hr>
+        <h4 data-bind="text: name"></h4>
+        <p class="pale-text">
+            <span data-bind="text: city"></span>,
+            <span data-bind="text: region"></span>
+        </p>
+        <p class="italic">
+            <span data-bind="text: concerts.length"></span>
+            <span data-bind="if: concerts.length > 1"> events</span>
+            <span data-bind="if: concerts.length == 1"> event</span>
+        </p>
+    </li>
+</ul>

@@ -78,6 +78,10 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         { require: '../kocomponents/venues-view-model'}
     );
 
+    ko.components.register('current-event',
+        { require: '../kocomponents/current-event'}
+    );
+
     var ViewModel =  function () {
         var self = this;
 
