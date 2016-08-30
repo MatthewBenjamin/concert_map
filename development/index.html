@@ -74,9 +74,7 @@
             <button class="info-button clickable" data-bind="css: { pressed: extraInfoBoolean() }, click: toggleExtraInfo">SHOW INFO POP-UP</button>
         </div>
 
-        <div class="menu-interface list-container" data-bind="css: { open: showMenu() }, click: function() { toggleMenu() }">
-            <!-- TODO: redundancies with having both an event & venue list
-                        (e.g. error msgs aren't DRY, etc.) -->
+        <div class="menu-interface list-container" data-bind="css: { open: showMenu() }">
             <p class="map-error"></p>
             <p data-bind="visible: !filteredEvents().length && !concertsStatus">no results</p>
             <p data-bind="text: concertsStatus"></p>
