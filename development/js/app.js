@@ -90,6 +90,10 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         { require: '../kocomponents/current-artist'}
     );
 
+    ko.components.register('status-messages',
+        { template: { require: 'text!../kotemplates/status-messages.html' }}
+    );
+
     var ViewModel =  function () {
         var self = this;
 

@@ -75,12 +75,8 @@
         </div>
 
         <div class="menu-interface list-container" data-bind="css: { open: showMenu() }">
-            <p class="map-error"></p>
-            <p data-bind="visible: !filteredEvents().length && !concertsStatus">no results</p>
-            <p data-bind="text: concertsStatus"></p>
-            <p data-bind="text: geocoderStatus"></p>
-            <p data-bind="text: allArtistStatusUpdate"></p>
-            <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
+            <!-- TODO: no params? seems to be operating from $root/parent context.. -->
+            <status-messages></status-messages>
 
             <!-- EVENT LIST -->
             <concerts-list params="
