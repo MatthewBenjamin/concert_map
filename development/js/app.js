@@ -318,7 +318,7 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         };
 
         self.selectEvent = function(concert) {
-            var unfilteredIndex = findVenue(concert.venue.id, self.concertVenues());
+            var unfilteredIndex = utils.findVenue(concert.venue.id, self.concertVenues());
             self.selectMarker(unfilteredIndex);
             // TODO: potential bug w/ filteredEvent/Venues - wrong venue index
             self.currentEvent(ko.mapping.fromJS(concert));
@@ -328,7 +328,7 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         };
 
         self.selectFilteredVenue = function(filteredVenue) {
-            var unfilteredIndex = findVenue(filteredVenue.id, self.concertVenues());
+            var unfilteredIndex = utils.findVenue(filteredVenue.id, self.concertVenues());
             self.selectVenue(self.concertVenues()[unfilteredIndex]);
         };
 
