@@ -70,12 +70,12 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         }
     }
 
-    ko.components.register('concerts-view-model',
-        { require: '../kocomponents/concerts-view-model'}
+    ko.components.register('concerts-list',
+        { require: '../kocomponents/concerts-list'}
     );
 
-    ko.components.register('venues-view-model',
-        { require: '../kocomponents/venues-view-model'}
+    ko.components.register('venues-list',
+        { require: '../kocomponents/venues-list'}
     );
 
     ko.components.register('current-event',

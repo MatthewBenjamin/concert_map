@@ -1,7 +1,7 @@
-define(['knockout', 'bandsInTown', 'text!../kotemplates/concerts-view-model.html'],
+define(['knockout', 'bandsInTown', 'text!../kotemplates/concerts-list.html'],
         function(ko, bandsInTown, htmlString) {
 
-    var ConcertsViewModel = function(params) {
+    var concertsList = function(params) {
         var self = this;
 
         self.mapCenter = params.mapCenter;
@@ -44,5 +44,5 @@ define(['knockout', 'bandsInTown', 'text!../kotemplates/concerts-view-model.html
     }
 
 
-    return { viewModel: ConcertsViewModel, template: htmlString }
+    return { viewModel: concertsList, template: htmlString }
 });

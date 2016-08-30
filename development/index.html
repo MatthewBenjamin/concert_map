@@ -84,20 +84,18 @@
             <p data-bind="text: allArtistStatusUpdate"></p>
             <p data-bind="if: searchInput">Search Results for: "<span data-bind="text: searchInput"></span>"</p>
 
-            <concerts-view-model params="
             <!-- EVENT LIST -->
+            <concerts-list params="
                 mapCenter: mapCenter,
                 concerts: concerts,
                 concertsStatus: concertsStatus
-            ">
-            </concerts-view-model>
-        </div>
+            "></concerts-list>
 
             <!-- VENUE LIST -->
-            <venues-view-model params="
+            <venues-list params="
                 concerts: concerts,
                 concertVenues: concertVenues
-            "></venues-view-model>
+            "></venues-list>
 
         </div>
 
