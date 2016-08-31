@@ -1,7 +1,6 @@
-define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWindow'],
-    function($, ko, komapping, utils, settings, gmap, infoWindow) {
+define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWindow', 'mapMarkers'],
+    function($, ko, komapping, utils, settings, gmap, infoWindow, mapMarkersUtils) {
     ko.mapping = komapping;
-
     // TODO: move custom binding & component registration into own module
 
     // Custom Handler for Google Map
@@ -107,47 +106,14 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWin
         });
 
         // Create google map markers from concertVenues
-        // TODO: have separate ko.computed-creation function from simple observable array
         self.mapMarkers = ko.computed(function() {
-            // TODO: move this?
-            // clear old markers
-            if (self.mapMarkers) {
-                console.log('hi markers', self.mapMarkers());
-                self.mapMarkers().forEach(function (marker) {
-                    marker.setMap(null);
-                });
+            if (self.mapMarkers && self.mapMarkers().length) {
+                mapMarkersUtils.clearMarkers(self.mapMarkers());
             }
-            var markers = [];
-
-            var venues = self.concertVenues();
-            //console.log(venues);
-
-            for (var i = 0; i < venues.length; i++){
-                var latLng = new google.maps.LatLng(
-                                venues[i].latitude,
-                                venues[i].longitude);
-
-                var marker = new google.maps.Marker({
-                    position: latLng,
-                    title: venues[i].name,
-                    icon: 'images/red.png',
-                    map: gmap,
-                    venueIndex: i
-                });
-
-                google.maps.event.addListener(marker, 'mouseup', function() {
-                    var m = this;
-                    self.currentVenue(self.concertVenues()[m.venueIndex]);
-                    infoWindow.open(gmap, m);
-                    m.setAnimation(google.maps.Animation.BOUNCE);
-                    setTimeout(function() {
-                        m.setAnimation(google.maps.Animation.null);
-                    }, 700);
-                });
-
-                markers.push(marker);
-            }
-
+            var markers = mapMarkersUtils.createMarkers(
+                self.concertVenues,
+                self.currentVenue
+            );
             return markers;
         });
 

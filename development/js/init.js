@@ -21,6 +21,7 @@ requirejs.config({
         infoWindow: '../info-window',
         utils: '../utils',
         settings: '../settings',
+        mapMarkers: '../map-markers',
         bandsInTown: '../apis/bands-in-town',
         app: '../app'
     },
