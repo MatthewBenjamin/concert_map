@@ -1,74 +1,18 @@
-define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, utils) {
+define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWindow'],
+    function($, ko, komapping, utils, settings, gmap, infoWindow) {
     ko.mapping = komapping;
-    // Google map
-    var map;
 
-    // initialize location
-    var defaultLatlng;
-    var defaultAddress;
-
-
-    (function init() {
-        // use last location
-        if (localStorage.lastAddress &&
-            localStorage.latitude &&
-            localStorage.longitude) {
-            var latitude = Number(localStorage.latitude);
-            var longitude = Number(localStorage.longitude);
-            defaultAddress = localStorage.lastAddress;
-            defaultLatlng = { latitude: latitude, longitude: longitude };
-        } else {
-            // program default
-            defaultAddress = 'Milwaukee, WI';
-            defaultLatlng = { latitude: 43.07772111168133, longitude: -88.10023715 };
-        }
-    })();
-
-    // Google Map Error Handling
-    setTimeout(function() {
-        if (!map) {
-            $('.map-error').append('Google Map could not be loaded');
-        }
-    }, 8000);
+    // TODO: move custom binding & component registration into own module
 
     // Custom Handler for Google Map
     ko.bindingHandlers.googlemap = {
-        // create map
-        init: function (element) {
-            var center = new google.maps.LatLng(defaultLatlng.latitude,defaultLatlng.longitude);
-            var mapOptions = {
-                center: center
-            };
-            map = new google.maps.Map(element, mapOptions);
-            //console.log("map init");
-        },
-
         // update map center when ViewModel.mapCenter value changes
         update: function (element, valueAccessor) {
             var value = valueAccessor();
-            map.fitBounds(value.mapBounds);
+            gmap.fitBounds(value.mapBounds);
             //console.log("map update");
         }
     };
-
-    /*** INFO WINDOWS ***/
-    var infoWindow = new google.maps.InfoWindow();
-    google.maps.event.addListener(infoWindow, 'closeclick', infoWindowClose);
-
-    // Grab HTML for infoWindow
-    var infoWindowView = function(){
-        html = document.getElementsByClassName("info-content")[0];
-        return html;
-    };
-
-    // Preserve info window content, see
-    // http://stackoverflow.com/questions/31970927/binding-knockoutjs-to-google-maps-infowindow-content
-    function infoWindowClose() {
-        var content = infoWindow.getContent();
-        if (content) {
-            document.getElementsByClassName("info-window-container")[0].appendChild(content);
-        }
-    }
 
     ko.components.register('concerts-list',
         { require: '../kocomponents/concerts-list'}
@@ -94,6 +38,10 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         { template: { require: 'text!../kotemplates/status-messages.html' }}
     );
 
+    ko.components.register('info-window',
+        { template: { require:'text!../kotemplates/info-window.html' } }
+    );
+
     var ViewModel =  function () {
         var self = this;
 
@@ -102,8 +50,8 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         /* Data observables */
 
         // map location
-        self.currentAddress = ko.observable(defaultAddress);
-        self.mapCenter = ko.observable(defaultLatlng);
+        self.currentAddress = ko.observable(settings.initAddress);
+        self.mapCenter = ko.observable(settings.initLatlng);
 
         // Last.fm event API results
         self.concerts = ko.observableArray();
@@ -183,15 +131,14 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
                     position: latLng,
                     title: venues[i].name,
                     icon: 'images/red.png',
-                    map: map,
+                    map: gmap,
                     venueIndex: i
                 });
 
                 google.maps.event.addListener(marker, 'mouseup', function() {
                     var m = this;
-                    infoWindow.setContent(infoWindowView());
                     self.currentVenue(self.concertVenues()[m.venueIndex]);
-                    infoWindow.open(map, m);
+                    infoWindow.open(gmap, m);
                     m.setAnimation(google.maps.Animation.BOUNCE);
                     setTimeout(function() {
                         m.setAnimation(google.maps.Animation.null);
@@ -372,7 +319,7 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         // Activate a map marker's click event
         self.selectMarker = function(venueIndex) {
             google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
-            map.panTo(self.mapMarkers()[venueIndex].position);
+            gmap.panTo(self.mapMarkers()[venueIndex].position);
         };
 
 
@@ -391,7 +338,7 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
 
         var geocoder = new google.maps.Geocoder();
         self.getMapGeocode = ko.computed(function() {
-            if (defaultAddress != self.currentAddress()) {
+            if (settings.initAddress != self.currentAddress()) {
                 var geocodeTimeoutError = setTimeout(function() {
                     self.geocoderStatus('Location coordinates could not be loaded.');
                 }, 8000);
@@ -411,7 +358,8 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
                             console.log("self center: ", self.mapCenter());
                             self.mapCenter(mapCenter);
                             storeLocation(self.currentAddress(), latitude, longitude);
-                            defaultLatlng = { latitude: latitude, longitude: longitude };
+                            // TODO: need to reset initLatLNg?
+                            settings.initLatlng = { latitude: latitude, longitude: longitude };
                         }
                     } else {
                         self.geocoderStatus('Geocoder error because: ' + status);
@@ -618,7 +566,7 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
         var venueInfoError = 'Sorry, detailed venue information could not be loaded.';
 
         function placesDetails(placeId, venueIndex) {
-            var placesService = new google.maps.places.PlacesService(map);
+            var placesService = new google.maps.places.PlacesService(gmap);
             var request = {
                 placeId: placeId
             };
@@ -642,7 +590,7 @@ define(['jquery', 'knockout', 'komapping', 'utils'], function($, ko, komapping, 
             latitude = self.currentVenue().latitude;
             longitude = self.currentVenue().longitude;
             //console.log(venueName, latitude, longitude, i);
-            var placesService = new google.maps.places.PlacesService(map);
+            var placesService = new google.maps.places.PlacesService(gmap);
             var latLng = new google.maps.LatLng(latitude,longitude);
             var request = {
                 location: latLng,
