@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWindow', 'mapMarkers'],
-    function($, ko, komapping, utils, settings, gmap, infoWindow, mapMarkersUtils) {
+define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWindow', 'mapMarkers', 'searchUtil'],
+    function($, ko, komapping, utils, settings, gmap, infoWindow, mapMarkersUtils, searchUtil) {
     ko.mapping = komapping;
     // TODO: move custom binding & component registration into own module
 
@@ -130,85 +130,24 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWin
             self.mapBounds(bounds);
         });
 
-        // Search Functions
-
-        function doesStringContain(targetString, searchTerm) {
-            targetString = targetString.toLowerCase();
-            return targetString.indexOf(searchTerm) > -1;
-        }
-        function doesObjectListContain(targetList, searchTerm, property) {
-            for (var i = 0; i < targetList.length; i++) {
-                if (doesStringContain(targetList[i][property], searchTerm)) {
-                    return true;
-                }
-            }
-        }
-        function searchArtists(artistsList, searchTerm) {
-            if (doesObjectListContain(artistsList, searchTerm, 'name')) {
-                return true;
-            } else {
-                for (var i = 0; i < artistsList.length; i++) {
-                    if (artistsList[i].lastfm && artistsList[i].lastfm.artist) {
-                        //console.log(artistsList[i].lastfm.artist.tags.tag);
-                        if (doesStringContain(artistsList[i].lastfm.artist.bio.content,searchTerm) ||
-                            doesObjectListContain(artistsList[i].lastfm.artist.tags.tag, searchTerm, 'name')) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
         // Search concerts
         self.searchConcerts = ko.computed(function() {
             if (self.searchInput()) {
                 var searchTerm = self.searchInput().toLowerCase();
-                var eventResults = [];
-                var venueResults;
-                var currentEvent;
-                for (var i = 0; i < self.concerts().length; i++) {
-                    currentEvent = self.concerts()[i];
-                    if ( doesStringContain(currentEvent.venue.name, searchTerm) ||
-                        doesStringContain(currentEvent.venue.city, searchTerm) ||
-                        searchArtists(currentEvent.artists, searchTerm)) {
-
-                            eventResults.push(currentEvent);
-                    }
-                }
-                // TODO: building venues from eventResults causes venueIndex in
-                // filteredEvents to only match w/ filteredVenues, but needs to
-                // match w/ concertVenues
-                venueResults = utils.buildVenues(eventResults);
+                var eventResults = searchUtil.performSearch(searchTerm);
+                var venueResults = utils.buildVenues(eventResults, self.concertVenues());
                 self.filteredEvents(eventResults);
                 self.filteredVenues(venueResults);
+                searchUtil.updateMarkerIcon(
+                    self.filteredVenues(),
+                    self.concertVenues(),
+                    self.mapMarkers()
+                );
             } else {
-                utils.buildVenues(self.concerts());
                 self.filteredEvents(self.concerts());
                 self.filteredVenues(self.concertVenues());
+                searchUtil.resetMarkerIcons(self.mapMarkers());
             }
-        });
-
-        // change marker icon based on search results
-        self.mapMarkersSearch = ko.computed(function() {
-            var venues = self.concertVenues();
-            var searchedEvents = self.filteredEvents();
-            var allEvents = self.concerts();
-
-            for (var i = 0; i < venues.length; i++) {
-                var searchedFor;
-                for (var j = 0; j < venues[i].concerts.length; j++) {
-                    searchedFor = searchedFor || searchedEvents.indexOf(venues[i].concerts[j]) > -1;
-                }
-
-                if (searchedEvents === allEvents) {
-                    self.mapMarkers()[i].setIcon('images/red.png');
-                } else if (searchedFor) {
-                    self.mapMarkers()[i].setIcon('images/blue.png');
-                } else {
-                    self.mapMarkers()[i].setIcon('images/clear.png');
-                }
-                searchedFor = null;
-            }
-
         });
 
         /*** UI FUNCTIONS ***/

@@ -1,5 +1,5 @@
 // utils.js
-define([], function() {
+define(function() {
     var utils = {};
 
     utils.findVenue = function(venueId, venues) {
@@ -9,12 +9,15 @@ define([], function() {
             }
         }
         return -1;
-    }
-    utils.buildVenues = function(events) {
-        console.log('building those venues!');
+    };
+
+    utils.buildVenues = function(events, allVenues) {
+        //console.log('building those venues!');
         var venues = [];
+        if (typeof(allVenues) === 'undefined') { var allVenues = venues; }
         var venueIndex;
         var venue;
+        // TODO: separate out functions inside for loop?
         for (var i = 0; i < events.length; i++) {
             venueIndex = utils.findVenue(events[i].venue.id, venues);
             venue = events[i].venue;
@@ -23,7 +26,7 @@ define([], function() {
                 venue.concerts = [];
                 venue.concerts.push(events[i]);
                 venues.push(venue);
-                events[i].venueIndex = venues.indexOf(venue);
+                events[i].venueIndex = allVenues.indexOf(venue);
             } else {
                 // venue already in list
                 events[i].venueIndex = venueIndex;
@@ -31,9 +34,8 @@ define([], function() {
             }
 
         }
-        //console.log(venues);
         return venues;
-    }
+    };
 
     return utils;
-})
+});
