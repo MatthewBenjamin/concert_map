@@ -37,5 +37,14 @@ define(function() {
         return venues;
     };
 
+    // Update mapCenter with new latLng when currentAddress changes & save in localStorage
+    utils.storeLocation = function(address, latitude, longitude) {
+        if (localStorage) {
+            localStorage.setItem('lastAddress', address);
+            localStorage.setItem('latitude', latitude);
+            localStorage.setItem('longitude', longitude);
+        }
+    };
+
     return utils;
 });

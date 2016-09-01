@@ -231,16 +231,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWin
         /*** API CALLS ***/
 
         /* Google Map */
-
-        // Update mapCenter with new latLng when currentAddress changes & save in localStorage
-        function storeLocation(address, latitude, longitude) {
-            if (localStorage) {
-                localStorage.setItem('lastAddress', address);
-                localStorage.setItem('latitude', latitude);
-                localStorage.setItem('longitude', longitude);
-            }
-        }
-
         var geocoder = new google.maps.Geocoder();
         self.getMapGeocode = ko.computed(function() {
             if (settings.initAddress != self.currentAddress()) {
@@ -262,7 +252,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWin
                             console.log("map center: ", mapCenter);
                             console.log("self center: ", self.mapCenter());
                             self.mapCenter(mapCenter);
-                            storeLocation(self.currentAddress(), latitude, longitude);
+                            utils.storeLocation(self.currentAddress(), latitude, longitude);
                             // TODO: need to reset initLatLNg?
                             settings.initLatlng = { latitude: latitude, longitude: longitude };
                         }
