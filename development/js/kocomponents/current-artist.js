@@ -1,17 +1,24 @@
 // current-artist.js
-define(['knockout', 'lastFm', 'text!../kotemplates/current-artist.html'],
-   function (ko, lastFm, htmlString) {
+define(['knockout', 'lastFm', 'youtube', 'text!../kotemplates/current-artist.html'],
+   function (ko, lastFm, youtube, htmlString) {
 
     var currentArtist = function(params) {
         var self = this;
         self.currentArtist = params.currentArtist;
 
-        self.getArtistInfo = ko.computed(function() {
+        self.getArtistExtras = ko.computed(function() {
             var artist = self.currentArtist();
                 if (artist && !artist.lastfm) {
                     artist.lastfm = {};
                     artist.lastfm.status = "Loading detailed artist info..."
                     lastFm.requestArtistInfo(artist);
+                }
+
+                if (artist && !artist.youtube) {
+                    console.log('get videos!');
+                    artist.youtube = {};
+                    artist.youtube.status = "Loading Youtube search results...";
+                    youtube.requestArtistVideos(artist);
                 }
         });
     }

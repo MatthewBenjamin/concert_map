@@ -13,11 +13,15 @@
     <!-- /ko -->
     <p><a data-bind="attr : { href: url }"><span data-bind="text: name"></span>'s Bands in Town Page</a></p>
     <h4>Youtube Search Results for "<span data-bind="text: name"></span>"</h4>
-    <p data-bind="text: youtubeStatus"></p>
-    <ul data-bind="foreach: currentArtistYoutube">
+
+    <!-- ko if: $data.youtube -->
+    <p data-bind="text: youtube.status"></p>
+    <ul data-bind="foreach: $data.youtube">
         <li class="youtube-link">
-            <a data-bind="text: snippet.title, attr : { href: url }"></a>
+            <a data-bind="text: title, attr : { href: url }"></a>
         </li>
     </ul>
+    <!-- /ko -->
+
 </div>
 </div>

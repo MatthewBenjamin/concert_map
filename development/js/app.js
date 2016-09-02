@@ -1,7 +1,8 @@
+// TODO: doublecheck if all modules are used
 define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
-        'infoWindow', 'mapMarkers', 'searchUtil', 'lastFm'], // TODO: need lastFm here?
+        'infoWindow', 'mapMarkers', 'searchUtil'],
     function($, ko, komapping, utils, settings, gmap, infoWindow,
-             mapMarkersUtils, searchUtil, lastFm) {
+             mapMarkersUtils, searchUtil) {
     ko.mapping = komapping;
     // TODO: move custom binding & component registration into own module
 
@@ -72,8 +73,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         self.currentEvent = ko.observable();
         self.currentVenue = ko.observable();
         self.currentArtist = ko.observable();
-        // youtube results for current artist
-        self.currentArtistYoutube = ko.observableArray();
+
         // extra venue data
         self.currentVenueFourSquare = ko.observable();
         self.currentVenuePlaces = ko.observable();
@@ -97,7 +97,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         self.geocoderStatus = ko.observable();
         self.concertsStatus = ko.observable();
         self.venueInfoStatus = ko.observable();
-        self.youtubeStatus = ko.observable();
 
         /*** COMPUTED OBSERVABLES ***/
 
@@ -124,6 +123,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         // Set map bounds based on markers
+        // TODO: combine into one computed?
         self.mapBounds = ko.observable();
         self.findMapBounds = ko.computed(function() {
             var markers = self.mapMarkers();
@@ -272,7 +272,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         /* Last.fm */
-
+        // TODO: reorganize this w/ rest of file
         // Get last.fm all-artist info
 
         // show request dialog (see component)
@@ -285,53 +285,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
             } else if (self.artistCount() > 0 ) {
                 return "Searching for Artist Info...";
             }
-        });
-
-        /* Youtube */
-
-        // remove spaces from artist name
-        searchableName = function(artistName) {
-            artistName = artistName.replace(/\s+/g, '+');
-            return artistName;
-        }
-        // get Youtube search results for currentArtist, display in extra-info
-        function requestArtistVideos (artistName) {
-            var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
-                'q=' + artistName +
-                '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI';
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    var results = data.items;
-                    for (var i = 0; i < results.length; i ++) {
-                        results[i].url = 'https://www.youtube.com/watch?v=' +
-                            results[i].id.videoId;
-                    }
-                    self.youtubeStatus(null);
-                    self.currentArtistYoutube(results);
-                    self.currentArtist().youTube = results;
-                },
-                error: function() {
-                    self.youtubeStatus('Youtube search results could not be loaded.');
-                },
-                timeout: 8000
-            };
-            self.youtubeStatus('Loading Youtube search results...');
-            $.ajax(requestURL, requestSettings);
-        }
-
-        self.getArtistVideos = ko.computed(function() {
-            var artist = self.currentArtist();
-            //console.log(artist);
-                if (artist) {
-                    if (artist.youTube) {
-                        self.youtubeStatus(null);
-                        self.currentArtistYoutube(artist.youTube);
-                    } else {
-                        self.currentArtistYoutube(null);
-                        var artistName = searchableName(artist.name());
-                        requestArtistVideos(artistName);
-                    }
-                }
         });
 
         /* Venue APIs */

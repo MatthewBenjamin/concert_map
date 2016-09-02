@@ -24,6 +24,7 @@ requirejs.config({
         mapMarkers: '../map-markers',
         bandsInTown: '../apis/bands-in-town',
         lastFm: '../apis/last-fm',
+        youtube: '../apis/youtube',
         searchUtil: '../search-util',
         app: '../app'
     },
