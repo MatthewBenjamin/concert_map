@@ -56,7 +56,7 @@ define(['jquery', 'knockout'], function($, ko) {
         }
     }
 
-    lastFm.requestAllArtistInfo = function() {
+    lastFm.requestAllArtistInfo = function(artistCount) {
         var requestSettings;
         var artistSearch;
         var requestURL;
@@ -64,7 +64,7 @@ define(['jquery', 'knockout'], function($, ko) {
         for (var i = 0; i < self.concerts().length; i++) {
             for (var j = 0; j < self.concerts()[i].artists.length; j++) {
                 requestURL = lastFm.makeRequestURL(self.concerts()[i].artists[j]);
-                self.artistCount(self.artistCount() + 1);
+                artistCount(artistCount() + 1);
                 (function(i,j) {
                     requestSettings = {
                         success: function(data, status, jqXHR) {
@@ -75,7 +75,7 @@ define(['jquery', 'knockout'], function($, ko) {
                             self.concerts()[i].artists[j].lastfm.status = apiErrorMessage;
                         },
                         complete: function(jqXHR, textStatus) {
-                            self.artistCount(self.artistCount() - 1);
+                            artistCount(artistCount() - 1);
                             console.log(textStatus);
                             // TODO: keep track on timeouts/errors and add option to resubmit
                             // request

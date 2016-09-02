@@ -35,6 +35,10 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         { require: '../kocomponents/current-artist'}
     );
 
+    ko.components.register('request-all-lastfm',
+        { require: '../kocomponents/request-all-lastfm' }
+    );
+
     ko.components.register('status-messages',
         { template: { require: 'text!../kotemplates/status-messages.html' }}
     );
@@ -269,44 +273,17 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
 
         /* Last.fm */
 
-        // Get last.fm artist info
-        // TODO: refactor
-        self.requestAllArtistInfo = ko.observable(false);
-        //self.haveAllArtistInfo = ko.observable(false);
-        //self.allArtistStatus = ko.observable();
+        // Get last.fm all-artist info
+
+        // show request dialog (see component)
+        self.searchBarFocus = ko.observable(false);
+        // how many requests have returned (see component & api module)
         self.artistCount = ko.observable(0);
         self.allArtistStatusUpdate = ko.computed(function() {
             if (self.artistCount() === 0) {
-                //self.allArtistStatus(null);
                 return null;
             } else if (self.artistCount() > 0 ) {
-                //self.allArtistStatus("Searching for Artist Info...");
                 return "Searching for Artist Info...";
-            }
-        });
-
-        // Ask user to load all artist info
-        self.searchBarFocus = ko.observable(false);
-        self.manualToggle = ko.observable(false);
-        self.anotherToggle = ko.computed(function() {
-            if (self.searchBarFocus()) {
-                self.manualToggle(true);
-            }
-        });
-        self.dontAsk = ko.observable(false);
-        self.askForArtistInfo = ko.computed(function() {
-            if (self.dontAsk()) {
-                return false;
-            } else if (searchBarFocus() || manualToggle()) {
-                return true;
-            }
-        });
-
-        self.getAllArtistInfo = ko.computed(function() {
-            if (self.requestAllArtistInfo()) {
-                self.requestAllArtistInfo(false);
-                //self.haveAllArtistInfo(true);
-                lastFm.requestAllArtistInfo();
             }
         });
 

@@ -1,0 +1,14 @@
+<!-- ko if: displayDialog() -->
+<!-- ko template: { name: 'request-info' } --><!-- /ko -->
+<script type="text/html" id="request-info">
+    <div class="request-artist-info">
+        <h4>Want better search results?</h4>
+        <p>If you choose to request info about each artist from Last.fm, you'll be able to search events by detailed info about the artists, such as genre.</p>
+        <p>Right now you can only search events by artists' names and venues' names and addresses.</p>
+        <p> Note: Last.fm info usually loads quickly, but may be slow depending on Last.fm's servers</p>
+        <div>
+            <button class="clickable" data-bind="click: function() { requestAllArtistInfo(true); dontAsk(true);}">Yes</button><button class="clickable" data-bind="click: function() { manualToggle(false); }">No</button><button class="clickable" data-bind="click: function() { dontAsk(true); }">Don't Ask Again</button>
+        </div>
+    </div>
+</script>
+<!-- /ko -->
