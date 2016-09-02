@@ -23,6 +23,7 @@ requirejs.config({
         settings: '../settings',
         mapMarkers: '../map-markers',
         bandsInTown: '../apis/bands-in-town',
+        lastFm: '../apis/last-fm',
         searchUtil: '../search-util',
         app: '../app'
     },

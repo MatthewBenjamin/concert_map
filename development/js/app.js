@@ -1,5 +1,7 @@
-define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWindow', 'mapMarkers', 'searchUtil'],
-    function($, ko, komapping, utils, settings, gmap, infoWindow, mapMarkersUtils, searchUtil) {
+define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
+        'infoWindow', 'mapMarkers', 'searchUtil', 'lastFm'], // TODO: need lastFm here?
+    function($, ko, komapping, utils, settings, gmap, infoWindow,
+             mapMarkersUtils, searchUtil, lastFm) {
     ko.mapping = komapping;
     // TODO: move custom binding & component registration into own module
 
@@ -268,97 +270,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWin
         /* Last.fm */
 
         // Get last.fm artist info
-        var lastFmRequestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
-                'api_key=d824cbbb7759624aa8b3621a627b70b8' +
-                '&format=json&';
-        var lastFmErrorMessage = "Sorry, additional information from Last.fm " +
-            "could not be loaded.";
-
-        function getArtistSearch(artist) {
-            if (artist.mbid) {
-                return 'mbid=' + artist.mbid;
-            } else {
-                return 'artist=' + artist.name;
-            }
-        }
-
-        function requestArtistInfo(artist) {
-            var artistSearch = getArtistSearch(ko.mapping.toJS(artist));
-            //console.log(artistSearch);
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    if (!data.error) {
-                        artist.lastfm = data;
-                        artist.lastfm.status = null;
-                        self.currentArtist(ko.mapping.fromJS(artist));
-                    } else {
-                        artist.lastfm.status = lastFmErrorMessage;
-                        self.currentArtist(ko.mapping.fromJS(artist));
-                    }
-                },
-                error: function(data, status, jqXHR) {
-                    artist.lastfm.status = lastFmErrorMessage;
-                    self.currentArtist(ko.mapping.fromJS(artist));
-                },
-                timeout: 11000
-            };
-            $.ajax(lastFmRequestURL + artistSearch, requestSettings);
-        }
-
-        //self.timeouts = 0;
-        function requestAllArtistInfo() {
-            var requestSettings;
-            var artistSearch;
-            //var artistCount = 0;
-            for (var i = 0; i < self.concerts().length; i++) {
-                for (var j = 0; j < self.concerts()[i].artists.length; j++) {
-                    artistSearch = getArtistSearch(self.concerts()[i].artists[j]);
-                    self.artistCount(self.artistCount() + 1);
-                    (function(i,j) {
-                        requestSettings = {
-                            success: function(data, status, jqXHR) {
-                                if (!data.error) {
-                                    self.concerts()[i].artists[j].lastfm = data;
-                                    self.concerts()[i].artists[j].lastfm.status = null;
-                                } else {
-                                    // TODO: use different error msg when not found vs. error?
-                                    //console.log("NOT FOUND")
-                                    self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
-                                }
-                            },
-                            error: function(data, status, jqXHR) {
-                                //console.log('last.fm error');
-                                self.concerts()[i].artists[j].lastfm.status = lastFmErrorMessage;
-                            },
-                            complete: function(jqXHR, textStatus) {
-                                //console.log(textStatus);
-                                // TODO: keep track on timeouts/errors and add option to resubmit
-                                // request
-                                console.log(textStatus);
-                                //if (textStatus === "timeout" || textStatus === "error") {
-                                //    timeouts++;
-                                //} else if ()
-                                self.artistCount(self.artistCount() - 1);
-                            },
-                            timeout: 11000
-                        };
-                        self.concerts()[i].artists[j].lastfm = {};
-                        $.ajax(lastFmRequestURL + artistSearch, requestSettings);
-                    })(i,j);
-                }
-            }
-        }
-
-        self.getArtistInfo = ko.computed(function() {
-            var artist = self.currentArtist();
-                if (artist && !artist.lastfm) {
-                    artist.lastfm = {};
-                    artist.lastfm.status = "Loading detailed artist info..."
-                    requestArtistInfo(artist);
-                }
-        });
-
-        // TODO: add option to load all artists' info at once for searching
         // TODO: refactor
         self.requestAllArtistInfo = ko.observable(false);
         //self.haveAllArtistInfo = ko.observable(false);
@@ -395,7 +306,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap', 'infoWin
             if (self.requestAllArtistInfo()) {
                 self.requestAllArtistInfo(false);
                 //self.haveAllArtistInfo(true);
-                requestAllArtistInfo();
+                lastFm.requestAllArtistInfo();
             }
         });
 

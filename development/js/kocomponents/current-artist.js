@@ -1,15 +1,20 @@
 // current-artist.js
-define(['knockout', 'text!../kotemplates/current-artist.html'],
-       function (ko, htmlString) {
+define(['knockout', 'lastFm', 'text!../kotemplates/current-artist.html'],
+   function (ko, lastFm, htmlString) {
 
-        var currentArtist = function(params) {
-            var self = this;
-            // TODO: uncommenting below breaks display, but not needed ATM
-            //      perhaps due to with binding in template?
-            //self.currentArtist = params.currentArtist;
+    var currentArtist = function(params) {
+        var self = this;
+        self.currentArtist = params.currentArtist;
 
-            // TODO: add last.fm API request
-        }
+        self.getArtistInfo = ko.computed(function() {
+            var artist = self.currentArtist();
+                if (artist && !artist.lastfm) {
+                    artist.lastfm = {};
+                    artist.lastfm.status = "Loading detailed artist info..."
+                    lastFm.requestArtistInfo(artist);
+                }
+        });
+    }
 
-        return { viewModel: currentArtist, template: htmlString }
+    return { viewModel: currentArtist, template: htmlString }
 })
