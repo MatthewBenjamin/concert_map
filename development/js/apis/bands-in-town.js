@@ -1,5 +1,7 @@
 // bands-in-town.js
 define(['jquery'], function($) {
+    var bandsInTown = {};
+
     function concertTickets(ticketStatus) {
         if (ticketStatus === "available") {
             return true;
@@ -24,7 +26,7 @@ define(['jquery'], function($) {
 
     function makeTimeInfo(time) {
         time = new Date(Date.parse(time));
-        timeString = time.toDateString();
+        var timeString = time.toDateString();
         return {
             day: timeString.substring(0,3),
             date: timeString.substring(4,10),
@@ -51,7 +53,7 @@ define(['jquery'], function($) {
         //return parseConcerts;
     }
 
-    function makeRequestURL(latitude, longitude) {
+    bandsInTown.makeRequestURL = function(latitude, longitude) {
         var requestURL = 'http://api.bandsintown.com/events/search.json?' +
             'api_version=2.0&' +
             'app_id=google-map-mashup&' +
@@ -60,16 +62,24 @@ define(['jquery'], function($) {
             'format=json';
         return requestURL;
     }
-    var requestSettings = {
+
+    bandsInTown.requestSettings = {
         dataType: "jsonp",
         crossDomain: "true",
-        timeout: 11000
-    }
-    // API Call
+        timeout: 11000,
+        success: function(data, status, jqXHR) {
+            if (data) {
+                self.concertsStatus(null);
+                parseConcerts(data);
+                self.concerts(data);
+            } else {
+                self.concertsStatus(data.message);
+            }
+        },
+        error: function() {
+                self.concertsStatus('Concert data could not be loaded. Please try again.');
+        }
+    };
 
-    return {
-        requestSettings: requestSettings,
-        makeRequestURL: makeRequestURL,
-        parseConcerts: parseConcerts
-    }
+    return bandsInTown;
 });
