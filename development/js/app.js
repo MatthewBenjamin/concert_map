@@ -74,10 +74,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         self.currentVenue = ko.observable();
         self.currentArtist = ko.observable();
 
-        // extra venue data
-        self.currentVenueFourSquare = ko.observable();
-        self.currentVenuePlaces = ko.observable();
-
         /* UI observables */
 
         // toggle extra-info display
@@ -96,7 +92,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         // API Status Messages
         self.geocoderStatus = ko.observable();
         self.concertsStatus = ko.observable();
-        self.venueInfoStatus = ko.observable();
 
         /*** COMPUTED OBSERVABLES ***/
 
@@ -287,141 +282,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
             }
         });
 
-        /* Venue APIs */
-
-        // in case user has changed current venue before API results arrive
-        function checkCurrentVenue(venueIndex) {
-            if (self.currentVenue() === self.concertVenues()[venueIndex]) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        // Google Places (if 4 square isn't found)
-        // TODO: This error msg is getting set when 4square isn't found (but then Places loads...)
-        var venueInfoError = 'Sorry, detailed venue information could not be loaded.';
-
-        function placesDetails(placeId, venueIndex) {
-            var placesService = new google.maps.places.PlacesService(gmap);
-            var request = {
-                placeId: placeId
-            };
-            placesService.getDetails(request, function(results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK &&
-                    checkCurrentVenue(venueIndex)) {
-                    self.concertVenues()[venueIndex].detailedInfo.googlePlaces = results;
-                    self.currentVenuePlaces(results);
-                    self.venueInfoStatus(null);
-                } else {
-                    self.venueInfoStatus(venueInfoStatus);
-                    console.log(results, status);
-                }
-
-            });
-        }
-
-        function placesSearch(venueIndex) {
-            //console.log('make place request', venueIndex);
-            venueName = self.currentVenue().name;
-            latitude = self.currentVenue().latitude;
-            longitude = self.currentVenue().longitude;
-            //console.log(venueName, latitude, longitude, i);
-            var placesService = new google.maps.places.PlacesService(gmap);
-            var latLng = new google.maps.LatLng(latitude,longitude);
-            var request = {
-                location: latLng,
-                query: venueName,
-                radius: '1'
-            };
-            //console.log(request, i);
-            placesService.textSearch(request, function(results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    placesDetails(results[0].place_id, venueIndex);
-                } else {
-                    self.venueInfoStatus(venueInfoError);
-                    console.log(status, results);
-                }
-            });
-        }
-
-        // Four Square
-        var fourSquareError = 'Four Square data cannot be found. Loading Google Places data instead...';
-        // Get detailed venue info based on 4square ID
-        function getFourSquareById(id, venueIndex) {
-            var requestURL = 'https://api.foursquare.com/v2/venues/' +
-            id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20160105';
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                    //console.log(data.response.venue);
-                    if (checkCurrentVenue(venueIndex)) {
-                        self.concertVenues()[venueIndex].detailedInfo.fourSquare = data.response.venue;
-                        self.currentVenueFourSquare(data.response.venue);
-                        self.venueInfoStatus(null);
-                    }
-
-                },
-                error: function(data, status, jqXHR) {
-                    self.venueInfoStatus(fourSquareError);
-                    placesSearch(venueIndex);
-                },
-                timeout: 8000
-            };
-            $.ajax(requestURL, requestSettings);
-        }
-        // Lookup 4square venue ID, then get detailed info
-        function findFourSquareVenue (venue) {
-            var venueIndex = self.concertVenues().indexOf(venue);
-            var lat = venue.latitude;
-            var lon = venue.longitude;
-            var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
-                'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
-                'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
-                'v=20160105&' +
-                'm=foursquare&' +
-                'll=' + lat + ',' + lon + '&' +
-                'query=' + venue.name + '&' +
-                'intent=match';
-            var requestSettings = {
-                success: function(data, status, jqXHR) {
-                     if (data.response.venues.length > 0 &&
-                        checkCurrentVenue(venueIndex)) {
-                        getFourSquareById(data.response.venues[0].id, venueIndex);
-                     } else {
-                        // TODO: DRY, see below
-                        self.venueInfoStatus(fourSquareError);
-                        placesSearch(venueIndex);
-                     }
-                },
-                error: function(data, status, jqXHR) {
-                    // TODO: DRY, see above
-                    self.venueInfoStatus(fourSquareError);
-                    placesSearch(venueIndex);
-                },
-                timeout: 8000
-            };
-            venue.detailedInfo = {};
-            self.venueInfoStatus('Loading Four Square data for venue...');
-            $.ajax(requestURL, requestSettings);
-        }
-
-        self.loadDetailedVenueInfo = ko.computed(function() {
-            var venue = self.currentVenue();
-            if (venue) {
-                self.currentVenuePlaces(null);
-                self.currentVenueFourSquare(null);
-                if (!venue.detailedInfo) {
-                    findFourSquareVenue(venue)
-                } else if (venue.detailedInfo.fourSquare) {
-                    self.currentVenueFourSquare(venue.detailedInfo.fourSquare);
-                } else if (venue.detailedInfo.googlePlaces) {
-                    self.currentVenuePlaces(venue.detailedInfo.googlePlaces);
-                } else {
-                    // TODO: this ignores previous failed attemps (e.g. timeouts
-                    // and other cases where data actually exists)
-                    self.venueInfoStatus(venueInfoError);
-                }
-            }
-        });
     };
 
     return ViewModel;

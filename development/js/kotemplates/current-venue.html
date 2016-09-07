@@ -1,29 +1,10 @@
 <div data-bind="visible: showVenueInfo(), with: currentVenue">
-    <p data-bind="text: venueInfoStatus"></p>
     <h3 data-bind="text: name"></h3>
-    <!-- ko if: !currentVenueFourSquare() && !currentVenuePlaces() -->
     <p class="pale-text">
         <span data-bind="text: city"></span>,
         <span data-bind="text: region"></span>
     </p>
-    <!-- /ko -->
-    <p class="pale-text" data-bind="with: currentVenueFourSquare">
-        <span data-bind="text: location.address"></span>
-        <br>
-        <span data-bind="text: location.city"></span>,
-        <span data-bind="text: location.state"></span>
-        <br>
-        <span data-bind="text: contact.formattedPhone"></span>
-    </p>
-    <!-- ko if: !currentVenueFourSquare()-->
-    <p class="pale-text" data-bind="with: currentVenuePlaces">
-        <span data-bind="text: formatted_address"></span>
-        <br>
-        <!-- ko if: currentVenuePlaces().formatted_phone_number -->
-        <span data-bind="text: formatted_phone_number"></span>
-        <!-- /ko -->
-    </p>
-    <!-- /ko -->
+
     <h4>Upcoming Events</h4>
     <ul data-bind="foreach: concerts">
         <li>
@@ -34,60 +15,50 @@
         </li>
         <br>
     </ul>
-
-    <div data-bind="with: currentVenueFourSquare">
+    <div data-bind="with: $parent.currentVenueDetails">
+        <p data-bind="text: status"></p>
+    </div>
+    <div data-bind="with: $parent.currentVenueDetails().data">
         <hr>
+        <p class="italic">
+            <span data-bind="text: provider"></span>
+            <span class="italic">info for:</span>
+        </p>
         <p>
-            <span class="italic">four square info for:</span>
-            <br>
             <span data-bind="text: name"></span>
         </p>
         <p data-bind="if: $data.rating">
             <span class="pale-text">Rating </span>
             <span class="italic" data-bind="text: $data.rating"></span>
-            <!-- rating range -->
-            <span>/10</span>
         </p>
         <ul class="tags" data-bind="foreach: categories">
-            <li data-bind="text: shortName"></li>
+            <li data-bind="text: $data"></li>
         </ul>
         <div data-bind="if: $data.description">
             <p class="italic">Description</p>
             <p data-bind="text: $data.description"></p>
         </div>
         <hr>
-        <p data-bind="if: $data.url"><a data-bind="attr: { href: url }">Official Site</a></p>
-        <p><a data-bind="attr: { href: canonicalUrl }">Four Square Page</a></p>
-    </div>
-
-    <div data-bind="with: currentVenuePlaces">
-        <hr>
-        <p>
-            <span class="italic">google places info for:</span>
-            <br>
-            <span data-bind="text: name"></span>
+        <p data-bind="if: $data.officialUrl">
+            <a data-bind="attr: { href: officialUrl }">
+                <span class="italic" data-bind="text: name"></span>
+                <span>'s Official Site</span>
+            </a>
         </p>
-        <p data-bind="if: $data.rating">
-            <span class="pale-text">Rating </span>
-            <span class="italic" data-bind="text: rating"></span>
-            <!-- rating range -->
-            <span>/5</span>
+        <p data-bind="if: $data.providerUrl">
+            <a data-bind="attr: { href: providerUrl }">
+                <span data-bind="text: provider"></span><span>'s </span>
+                <span class="italic" data-bind="text: name"></span>
+                <span> Page</span>
+            </a>
         </p>
-        <ul class="tags" data-bind="foreach: types">
-            <li data-bind="text: $data"></li>
-        </ul>
-        <hr>
-        <!-- ko if: currentVenuePlaces().website -->
-        <p><a data-bind="attr: { href: website }">Official Site</a></p>
-        <!-- /ko -->
-        <p><a data-bind="attr: { href: url }">Google Places Page</a></p>
     </div>
 
     <p>
-        <a data-bind="attr: { href: url }">Bands in Town Page</a>
+        <a data-bind="attr: { href: url }">
+            <span>Bands in Town's </span>
+            <span class="italic" data-bind="text: name"></span>
+            <span> Page</span>
+        </a>
     </p>
-    <!--
-    <div data-bind="if: currentVenuePlaces" style="background: black; color: white;">
-        <venue-info-component params="name: self.currentVenuePlaces().name"></venue-info-component>
-    </div>-->
 </div>

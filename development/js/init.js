@@ -25,7 +25,10 @@ requirejs.config({
         bandsInTown: '../apis/bands-in-town',
         lastFm: '../apis/last-fm',
         youtube: '../apis/youtube',
+        fourSquare: '../apis/four-square',
+        googlePlaces: '../apis/google-places',
         searchUtil: '../search-util',
+        venueApiUtils: '../apis/venue-api-utils',
         app: '../app'
     },
     shim: {
