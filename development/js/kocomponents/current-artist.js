@@ -4,7 +4,9 @@ define(['knockout', 'lastFm', 'youtube', 'text!../kotemplates/current-artist.htm
 
     var currentArtist = function(params) {
         var self = this;
+
         self.currentArtist = params.currentArtist;
+        self.selectEvent = params.selectEvent;
 
         self.getArtistExtras = ko.computed(function() {
             var artist = self.currentArtist();
@@ -21,6 +23,10 @@ define(['knockout', 'lastFm', 'youtube', 'text!../kotemplates/current-artist.htm
                     youtube.requestArtistVideos(artist);
                 }
         });
+
+        self.backToEvent = function(mappedConcert) {
+            selectEvent(ko.mapping.toJS(mappedConcert));
+        };
     }
 
     return { viewModel: currentArtist, template: htmlString }

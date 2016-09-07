@@ -1,5 +1,5 @@
 <div data-bind="visible: showArtistInfo(), with: currentArtist">
-    <a class="highlight clickable" data-bind="click: function() {backToEvent(currentEvent())}">back to event page</a>
+    <a class="highlight clickable" data-bind="click: function() {$parent.backToEvent(currentEvent())}">back to event page</a>
     <h3 data-bind="text: name"></h3>
     <!-- ko if: $data.lastfm -->
     <p data-bind="text: lastfm.status"></p>

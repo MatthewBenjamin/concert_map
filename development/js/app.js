@@ -160,11 +160,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         /*** UI FUNCTIONS ***/
-        // select event from artist info
-        self.backToEvent = function(mappedConcert) {
-            selectEvent(ko.mapping.toJS(mappedConcert));
-        };
-
         self.selectEvent = function(concert) {
             var unfilteredIndex = utils.findVenue(concert.venue.id, self.concertVenues());
             self.selectMarker(unfilteredIndex);
