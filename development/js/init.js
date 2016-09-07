@@ -29,6 +29,7 @@ requirejs.config({
         googlePlaces: '../apis/google-places',
         searchUtil: '../search-util',
         venueApiUtils: '../apis/venue-api-utils',
+        geocode: '../apis/google-geocode',
         app: '../app'
     },
     shim: {

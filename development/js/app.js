@@ -1,8 +1,8 @@
 // TODO: doublecheck if all modules are used
 define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
-        'infoWindow', 'mapMarkers', 'searchUtil'],
+        'infoWindow', 'mapMarkers', 'searchUtil', 'geocode'],
     function($, ko, komapping, utils, settings, gmap, infoWindow,
-             mapMarkersUtils, searchUtil) {
+             mapMarkersUtils, searchUtil, geocode) {
     ko.mapping = komapping;
     // TODO: move custom binding & component registration into own module
 
@@ -230,39 +230,12 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
 
 
         /*** API CALLS ***/
-
-        /* Google Map */
-        var geocoder = new google.maps.Geocoder();
+        // TODO: put geocoder in ko.component? would only have status in template,
+        // but pass address, mapCenter, as params
         self.getMapGeocode = ko.computed(function() {
             if (settings.initAddress != self.currentAddress()) {
-                var geocodeTimeoutError = setTimeout(function() {
-                    self.geocoderStatus('Location coordinates could not be loaded.');
-                }, 8000);
-                geocoder.geocode( { 'address': self.currentAddress() }, function(results, status) {
-                    self.geocoderStatus('Setting map location...');
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        clearTimeout(geocodeTimeoutError);
-                        self.geocoderStatus(null);
-                        var latitude = results[0]['geometry']['location']['lat']();
-                        var longitude = results[0]['geometry']['location']['lng']();
-                        var mapCenter = {
-                            latitude: latitude,
-                            longitude: longitude
-                        };
-                        if (mapCenter != self.mapCenter()) {
-                            console.log("map center: ", mapCenter);
-                            console.log("self center: ", self.mapCenter());
-                            self.mapCenter(mapCenter);
-                            utils.storeLocation(self.currentAddress(), latitude, longitude);
-                            // TODO: need to reset initLatLNg?
-                            settings.initLatlng = { latitude: latitude, longitude: longitude };
-                        }
-                    } else {
-                        self.geocoderStatus('Geocoder error because: ' + status);
-                    }
-                });
-            } else {
-                //console.log('init address');
+                self.geocoderStatus('Setting map location...');
+                geocode.requestGeocode(self.currentAddress());
             }
         });
 
