@@ -48,6 +48,10 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         { template: { require:'text!../kotemplates/info-window.html' } }
     );
 
+    ko.components.register('info-list-toggle',
+        { require: '../kocomponents/info-list-toggle' }
+    );
+
     var ViewModel =  function () {
         var self = this;
 
@@ -158,27 +162,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
             } else {
                 self.showMenu(true);
             }
-        };
-        self.toggleExtraInfo = function() {
-            if (self.extraInfoBoolean()) {
-                self.extraInfoBoolean(false);
-            } else {
-                self.showEventInfo(false);
-                self.showVenueInfo(false);
-                self.showArtistInfo(false);
-                self.extraInfoBoolean(true);
-            }
-            //console.log(self.extraInfoBoolean());
-        };
-
-        self.showEvents = function() {
-            self.listEvents(true);
-            self.listVenues(false);
-        };
-
-        self.showVenues = function() {
-            self.listEvents(false);
-            self.listVenues(true);
         };
 
         // select event from artist info
