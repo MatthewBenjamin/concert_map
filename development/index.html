@@ -16,12 +16,9 @@
             <info-window></info-window>
         </div>
 
-        <!-- MENU TOGGLE -->
-        <a class="menu-toggle clickable" data-bind="click: function() { toggleMenu() }, css: { open: showMenu() }">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
-          </svg>
-        </a>
+        <menu-toggle params="
+            showMenu: showMenu
+        "></menu-toggle>
 
         <!-- EVENT SEARCH -->
         <input class="menu-interface event-search search-box" data-bind="hasFocus: searchBarFocus, textInput: searchInput, css: { open: showMenu() }" placeholder="search concerts">

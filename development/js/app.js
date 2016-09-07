@@ -52,6 +52,10 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         { require: '../kocomponents/info-list-toggle' }
     );
 
+    ko.components.register('menu-toggle',
+        { require: '../kocomponents/menu-toggle' }
+    );
+
     var ViewModel =  function () {
         var self = this;
 
@@ -156,14 +160,6 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         /*** UI FUNCTIONS ***/
-        self.toggleMenu = function() {
-            if (self.showMenu()) {
-                self.showMenu(false);
-            } else {
-                self.showMenu(true);
-            }
-        };
-
         // select event from artist info
         self.backToEvent = function(mappedConcert) {
             selectEvent(ko.mapping.toJS(mappedConcert));
