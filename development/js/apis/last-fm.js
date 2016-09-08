@@ -13,7 +13,7 @@ define(['jquery', 'knockout'], function($, ko) {
         }
     }
 
-    lastFm.makeRequestURL = function(artist) {
+    function makeRequestURL(artist) {
         //console.log('make request url');
         var artistSearch = getArtistSearch(ko.mapping.toJS(artist));
         var lastFmRequestURL = 'http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&' +
@@ -23,7 +23,7 @@ define(['jquery', 'knockout'], function($, ko) {
     }
 
     lastFm.requestArtistInfo = function(artist) {
-        var requestURL = lastFm.makeRequestURL(artist);
+        var requestURL = makeRequestURL(artist);
         var requestSettings = {
             success: function(data, status, jqXHR) {
                 if (!data.error) {
@@ -63,7 +63,7 @@ define(['jquery', 'knockout'], function($, ko) {
 
         for (var i = 0; i < self.concerts().length; i++) {
             for (var j = 0; j < self.concerts()[i].artists.length; j++) {
-                requestURL = lastFm.makeRequestURL(self.concerts()[i].artists[j]);
+                requestURL = makeRequestURL(self.concerts()[i].artists[j]);
                 artistCount(artistCount() + 1);
                 (function(i,j) {
                     requestSettings = {
