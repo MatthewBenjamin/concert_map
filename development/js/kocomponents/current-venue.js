@@ -19,13 +19,12 @@ define(['knockout','fourSquare', 'googlePlaces', 'text!../kotemplates/current-ve
 
             if (venue() && venue().detailedInfo) {
                 venueDetails(venue().detailedInfo);
-            } else if (venue() && !venue().detailedInfo &&
-                       venueDetails().status !== fourSquare.error) {
-                fourSquare.requestVenueInfo(venue, venueDetails, venueIndex);
             } else if (venue() &&
                        !venue().detailedInfo &&
                        venueDetails().status === fourSquare.error) {
                 googlePlaces.requestVenueInfo(venue, venueDetails, venueIndex);
+            } else if ( venue() && !venue().detailedInfo) {
+                fourSquare.requestVenueInfo(venue, venueDetails, venueIndex);
             }
         });
     };

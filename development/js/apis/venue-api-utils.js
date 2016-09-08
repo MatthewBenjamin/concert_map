@@ -105,5 +105,13 @@ define(function() {
 
     };
 
+    venueApiUtils.venueNotFound = function(venue, errorMsg) {
+        venue().detailedInfo = {
+            data: null,
+            status: errorMsg
+        };
+        venue(venue());
+    }
+
     return venueApiUtils;
 });

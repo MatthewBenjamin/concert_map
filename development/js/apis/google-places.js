@@ -19,9 +19,7 @@ define(['jquery', 'gmap', 'venueApiUtils'], function($, gmap, venueApiUtils) {
                 };
                 venue(venue());
             } else {
-                venueApiUtils.showNotFoundStatusIfNeeded(
-                    false, venueDetails, googlePlaces.error
-                );
+                venueApiUtils.venueNotFound(venue, googlePlaces.error);
             }
 
         });
@@ -43,12 +41,10 @@ define(['jquery', 'gmap', 'venueApiUtils'], function($, gmap, venueApiUtils) {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
                 getPlacesDetails(results[0].place_id, venue, venueDetails, venueIndex);
             } else {
-                venueApiUtils.showNotFoundStatusIfNeeded(
-                    false, venueDetails, googlePlaces.error
-                );
+                venueApiUtils.venueNotFound(venue, googlePlaces.error);
             }
         });
     };
 
     return googlePlaces;
-})
+});
