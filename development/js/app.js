@@ -118,18 +118,11 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
 
         /*** UI FUNCTIONS ***/
         self.selectEvent = function(concert) {
-            var unfilteredIndex = utils.findVenue(concert.venue.id, self.concertVenues());
-            self.selectMarker(unfilteredIndex);
-            // TODO: potential bug w/ filteredEvent/Venues - wrong venue index
+            self.selectMarker(concert.venueIndex);
             self.currentEvent(ko.mapping.fromJS(concert));
             self.showEventInfo(true);
             self.showVenueInfo(false);
             self.showArtistInfo(false);
-        };
-
-        self.selectFilteredVenue = function(filteredVenue) {
-            var unfilteredIndex = utils.findVenue(filteredVenue.id, self.concertVenues());
-            self.selectVenue(self.concertVenues()[unfilteredIndex]);
         };
 
         self.selectVenue = function(venue) {
