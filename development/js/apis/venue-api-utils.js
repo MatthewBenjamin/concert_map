@@ -44,11 +44,10 @@ define(function() {
 
         if (provider === "Four Square") {
             var categoryInfo = data.categories || null;
-            categories = [];
-
-            categoryInfo.forEach(function(c) {
-                categories.push(c.shortName);
+            var categories = categoryInfo.map(function(c) {
+                return c.shortName;
             });
+
         } else if (provider === "Google Places") {
             categories = data.types || null;
         }
