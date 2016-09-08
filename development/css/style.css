@@ -137,11 +137,11 @@ button {
     overflow: auto;
 }
 
-    .list-container > ul {
+    .list-container > * > ul {
         margin-top: -8px;
     }
 
-        .list-container > ul > li {
+        .list-container > * > ul > li {
             padding-left: 15px;
             margin-top: -16px;
         }
@@ -174,8 +174,8 @@ button {
         transform: translate(0, 0);
     }
 
-    .extra-info > div {
-        padding: 10px 30px;
+    .extra-info > * > div {
+        padding: 30px;
     }
 
     .extra-info > .close-button {
