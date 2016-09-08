@@ -51,7 +51,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         self.showVenueInfo = ko.observable(false);
         self.showArtistInfo = ko.observable(false);
 
-        // toggle menu
+        // toggle menu overlay
         self.showMenu = ko.observable(true);
         // toggle list display between events and venues
         self.listEvents = ko.observable(true);
@@ -86,17 +86,14 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         // Set map bounds based on markers
-        // TODO: combine into one computed?
-        self.mapBounds = ko.observable();
-        self.findMapBounds = ko.computed(function() {
+        self.mapBounds = ko.computed(function() {
             var markers = self.mapMarkers();
             // TODO: optimize? (makes new object every time...)
             var bounds = new google.maps.LatLngBounds();
             for(var i = 0; i < markers.length; i++) {
                 bounds.extend(markers[i].getPosition());
             }
-
-            self.mapBounds(bounds);
+            return bounds;
         });
 
         // Search concerts
