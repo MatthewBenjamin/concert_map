@@ -1,6 +1,6 @@
 // google-geocode.js
-define(['settings', 'utils'], function(settings, utils) {;
-    var geocode = {}
+define(['settings', 'utils', 'infoWindow'], function(settings, utils, infoWindow) {
+    var geocode = {};
     var geocoder = new google.maps.Geocoder();
 
     geocode.requestGeocode = function(address) {
@@ -9,18 +9,17 @@ define(['settings', 'utils'], function(settings, utils) {;
         }, 8000);
 
         geocoder.geocode( { 'address': address }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
+            if (status === google.maps.GeocoderStatus.OK) {
                 clearTimeout(geocodeTimeoutError);
                 self.geocoderStatus(null);
-                var latitude = results[0]['geometry']['location']['lat']();
-                var longitude = results[0]['geometry']['location']['lng']();
+                var latitude = results[0].geometry.location.lat();
+                var longitude = results[0].geometry.location.lng();
                 var mapCenter = {
                     latitude: latitude,
                     longitude: longitude
                 };
                 if (mapCenter != self.mapCenter()) {
-                    console.log("map center: ", mapCenter);
-                    console.log("self center: ", self.mapCenter());
+                    infoWindow.resetContentForNewLocation();
                     self.mapCenter(mapCenter);
                     utils.storeLocation(address, latitude, longitude);
 
@@ -32,6 +31,6 @@ define(['settings', 'utils'], function(settings, utils) {;
                 self.geocoderStatus('Geocoder error because: ' + status);
             }
         });
-    }
+    };
     return geocode;
 });
