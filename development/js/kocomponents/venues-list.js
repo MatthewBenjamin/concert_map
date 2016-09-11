@@ -1,5 +1,5 @@
 // venues-view-model.js
-define(['knockout', 'utils', 'text!../kotemplates/venues-list.html'],
+define(['knockout', 'utils', 'text!../../templates/venues-list.html'],
     function (ko, utils, htmlString) {
     var venuesList = function (params) {
         var self = this;

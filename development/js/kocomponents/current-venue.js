@@ -1,5 +1,5 @@
 // current-venue.js
-define(['knockout', 'fourSquare', 'googlePlaces', 'text!../kotemplates/current-venue.html'],
+define(['knockout', 'fourSquare', 'googlePlaces', 'text!../../templates/current-venue.html'],
     function (ko, fourSquare, googlePlaces, htmlString) {
     var currentVenue = function (params) {
         var self = this;

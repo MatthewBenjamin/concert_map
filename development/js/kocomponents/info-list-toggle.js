@@ -1,5 +1,5 @@
 // info-list-toggle.js
-define(['knockout', 'text!../kotemplates/info-list-toggle.html'],
+define(['knockout', 'text!../../templates/info-list-toggle.html'],
     function (ko, htmlString) {
     var infoListToggle = function (params) {
         var self = this;

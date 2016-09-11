@@ -1,5 +1,5 @@
 // menu-toggle.js
-define(['knockout', 'text!../kotemplates/menu-toggle.html'], function (ko, htmlString) {
+define(['knockout', 'text!../../templates/menu-toggle.html'], function (ko, htmlString) {
     var menuToggle = function (params) {
         var self = this;
 

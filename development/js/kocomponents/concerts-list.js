@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'bandsInTown', 'text!../kotemplates/concerts-list.html'],
+define(['jquery', 'knockout', 'bandsInTown', 'text!../../templates/concerts-list.html'],
         function ($, ko, bandsInTown, htmlString) {
     var concertsList = function (params) {
         var self = this;

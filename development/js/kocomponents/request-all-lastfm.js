@@ -1,5 +1,5 @@
 // request-all-lastfm.js
-define(['knockout', 'lastFm', 'text!../kotemplates/request-all-lastfm.html'],
+define(['knockout', 'lastFm', 'text!../../templates/request-all-lastfm.html'],
     function (ko, lastFm, htmlString) {
     var requestAllLastFm = function (params) {
         var self = this;

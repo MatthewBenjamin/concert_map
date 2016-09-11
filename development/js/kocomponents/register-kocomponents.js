@@ -26,11 +26,11 @@ require(['knockout'], function (ko) {
     );
 
     ko.components.register('status-messages',
-        { template: { require: 'text!../kotemplates/status-messages.html' } }
+        { template: { require: 'text!../../templates/status-messages.html' } }
     );
 
     ko.components.register('info-window',
-        { template: { require: 'text!../kotemplates/info-window.html' } }
+        { template: { require: 'text!../../templates/info-window.html' } }
     );
 
     ko.components.register('info-list-toggle',
