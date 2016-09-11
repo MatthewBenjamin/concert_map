@@ -4,6 +4,7 @@ requirejs.config({
     baseUrl: 'js/libraries',
     paths: {
         // TODO: what about global jQuery/$ ? check requireJS docs: http://requirejs.org/docs/jquery.html
+        // libraries
         jquery: [
             'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min',
             'jquery-2.1.3.min',
@@ -16,20 +17,29 @@ requirejs.config({
             'https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min',
             'knockout.mapping-latest',
         ],
-        gmap: '../gmap',
-        infoWindow: '../info-window',
-        utils: '../utils',
+
+        // app scripts //
+        app: '../app',
+        registerKoComponents: '../kocomponents/register-kocomponents',
+        searchUtil: '../search-util',
         settings: '../settings',
-        mapMarkers: '../map-markers',
+        utils: '../utils',
+
+        // APIs //
+        // concerts
         bandsInTown: '../apis/bands-in-town',
-        lastFm: '../apis/last-fm',
-        youtube: '../apis/youtube',
+        // google maps
+        geocode: '../apis/google-geocode',
+        gmap: '../apis/gmap',
+        infoWindow: '../apis/info-window',
+        mapMarkers: '../apis/map-markers',
+        // venues
         fourSquare: '../apis/four-square',
         googlePlaces: '../apis/google-places',
-        searchUtil: '../search-util',
         venueApiUtils: '../apis/venue-api-utils',
-        geocode: '../apis/google-geocode',
-        app: '../app',
+        // artists
+        lastFm: '../apis/last-fm',
+        youtube: '../apis/youtube',
     },
     shim: {
         komapping: {
