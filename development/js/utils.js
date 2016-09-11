@@ -1,25 +1,24 @@
 // utils.js
-define(function() {
+define(function () {
     var utils = {};
 
-    utils.findVenue = function(venueId, venues) {
+    function findVenue(venueId, venues) {
         for (var i = 0; i < venues.length; i++) {
             if (venueId === venues[i].id) {
                 return i;
             }
         }
         return -1;
-    };
+    }
 
-    utils.buildVenues = function(events, allVenues) {
-        //console.log('building those venues!');
+    utils.buildVenues = function (events, allVenues) {
         var venues = [];
-        if (typeof(allVenues) === 'undefined') { var allVenues = venues; }
+        if (typeof (allVenues) === 'undefined') { allVenues = venues; }
         var venueIndex;
         var venue;
-        // TODO: separate out functions inside for loop?
+        // TODO: refactor into helper functions?
         for (var i = 0; i < events.length; i++) {
-            venueIndex = utils.findVenue(events[i].venue.id, venues);
+            venueIndex = findVenue(events[i].venue.id, venues);
             venue = events[i].venue;
             if (venueIndex === -1) {
                 // venue not yet in list
@@ -32,13 +31,12 @@ define(function() {
                 events[i].venueIndex = venueIndex;
                 venues[venueIndex].concerts.push(events[i]);
             }
-
         }
         return venues;
     };
 
     // Update mapCenter with new latLng when currentAddress changes & save in localStorage
-    utils.storeLocation = function(address, latitude, longitude) {
+    utils.storeLocation = function (address, latitude, longitude) {
         if (localStorage) {
             localStorage.setItem('lastAddress', address);
             localStorage.setItem('latitude', latitude);

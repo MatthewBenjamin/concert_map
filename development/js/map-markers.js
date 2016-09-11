@@ -1,36 +1,37 @@
 // map-markers.js
-define(['gmap', 'infoWindow'], function(gmap, infoWindow) {
+define(['gmap', 'infoWindow'], function (gmap, infoWindow) {
     var mapMarkers = {};
 
-    mapMarkers.clearMarkers = function(markers) {
+    mapMarkers.clearMarkers = function (markers) {
         markers.forEach(function (marker) {
             marker.setMap(null);
         });
-    }
+    };
 
-    mapMarkers.createMarkers = function(concertVenuesCallBack, currentVenueCallBack) {
+    mapMarkers.createMarkers = function (concertVenuesCallBack, currentVenueCallBack) {
         var markers = [];
         var venues = concertVenuesCallBack();
+        var marker;
 
-        for (var i = 0; i < venues.length; i++){
+        for (var i = 0; i < venues.length; i++) {
             var latLng = new google.maps.LatLng(
                             venues[i].latitude,
                             venues[i].longitude);
 
-            var marker = new google.maps.Marker({
+            marker = new google.maps.Marker({
                 position: latLng,
                 title: venues[i].name,
                 icon: 'images/red.png',
                 map: gmap,
-                venueIndex: i
+                venueIndex: i,
             });
 
-            google.maps.event.addListener(marker, 'mouseup', function() {
+            google.maps.event.addListener(marker, 'mouseup', function () {
                 var m = this;
                 currentVenueCallBack(concertVenuesCallBack()[m.venueIndex]);
-                infoWindow.open(gmap, m);
+                infoWindow.window.open(gmap, m);
                 m.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(function() {
+                setTimeout(function () {
                     m.setAnimation(google.maps.Animation.null);
                 }, 700);
             });
@@ -38,6 +39,6 @@ define(['gmap', 'infoWindow'], function(gmap, infoWindow) {
             markers.push(marker);
         }
         return markers;
-    }
+    };
     return mapMarkers;
 });

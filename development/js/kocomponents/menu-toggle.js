@@ -1,19 +1,18 @@
 // menu-toggle.js
-define(['knockout', 'text!../kotemplates/menu-toggle.html'], function(ko, htmlString) {
-    var menuToggle = function(params) {
+define(['knockout', 'text!../kotemplates/menu-toggle.html'], function (ko, htmlString) {
+    var menuToggle = function (params) {
         var self = this;
 
         self.showMenu = params.showMenu;
 
-        self.toggleMenu = function() {
+        self.toggleMenu = function () {
             if (self.showMenu()) {
                 self.showMenu(false);
             } else {
                 self.showMenu(true);
             }
         };
-
     };
 
-    return { viewModel: menuToggle, template: htmlString }
-})
+    return { viewModel: menuToggle, template: htmlString };
+});

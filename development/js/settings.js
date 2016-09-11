@@ -1,13 +1,16 @@
 // settings.js
-define(function() {
+define(function () {
     var initAddress;
     var initLatlng;
+    var latitude;
+    var longitude;
     // use last location
-    if (localStorage.lastAddress &&
+    if (localStorage &&
+        localStorage.lastAddress &&
         localStorage.latitude &&
         localStorage.longitude) {
-        var latitude = Number(localStorage.latitude);
-        var longitude = Number(localStorage.longitude);
+        latitude = Number(localStorage.latitude);
+        longitude = Number(localStorage.longitude);
         initAddress = localStorage.lastAddress;
         initLatlng = { latitude: latitude, longitude: longitude };
     } else {
@@ -17,6 +20,6 @@ define(function() {
     }
     return {
         initAddress: initAddress,
-        initLatlng: initLatlng
-    }
+        initLatlng: initLatlng,
+    };
 });

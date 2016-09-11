@@ -1,5 +1,5 @@
 // four-square.js
-define(['jquery', 'knockout', 'venueApiUtils'], function($, ko, venueApiUtils) {
+define(['jquery', 'knockout', 'venueApiUtils'], function ($, ko, venueApiUtils) {
     var fourSquare = {};
 
     fourSquare.error = 'Four Square data cannot be found. Loading Google ' +
@@ -8,37 +8,37 @@ define(['jquery', 'knockout', 'venueApiUtils'], function($, ko, venueApiUtils) {
 
     function getById(id, venue, venueDetails, venueIndex) {
         var foundVenue = false;
-        var requestUrl = 'https://api.foursquare.com/v2/venues/' +
-        id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20160105';
+        var requestURL = 'https://api.foursquare.com/v2/venues/' +
+            id + '?oauth_token=PV4PYPFODETGIN4BI22F1YN23FER1YPGAKQOBLCODUP251GX&v=20160105';
         var requestSettings = {
-            success: function(data, status, jqXHR) {
+            success: function (data) {
                 foundVenue = true;
                 if (venueApiUtils.checkCurrentVenue(venueIndex)) {
                     var parsedResults = venueApiUtils.parseResults(
                         data.response.venue,
-                        "Four Square"
-                    )
+                        'Four Square'
+                    );
                     venue().detailedInfo = {
                         data: parsedResults,
-                        status: null
+                        status: null,
                     };
                     venue(venue());
                 }
             },
-            complete: function(jqXHR, textStatus) {
+            complete: function () {
                 venueApiUtils.showNotFoundStatusIfNeeded(
                     foundVenue, venueDetails, fourSquare.error
                 );
             },
-            timeout: 8000
+            timeout: 8000,
         };
-        $.ajax(requestUrl, requestSettings);
+        $.ajax(requestURL, requestSettings);
     }
 
-    function makeRequestUrl(venue) {
+    function makeRequestURL(venue) {
         var lat = venue().latitude;
         var lon = venue().longitude;
-        var requestUrl = 'https://api.foursquare.com/v2/venues/search?' +
+        var requestURL = 'https://api.foursquare.com/v2/venues/search?' +
             'client_id=HEC4M2QKHJVGW5L5TPIBLBWBFJBBFSCIFFZDNZSGD2G5UGTI&' +
             'client_secret=AJKA10FIBJE3CUKUBYYYOGZ0BU2XNGMXNGUA43LAI0PQT3ZD&' +
             'v=20160105&' +
@@ -47,32 +47,33 @@ define(['jquery', 'knockout', 'venueApiUtils'], function($, ko, venueApiUtils) {
             'query=' + venue().name + '&' +
             'intent=match';
 
-        return requestUrl;
+        return requestURL;
     }
 
-    fourSquare.requestVenueInfo = function(venue, venueDetails, venueIndex) {
+    fourSquare.requestVenueInfo = function (venue, venueDetails, venueIndex) {
         var foundVenue = false;
-        var requestUrl = makeRequestUrl(venue);
+        var requestURL = makeRequestURL(venue);
         var requestSettings = {
-            success: function(data, status, jqXHR) {
+            success: function (data) {
                  if (data.response.venues.length > 0) {
                     foundVenue = true;
                     getById(data.response.venues[0].id, venue, venueDetails, venueIndex);
                  }
             },
-            complete: function(jqXHR, textStatus) {
-                venueApiUtils.showNotFoundStatusIfNeeded(foundVenue, venueDetails, fourSquare.error)
+            complete: function () {
+                venueApiUtils.showNotFoundStatusIfNeeded(
+                    foundVenue, venueDetails, fourSquare.error);
             },
-            timeout: 8000
+            timeout: 8000,
         };
 
         // TODO: incorporate helper function? similar to status update after failure
         venueDetails({
             status: fourSquare.search,
-            data: null
+            data: null,
         });
 
-        $.ajax(requestUrl, requestSettings);
+        $.ajax(requestURL, requestSettings);
     };
 
     return fourSquare;

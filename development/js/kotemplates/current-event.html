@@ -18,14 +18,14 @@
     <ul data-bind="foreach: artists">
         <li>
             <a class="highlight clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
-            <div data-bind="if: $data.lastfm">
-                <!-- ko if: lastfm.artist -->
-                    <ul class="tags" data-bind="foreach: lastfm.artist.tags.tag">
+            <div data-bind="if: $data.lastFm">
+                <!-- ko if: lastFm.artist -->
+                    <ul class="tags" data-bind="foreach: lastFm.artist.tags.tag">
                         <li class="highlight clickable" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
                     </ul>
-                    <span class="italic" data-bind="if: !lastfm.artist.tags.tag().length">no genre info</span>
+                    <span class="italic" data-bind="if: !lastFm.artist.tags.tag().length">no genre info</span>
                 <!-- /ko -->
-                <span class="italic" data-bind="if: $data.lastfm.status">no additional info</span>
+                <span class="italic" data-bind="if: $data.lastFm.status">no additional info</span>
             </div>
         </li>
         <br>

@@ -1,13 +1,14 @@
 // venue-api-utils.js
-define(function() {
-    venueApiUtils = {};
+define(function () {
+    var venueApiUtils = {};
 
     function parseAddress(data, provider) {
         var formattedAddress;
-        if (provider === "Four Square") {
-            var locationInfo = data.location || null;
+        var locationInfo;
+        if (provider === 'Four Square') {
+            locationInfo = data.location || null;
             formattedAddress = locationInfo.formattedAddress.join(', ') || null;
-        } else if (provider === "Google Places") {
+        } else if (provider === 'Google Places') {
             formattedAddress = data.formatted_address || null;
         }
         return formattedAddress;
@@ -15,10 +16,11 @@ define(function() {
 
     function parsePhone(data, provider) {
         var formattedPhone;
-        if (provider === "Four Square") {
-            var contactInfo = data.contact || null;
+        var contactInfo;
+        if (provider === 'Four Square') {
+            contactInfo = data.contact || null;
             formattedPhone = contactInfo.formattedPhone || null;
-        } else if (provider === "Google Places") {
+        } else if (provider === 'Google Places') {
             formattedPhone = data.formatted_phone_number || null;
         }
         return formattedPhone;
@@ -28,11 +30,11 @@ define(function() {
         var rating = data.rating || null;
 
         if (rating) {
-            rating = rating.toString()
-            if (provider === "Four Square") {
-                rating += " / 10";
-            } else if (provider === "Google Places") {
-                rating += " / 5";
+            rating = rating.toString();
+            if (provider === 'Four Square') {
+                rating += ' / 10';
+            } else if (provider === 'Google Places') {
+                rating += ' / 5';
             }
         }
 
@@ -40,43 +42,42 @@ define(function() {
     }
 
     function parseCategories(data, provider) {
+        var categoryInfo;
         var categories;
-
-        if (provider === "Four Square") {
-            var categoryInfo = data.categories || null;
-            var categories = categoryInfo.map(function(c) {
+        if (provider === 'Four Square') {
+            categoryInfo = data.categories || null;
+            categories = categoryInfo.map(function (c) {
                 return c.shortName;
             });
-
-        } else if (provider === "Google Places") {
+        } else if (provider === 'Google Places') {
             categories = data.types || null;
         }
         return categories;
-
     }
-    function parseOfficialUrl(data, provider) {
-        var officialUrl;
 
-        if (provider === "Four Square") {
-            officialUrl = data.url || null;
-        } else if (provider === "Google Places") {
-            officialUrl = data.website || null;
+    function parseOfficialURL(data, provider) {
+        var officialURL;
+
+        if (provider === 'Four Square') {
+            officialURL = data.url || null;
+        } else if (provider === 'Google Places') {
+            officialURL = data.website || null;
         }
-        return officialUrl;
+        return officialURL;
     }
 
-    function parseProviderUrl(data, provider) {
-        var providerUrl;
+    function parseProviderURL(data, provider) {
+        var providerURL;
 
-        if (provider === "Four Square") {
-            providerUrl = data.url || null;
-        } else if (provider === "Google Places") {
-            providerUrl = data.url || null;
+        if (provider === 'Four Square') {
+            providerURL = data.url || null;
+        } else if (provider === 'Google Places') {
+            providerURL = data.url || null;
         }
-        return providerUrl;
+        return providerURL;
     }
 
-    venueApiUtils.parseResults = function(data, provider) {
+    venueApiUtils.parseResults = function (data, provider) {
         return {
             formattedAddress: parseAddress(data, provider),
             formattedPhone: parsePhone(data, provider),
@@ -84,33 +85,32 @@ define(function() {
             rating: parseRating(data, provider),
             categories: parseCategories(data, provider),
             description: data.description || null,
-            officialUrl: parseOfficialUrl(data, provider),
-            providerUrl: parseProviderUrl(data, provider),
-            provider: provider
-        }
+            officialURL: parseOfficialURL(data, provider),
+            providerURL: parseProviderURL(data, provider),
+            provider: provider,
+        };
     };
 
-    venueApiUtils.checkCurrentVenue = function(venueIndex) {
+    venueApiUtils.checkCurrentVenue = function (venueIndex) {
         return (self.currentVenue() === self.concertVenues()[venueIndex]);
     };
 
-    venueApiUtils.showNotFoundStatusIfNeeded = function(foundVenue, venueDetails, errorMsg) {
+    venueApiUtils.showNotFoundStatusIfNeeded = function (foundVenue, venueDetails, errorMsg) {
         if (!foundVenue) {
             venueDetails({
                 status: errorMsg,
-                data: null
+                data: null,
             });
         }
-
     };
 
-    venueApiUtils.venueNotFound = function(venue, errorMsg) {
+    venueApiUtils.venueNotFound = function (venue, errorMsg) {
         venue().detailedInfo = {
             data: null,
-            status: errorMsg
+            status: errorMsg,
         };
         venue(venue());
-    }
+    };
 
     return venueApiUtils;
 });

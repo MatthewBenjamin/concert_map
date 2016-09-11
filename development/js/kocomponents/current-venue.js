@@ -1,7 +1,7 @@
 // current-venue.js
-define(['knockout','fourSquare', 'googlePlaces', 'text!../kotemplates/current-venue.html'],
-    function(ko, fourSquare, googlePlaces, htmlString) {
-    var currentVenue = function(params) {
+define(['knockout', 'fourSquare', 'googlePlaces', 'text!../kotemplates/current-venue.html'],
+    function (ko, fourSquare, googlePlaces, htmlString) {
+    var currentVenue = function (params) {
         var self = this;
 
         self.currentVenue = params.currentVenue;
@@ -9,10 +9,10 @@ define(['knockout','fourSquare', 'googlePlaces', 'text!../kotemplates/current-ve
         self.currentVenueDetails = ko.observable(
             {
                 data: null,
-                status: null
-        });;
+                status: null,
+        });
 
-        self.loadDetailedVenueInfo = ko.computed(function() {
+        self.loadDetailedVenueInfo = ko.computed(function () {
             var venue = self.currentVenue;
             var venueDetails = self.currentVenueDetails;
             var venueIndex = self.concertVenues().indexOf(venue());
@@ -23,11 +23,11 @@ define(['knockout','fourSquare', 'googlePlaces', 'text!../kotemplates/current-ve
                        !venue().detailedInfo &&
                        venueDetails().status === fourSquare.error) {
                 googlePlaces.requestVenueInfo(venue, venueDetails, venueIndex);
-            } else if ( venue() && !venue().detailedInfo) {
+            } else if (venue() && !venue().detailedInfo) {
                 fourSquare.requestVenueInfo(venue, venueDetails, venueIndex);
             }
         });
     };
 
-    return { viewModel: currentVenue, template: htmlString }
+    return { viewModel: currentVenue, template: htmlString };
 });

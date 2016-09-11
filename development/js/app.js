@@ -1,10 +1,9 @@
 // TODO: doublecheck if all modules are used
 define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
-        'infoWindow', 'mapMarkers', 'searchUtil', 'geocode'],
-    function($, ko, komapping, utils, settings, gmap, infoWindow,
+        'mapMarkers', 'searchUtil', 'geocode'],
+    function ($, ko, komapping, utils, settings, gmap,
              mapMarkersUtils, searchUtil, geocode) {
     ko.mapping = komapping;
-    // TODO: move custom binding & component registration into own module
 
     // Custom Handler for Google Map
     ko.bindingHandlers.googlemap = {
@@ -12,11 +11,10 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         update: function (element, valueAccessor) {
             var value = valueAccessor();
             gmap.fitBounds(value.mapBounds);
-            //console.log("map update");
-        }
+        },
     };
 
-    var ViewModel =  function () {
+    var ViewModel = function () {
         var self = this;
 
         /*** VARIABLES/OBSERVABLES ***/
@@ -57,24 +55,27 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         self.listEvents = ko.observable(true);
         self.listVenues = ko.observable(false);
 
+        // show all artist last.fm request dialog (see component)
+        self.searchBarFocus = ko.observable(false);
+
         // API Status Messages
         self.geocoderStatus = ko.observable();
         self.concertsStatus = ko.observable();
+        self.allArtistStatusUpdate = ko.observable(null);
 
         /*** COMPUTED OBSERVABLES ***/
 
         // toggle extra-info display
-        self.showExtraInfo = ko.computed(function() {
-            if ( (self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo()) &&
-                self.extraInfoBoolean() ) {
+        self.showExtraInfo = ko.computed(function () {
+            if ((self.showEventInfo() || self.showVenueInfo() || self.showArtistInfo()) &&
+                self.extraInfoBoolean()) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         });
 
         // Create google map markers from concertVenues
-        self.mapMarkers = ko.computed(function() {
+        self.mapMarkers = ko.computed(function () {
             if (self.mapMarkers && self.mapMarkers().length) {
                 mapMarkersUtils.clearMarkers(self.mapMarkers());
             }
@@ -86,21 +87,21 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         // Set map bounds based on markers
-        self.mapBounds = ko.computed(function() {
+        self.mapBounds = ko.computed(function () {
             var markers = self.mapMarkers();
-            // TODO: optimize? (makes new object every time...)
             var bounds = new google.maps.LatLngBounds();
-            for(var i = 0; i < markers.length; i++) {
+            for (var i = 0; i < markers.length; i++) {
                 bounds.extend(markers[i].getPosition());
             }
             return bounds;
         });
 
         // Search concerts
-        self.searchConcerts = ko.computed(function() {
+        self.searchConcerts = ko.computed(function () {
+            var concerts = self.concerts();
             if (self.searchInput()) {
                 var searchTerm = self.searchInput().toLowerCase();
-                var eventResults = searchUtil.performSearch(searchTerm);
+                var eventResults = searchUtil.performSearch(searchTerm, concerts);
                 var venueResults = utils.buildVenues(eventResults, self.concertVenues());
                 self.filteredEvents(eventResults);
                 self.filteredVenues(venueResults);
@@ -117,7 +118,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
         });
 
         /*** UI FUNCTIONS ***/
-        self.selectEvent = function(concert) {
+        self.selectEvent = function (concert) {
             self.selectMarker(concert.venueIndex);
             self.currentEvent(ko.mapping.fromJS(concert));
             self.showEventInfo(true);
@@ -125,7 +126,7 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
             self.showArtistInfo(false);
         };
 
-        self.selectVenue = function(venue) {
+        self.selectVenue = function (venue) {
             // can't pass venue object from currentEvent extra-info
             var currentVenue = venue || self.concertVenues()[self.currentEvent().venueIndex()];
             self.selectMarker(self.concertVenues.indexOf(currentVenue));
@@ -134,51 +135,33 @@ define(['jquery', 'knockout', 'komapping', 'utils', 'settings', 'gmap',
             self.showArtistInfo(false);
         };
 
-        self.selectArtist = function(artist) {
+        self.selectArtist = function (artist) {
             self.currentArtist(artist);
             self.showArtistInfo(true);
             self.showEventInfo(false);
             self.showVenueInfo(false);
         };
 
-        self.closeExtraInfo = function() {
+        self.closeExtraInfo = function () {
             self.showEventInfo(false);
             self.showVenueInfo(false);
             self.showArtistInfo(false);
         };
         // Activate a map marker's click event
-        self.selectMarker = function(venueIndex) {
+        self.selectMarker = function (venueIndex) {
             google.maps.event.trigger(self.mapMarkers()[venueIndex], 'mouseup');
             gmap.panTo(self.mapMarkers()[venueIndex].position);
         };
 
-
         /*** API CALLS ***/
         // TODO: put geocoder in ko.component? would only have status in template,
         // but pass address, mapCenter, as params
-        self.getMapGeocode = ko.computed(function() {
-            if (settings.initAddress != self.currentAddress()) {
+        self.getMapGeocode = ko.computed(function () {
+            if (settings.initAddress !== self.currentAddress()) {
                 self.geocoderStatus('Setting map location...');
                 geocode.requestGeocode(self.currentAddress());
             }
         });
-
-        /* Last.fm */
-        // TODO: reorganize this w/ rest of file
-        // Get last.fm all-artist info
-
-        // show request dialog (see component)
-        self.searchBarFocus = ko.observable(false);
-        // how many requests have returned (see component & api module)
-        self.artistCount = ko.observable(0);
-        self.allArtistStatusUpdate = ko.computed(function() {
-            if (self.artistCount() === 0) {
-                return null;
-            } else if (self.artistCount() > 0 ) {
-                return "Searching for Artist Info...";
-            }
-        });
-
     };
 
     return ViewModel;

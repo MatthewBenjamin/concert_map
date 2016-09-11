@@ -1,7 +1,7 @@
 // info-list-toggle.js
 define(['knockout', 'text!../kotemplates/info-list-toggle.html'],
-    function(ko, htmlString) {
-    var infoListToggle = function(params) {
+    function (ko, htmlString) {
+    var infoListToggle = function (params) {
         var self = this;
 
         self.listEvents = params.listEvents;
@@ -11,17 +11,17 @@ define(['knockout', 'text!../kotemplates/info-list-toggle.html'],
         self.showVenueInfo = params.showVenueInfo;
         self.showArtistInfo = params.showArtistInfo;
 
-        self.showEvents = function() {
+        self.showEvents = function () {
             self.listEvents(true);
             self.listVenues(false);
         };
 
-        self.showVenues = function() {
+        self.showVenues = function () {
             self.listEvents(false);
             self.listVenues(true);
         };
 
-        self.toggleExtraInfo = function() {
+        self.toggleExtraInfo = function () {
             if (self.extraInfoBoolean()) {
                 self.extraInfoBoolean(false);
             } else {
@@ -33,5 +33,5 @@ define(['knockout', 'text!../kotemplates/info-list-toggle.html'],
         };
     };
 
-    return {viewModel: infoListToggle, template: htmlString }
-})
+    return { viewModel: infoListToggle, template: htmlString };
+});

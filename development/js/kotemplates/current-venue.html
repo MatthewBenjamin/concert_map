@@ -39,14 +39,14 @@
             <p data-bind="text: $data.description"></p>
         </div>
         <hr>
-        <p data-bind="if: $data.officialUrl">
-            <a data-bind="attr: { href: officialUrl }">
+        <p data-bind="if: $data.officialURL">
+            <a data-bind="attr: { href: officialURL }">
                 <span class="italic" data-bind="text: name"></span>
                 <span>'s Official Site</span>
             </a>
         </p>
-        <p data-bind="if: $data.providerUrl">
-            <a data-bind="attr: { href: providerUrl }">
+        <p data-bind="if: $data.providerURL">
+            <a data-bind="attr: { href: providerURL }">
                 <span data-bind="text: provider"></span><span>'s </span>
                 <span class="italic" data-bind="text: name"></span>
                 <span> Page</span>

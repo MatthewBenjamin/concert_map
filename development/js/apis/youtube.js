@@ -1,5 +1,5 @@
 // youtube.js
-define(['jquery', 'knockout', 'utils'], function($, ko, utils) {
+define(['jquery', 'knockout'], function ($, ko) {
     var youtube = {};
 
     // remove spaces from string
@@ -14,14 +14,14 @@ define(['jquery', 'knockout', 'utils'], function($, ko, utils) {
         var resultURL;
         var title;
 
-        for (var i = 0; i < data.length; i ++) {
+        for (var i = 0; i < data.length; i++) {
             title = data[i].snippet.title;
 
             if (data[i].id.videoId) {
                 resultURL = 'watch?v=' + data[i].id.videoId;
             } else if (data[i].id.channelId) {
                 resultURL = 'channel/' + data[i].id.channelId;
-                title += " (channel)";
+                title += ' (channel)';
             }
 
             parsedData.push({ url: baseURL + resultURL, title: title });
@@ -29,28 +29,28 @@ define(['jquery', 'knockout', 'utils'], function($, ko, utils) {
 
         return parsedData;
     }
-    youtube.requestArtistVideos = function(artist) {
+
+    youtube.requestArtistVideos = function (artist) {
         var artistName = searchableName(artist.name());
         var requestURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&' +
             'q=' + artistName +
             '&key=AIzaSyA8B9NC0lW-vqhQzWmVp8XwEMFbyg01blI';
         var requestSettings = {
-            success: function(data, status, jqXHR) {;
+            success: function (data) {
                 var results = parseResults(data.items);
                 artist.youtube = results;
                 artist.youtube.status = null;
                 self.currentArtist(ko.mapping.fromJS(artist));
             },
-            error: function(textStatus) {
-                //console.log(textStatus);
+            error: function () {
                 artist.youtube.status = 'Youtube search results could not be loaded.';
                 self.currentArtist(ko.mapping.fromJS(artist));
             },
-            timeout: 8000
+            timeout: 8000,
         };
 
         $.ajax(requestURL, requestSettings);
     };
 
     return youtube;
-})
+});

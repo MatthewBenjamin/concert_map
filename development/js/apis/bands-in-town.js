@@ -1,22 +1,22 @@
 // bands-in-town.js
-define(['jquery'], function($) {
+// TODO: make request here or in concerts-list.js ? (right now $ is unused)
+define(['jquery'], function ($) {
     var bandsInTown = {};
 
     function concertTickets(ticketStatus) {
-        if (ticketStatus === "available") {
+        if (ticketStatus === 'available') {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     function makeSubtitle(artistCount) {
         var subtitle;
         if (artistCount > 1) {
             artistCount -= 1;
-            subtitle = "& " + artistCount + " more act";
+            subtitle = '& ' + artistCount + ' more act';
             if (artistCount > 1) {
-                subtitle += "s";
+                subtitle += 's';
             }
         } else {
             subtitle = null;
@@ -28,18 +28,15 @@ define(['jquery'], function($) {
         time = new Date(Date.parse(time));
         var timeString = time.toDateString();
         return {
-            day: timeString.substring(0,3),
-            date: timeString.substring(4,10),
+            day: timeString.substring(0, 3),
+            date: timeString.substring(4, 10),
             year: time.getFullYear(),
-            time: time.toUTCString().substring(17,22)
+            time: time.toUTCString().substring(17, 22),
         };
     }
 
-    function parseConcerts(concerts) {
-        //console.log(data);
-        var time;
+    function parseConcerts (concerts) {
         var artistCount;
-        //var parsedConcerts = [];
         for (var i = 0; i < concerts.length; i++) {
             // assign tickets boolean
             concerts[i].tickets_available = concertTickets(concerts[i].ticket_status);
@@ -48,12 +45,10 @@ define(['jquery'], function($) {
             concerts[i].subtitle = makeSubtitle(artistCount);
             // write timeInfo
             concerts[i].timeInfo = makeTimeInfo(concerts[i].datetime);
-            //parseConcerts.push(concerts[i]);
         }
-        //return parseConcerts;
     }
 
-    bandsInTown.makeRequestURL = function(latitude, longitude) {
+    bandsInTown.makeRequestURL = function (latitude, longitude) {
         var requestURL = 'http://api.bandsintown.com/events/search.json?' +
             'api_version=2.0&' +
             'app_id=google-map-mashup&' +
@@ -61,13 +56,13 @@ define(['jquery'], function($) {
             'per_page=100&' +
             'format=json';
         return requestURL;
-    }
+    };
 
     bandsInTown.requestSettings = {
-        dataType: "jsonp",
-        crossDomain: "true",
+        dataType: 'jsonp',
+        crossDomain: 'true',
         timeout: 11000,
-        success: function(data, status, jqXHR) {
+        success: function (data) {
             if (data) {
                 self.concertsStatus(null);
                 parseConcerts(data);
@@ -76,9 +71,9 @@ define(['jquery'], function($) {
                 self.concertsStatus(data.message);
             }
         },
-        error: function() {
+        error: function () {
                 self.concertsStatus('Concert data could not be loaded. Please try again.');
-        }
+        },
     };
 
     return bandsInTown;

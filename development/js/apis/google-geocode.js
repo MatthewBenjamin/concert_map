@@ -1,14 +1,14 @@
 // google-geocode.js
-define(['settings', 'utils', 'infoWindow'], function(settings, utils, infoWindow) {
+define(['settings', 'utils', 'infoWindow'], function (settings, utils, infoWindow) {
     var geocode = {};
     var geocoder = new google.maps.Geocoder();
 
-    geocode.requestGeocode = function(address) {
-        var geocodeTimeoutError = setTimeout(function() {
+    geocode.requestGeocode = function (address) {
+        var geocodeTimeoutError = setTimeout(function () {
             self.geocoderStatus('Location coordinates could not be loaded.');
         }, 8000);
 
-        geocoder.geocode( { 'address': address }, function(results, status) {
+        geocoder.geocode({ address: address }, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 clearTimeout(geocodeTimeoutError);
                 self.geocoderStatus(null);
@@ -16,9 +16,9 @@ define(['settings', 'utils', 'infoWindow'], function(settings, utils, infoWindow
                 var longitude = results[0].geometry.location.lng();
                 var mapCenter = {
                     latitude: latitude,
-                    longitude: longitude
+                    longitude: longitude,
                 };
-                if (mapCenter != self.mapCenter()) {
+                if (mapCenter !== self.mapCenter()) {
                     infoWindow.resetContentForNewLocation();
                     self.mapCenter(mapCenter);
                     utils.storeLocation(address, latitude, longitude);
