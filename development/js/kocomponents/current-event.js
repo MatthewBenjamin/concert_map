@@ -1,5 +1,5 @@
 // current-event.js
-define(['knockout', 'text!../../templates/current-event.html'], function (ko, htmlString) {
+define(['knockout', 'currentEventTemplate'], function (ko, htmlString) {
     var currentEvent = function (params) {
         var self = this;
 

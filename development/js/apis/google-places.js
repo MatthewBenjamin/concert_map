@@ -1,5 +1,6 @@
 // google-places.js
-define(['jquery', 'gmap', 'venueApiUtils'], function ($, gmap, venueApiUtils) {
+define(['jquery', 'gmap', 'venueApiUtils', 'google'],
+    function ($, gmap, venueApiUtils, google) {
     var googlePlaces = {};
 
     googlePlaces.error = 'Sorry, detailed venue information could not be loaded.';

@@ -1,5 +1,6 @@
 // google-geocode.js
-define(['settings', 'utils', 'infoWindow'], function (settings, utils, infoWindow) {
+define(['settings', 'utils', 'infoWindow', 'google'],
+    function (settings, utils, infoWindow, google) {
     var geocode = {};
     var geocoder = new google.maps.Geocoder();
 

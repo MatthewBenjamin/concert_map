@@ -1,5 +1,5 @@
 // map-init.js
-define(['settings', 'jquery'],
+define(['settings', 'jquery', 'google'],
         function (settings, $) {
     var mapCanvas = document.getElementsByClassName('map-canvas')[0];
     var mapOptions = {

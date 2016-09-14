@@ -1,4 +1,4 @@
-define(['gmap'], function () {
+define(['google', 'gmap'], function (google) {
     var infoWindow = {};
 
     infoWindow.window = new google.maps.InfoWindow();
@@ -14,11 +14,14 @@ define(['gmap'], function () {
     function removeContent() {
         var content = infoWindow.window.getContent();
         if (content) {
+            // TODO: instead of getting from DOM, just define template above
+            // (but will be text, not DOM element)?
             document.getElementsByClassName('info-window-container')[0].appendChild(content);
         }
     }
 
     function infoWindowClose() {
+        removeContent();
         infoWindow.window.setContent(infoWindowView());
     }
 

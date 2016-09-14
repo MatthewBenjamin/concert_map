@@ -1,0 +1,26 @@
+<div data-bind="visible: showArtistInfo(), with: currentArtist">
+    <a class="highlight clickable" data-bind="click: function() {$parent.backToEvent(currentEvent())}">back to event page</a>
+    <h3 data-bind="text: name"></h3>
+    <!-- ko if: $data.lastFm -->
+    <p data-bind="text: lastFm.status"></p>
+    <div data-bind="if: lastFm.artist">
+        <ul class="tags" data-bind="foreach: lastFm.artist.tags.tag">
+            <li class="highlight clickable" data-bind="text: name, click: function(){searchInput($data.name())}"></li>
+        </ul>
+        <h4>Bio</h4>
+        <p data-bind="html: lastFm.artist.bio.summary"></p>
+    </div>
+    <!-- /ko -->
+    <p><a data-bind="attr : { href: url }"><span data-bind="text: name"></span>'s Bands in Town Page</a></p>
+    <h4>Youtube Search Results for "<span data-bind="text: name"></span>"</h4>
+
+    <!-- ko if: $data.youtube -->
+    <p data-bind="text: youtube.status"></p>
+    <ul data-bind="foreach: $data.youtube">
+        <li class="youtube-link">
+            <a data-bind="text: title, attr : { href: url }"></a>
+        </li>
+    </ul>
+    <!-- /ko -->
+
+</div>

@@ -1,0 +1,40 @@
+<div data-bind="visible: showEventInfo(), with: currentEvent">
+    <div>
+        <h4>
+            <span data-bind="text: artists()[0].name"></span>
+            <span class="subtitle" data-bind="text: subtitle"></span>
+        </h4>
+        <p class="pale-text">
+            <span data-bind="text: timeInfo.time"></span>
+            <br>
+            <span data-bind="text: timeInfo.day"></span>
+            <span data-bind="text: timeInfo.date"></span>
+            <br>
+            <span data-bind="text: timeInfo.year"></span>
+        </p>
+    </div>
+    <h4>Artists</h4>
+    <hr>
+    <ul data-bind="foreach: artists">
+        <li>
+            <a class="highlight clickable" data-bind="text: name, click: function() { selectArtist($data); }"></a>
+            <div data-bind="if: $data.lastFm">
+                <!-- ko if: lastFm.artist -->
+                    <ul class="tags" data-bind="foreach: lastFm.artist.tags.tag">
+                        <li class="highlight clickable" data-bind="text: name, click: function() { searchInput(this.name()) }"></li>
+                    </ul>
+                    <span class="italic" data-bind="if: !lastFm.artist.tags.tag().length">no genre info</span>
+                <!-- /ko -->
+                <span class="italic" data-bind="if: $data.lastFm.status">no additional info</span>
+            </div>
+        </li>
+        <br>
+    </ul>
+    <h4>
+        <span>Venue</span>
+        <a class="highlight clickable subtitle" data-bind="text: venue.name, click: function() { selectVenue(); }"></a>
+    </h4>
+    <a data-bind="attr: { href: url }">Bands in Town Event Page</a>
+    <br>
+    <p data-bind="if: tickets_available"><a data-bind="attr: { href: ticket_url }">Get Tickets</a></p>
+</div>

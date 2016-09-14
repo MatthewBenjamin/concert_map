@@ -1,5 +1,5 @@
 // map-markers.js
-define(['gmap', 'infoWindow'], function (gmap, infoWindow) {
+define(['google', 'gmap', 'infoWindow'], function (google, gmap, infoWindow) {
     var mapMarkers = {};
 
     mapMarkers.clearMarkers = function (markers) {

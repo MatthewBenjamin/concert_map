@@ -1,5 +1,5 @@
 // current-artist.js
-define(['knockout', 'lastFm', 'youtube', 'text!../../templates/current-artist.html'],
+define(['knockout', 'lastFm', 'youtube', 'currentArtistTemplate'],
    function (ko, lastFm, youtube, htmlString) {
     var currentArtist = function (params) {
         var self = this;

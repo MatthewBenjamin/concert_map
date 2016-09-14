@@ -1,0 +1,19 @@
+<div class="info-content" data-bind="if: currentVenue">
+    <div data-bind="with: currentVenue">
+        <h2 class="window-header clickable" data-bind="text: name, click: selectVenue;"></h2>
+        <ul data-bind="foreach: concerts">
+            <li class="clickable" data-bind="click: selectEvent">
+                <hr>
+                <h4>
+                    <span data-bind="text: artists[0].name"></span> 
+                    <span class="subtitle" data-bind="text: subtitle"></span>
+                </h4>
+
+                <p class="window-event-date pale-text">
+                    <span data-bind="text: timeInfo.day"></span>, 
+                    <span data-bind="text: timeInfo.date"></span>
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
